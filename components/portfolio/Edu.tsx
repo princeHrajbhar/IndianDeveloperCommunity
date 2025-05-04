@@ -45,46 +45,8 @@ const UltraEnhancedPortfolio = () => {
   }, []);
 
   const timelineData: TimelineItem[] = [
-    {
-      id: 'edu-1',
-      title: 'Master of Computer Science',
-      institution: 'Tech University',
-      duration: '2020 - 2022',
-      description: [
-        'Specialized in Artificial Intelligence and Machine Learning',
-        'Published research on neural network optimization',
-        'Thesis: "Advanced Techniques in Image Recognition"'
-      ],
-      type: 'education',
-      skills: ['Machine Learning', 'Deep Learning', 'Data Structures', 'Algorithms']
-    },
-    {
-      id: 'edu-1',
-      title: 'Master of Computer Science',
-      institution: 'Tech University',
-      duration: '2022 - 2024',
-      description: [
-        'Specialized in Artificial Intelligence and Machine Learning',
-        'Published research on neural network optimization',
-        'Thesis: "Advanced Techniques in Image Recognition"'
-      ],
-      type: 'education',
-      skills: ['Machine Learning', 'Deep Learning', 'Data Structures', 'Algorithms']
-    },
-    {
-      id: 'exp-1',
-      title: 'Machine Learning Engineer Intern',
-      company: 'NeuralTech Solutions',
-      position: 'Intern',
-      duration: 'Jan 2024 - Apr 2024',
-      description: [
-        'Built ML models for real-time data analytics',
-        'Collaborated on a chatbot project using NLP techniques',
-        'Optimized model inference time by 30%'
-      ],
-      type: 'experience',
-      skills: ['Python', 'TensorFlow', 'NLP', 'Model Optimization']
-    },
+    
+  
     {
       id: 'cert-1',
       title: 'Deep Learning Specialization',
