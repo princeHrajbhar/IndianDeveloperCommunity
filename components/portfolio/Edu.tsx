@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
-import { FiArrowRight, FiChevronDown } from 'react-icons/fi';
+import { FiArrowRight, FiCode, FiChevronDown } from 'react-icons/fi';
 import { FaGraduationCap, FaLaptopCode, FaCertificate } from 'react-icons/fa';
 
 type TimelineItem = {
@@ -17,8 +17,10 @@ type TimelineItem = {
   skills?: string[];
 };
 
+type TabType = 'education' | 'experience' | 'certifications';
+
 const UltraEnhancedPortfolio = () => {
-  const [activeTab, setActiveTab] = useState<'education' | 'experience' | 'certifications'>('education');
+  const [activeTab, setActiveTab] = useState<TabType>('education');
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const [isHovering, setIsHovering] = useState<string | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -34,7 +36,9 @@ const UltraEnhancedPortfolio = () => {
   });
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -42,133 +46,146 @@ const UltraEnhancedPortfolio = () => {
 
   const timelineData: TimelineItem[] = [
     {
-        id: 'edu-1',
-        title: 'Master of Computer Science',
-        institution: 'Tech University',
-        duration: '2022 - 2024',
-        description: [
-          'Specialized in Artificial Intelligence and Machine Learning',
-          'Published research on neural network optimization',
-          'Thesis: "Advanced Techniques in Image Recognition"'
-        ],
-        type: 'education',
-        skills: ['Machine Learning', 'Deep Learning', 'Data Structures', 'Algorithms']
-      },
-      {
-        id: 'exp-1',
-        title: 'Machine Learning Engineer Intern',
-        company: 'NeuralTech Solutions',
-        position: 'Intern',
-        duration: 'Jan 2024 - Apr 2024',
-        description: [
-          'Built ML models for real-time data analytics',
-          'Collaborated on a chatbot project using NLP techniques',
-          'Optimized model inference time by 30%'
-        ],
-        type: 'experience',
-        skills: ['Python', 'TensorFlow', 'NLP', 'Model Optimization']
-      },
-      {
-        id: 'cert-1',
-        title: 'Deep Learning Specialization',
-        company: 'Coursera (deeplearning.ai)',
-        duration: 'Dec 2023',
-        description: [
-          'Completed five courses covering CNNs, RNNs, and Sequence Models',
-          'Final project: Image classification with transfer learning'
-        ],
-        type: 'certification',
-        skills: ['Keras', 'CNN', 'Transfer Learning', 'RNN']
-      },
-      {
-        id: 'edu-2',
-        title: 'Bachelor of Technology in Computer Science',
-        institution: 'Global Engineering College',
-        duration: '2018 - 2022',
-        description: [
-          'Graduated with Honors (CGPA: 9.1)',
-          'Final year project: "Smart Home Automation System"',
-          'Active member of the coding club and hackathon participant'
-        ],
-        type: 'education',
-        skills: ['Java', 'C++', 'Embedded Systems', 'IoT']
-      },
-      {
-        id: 'exp-2',
-        title: 'Full-Stack Developer Intern',
-        company: 'CodeCraft Innovations',
-        position: 'Intern',
-        duration: 'Jul 2023 - Oct 2023',
-        description: [
-          'Developed and maintained company’s e-commerce platform',
-          'Integrated payment gateway APIs',
-          'Improved website load time by 40%'
-        ],
-        type: 'experience',
-        skills: ['React.js', 'Node.js', 'MongoDB', 'Express']
-      },
-      {
-        id: 'cert-2',
-        title: 'AWS Certified Cloud Practitioner',
-        company: 'Amazon Web Services',
-        duration: 'Jun 2023',
-        description: [
-          'Learned AWS core services: EC2, S3, Lambda',
-          'Deployed serverless applications using AWS Lambda and API Gateway'
-        ],
-        type: 'certification',
-        skills: ['AWS', 'Cloud Computing', 'Serverless']
-      },
-      {
-        id: 'edu-3',
-        title: 'Higher Secondary Schooling',
-        institution: 'Sunrise Senior Secondary School',
-        duration: '2016 - 2018',
-        description: [
-          'Major subjects: Physics, Chemistry, Mathematics, Computer Science',
-          'Secured 91% in final board exams'
-        ],
-        type: 'education',
-        skills: ['Physics', 'Maths', 'Problem Solving']
-      },
-      {
-        id: 'exp-3',
-        title: 'Campus Ambassador',
-        company: 'TechFest Global',
-        position: 'Ambassador',
-        duration: 'Feb 2023 - May 2023',
-        description: [
-          'Promoted national-level coding contests on campus',
-          'Managed event logistics and student registrations',
-          'Increased event participation by 35%'
-        ],
-        type: 'experience',
-        skills: ['Public Speaking', 'Event Management', 'Networking']
-      },
-      {
-        id: 'cert-3',
-        title: 'Python for Data Science',
-        company: 'edX (Microsoft)',
-        duration: 'Mar 2023',
-        description: [
-          'Mastered data wrangling, visualization, and predictive analytics',
-          'Built final project: Customer churn prediction using logistic regression'
-        ],
-        type: 'certification',
-        skills: ['Python', 'Pandas', 'Seaborn', 'Scikit-learn']
-      },
-      {
-        id: 'cert-4',
-        title: 'Git & GitHub Essentials',
-        company: 'Udemy',
-        duration: 'Jan 2023',
-        description: [
-          'Covered version control fundamentals and collaborative workflows',
-          'Built team projects using branches, pull requests, and merge conflicts'
-        ],
-        type: 'certification',
-        skills: ['Git', 'GitHub', 'Version Control']
-      }
+      id: 'edu-1',
+      title: 'Master of Computer Science',
+      institution: 'Tech University',
+      duration: '2020 - 2022',
+      description: [
+        'Specialized in Artificial Intelligence and Machine Learning',
+        'Published research on neural network optimization',
+        'Thesis: "Advanced Techniques in Image Recognition"'
+      ],
+      type: 'education',
+      skills: ['Machine Learning', 'Deep Learning', 'Data Structures', 'Algorithms']
+    },
+    {
+      id: 'edu-1',
+      title: 'Master of Computer Science',
+      institution: 'Tech University',
+      duration: '2022 - 2024',
+      description: [
+        'Specialized in Artificial Intelligence and Machine Learning',
+        'Published research on neural network optimization',
+        'Thesis: "Advanced Techniques in Image Recognition"'
+      ],
+      type: 'education',
+      skills: ['Machine Learning', 'Deep Learning', 'Data Structures', 'Algorithms']
+    },
+    {
+      id: 'exp-1',
+      title: 'Machine Learning Engineer Intern',
+      company: 'NeuralTech Solutions',
+      position: 'Intern',
+      duration: 'Jan 2024 - Apr 2024',
+      description: [
+        'Built ML models for real-time data analytics',
+        'Collaborated on a chatbot project using NLP techniques',
+        'Optimized model inference time by 30%'
+      ],
+      type: 'experience',
+      skills: ['Python', 'TensorFlow', 'NLP', 'Model Optimization']
+    },
+    {
+      id: 'cert-1',
+      title: 'Deep Learning Specialization',
+      company: 'Coursera (deeplearning.ai)',
+      duration: 'Dec 2023',
+      description: [
+        'Completed five courses covering CNNs, RNNs, and Sequence Models',
+        'Final project: Image classification with transfer learning'
+      ],
+      type: 'certification',
+      skills: ['Keras', 'CNN', 'Transfer Learning', 'RNN']
+    },
+    {
+      id: 'edu-2',
+      title: 'Bachelor of Technology in Computer Science',
+      institution: 'Global Engineering College',
+      duration: '2018 - 2022',
+      description: [
+        'Graduated with Honors (CGPA: 9.1)',
+        'Final year project: "Smart Home Automation System"',
+        'Active member of the coding club and hackathon participant'
+      ],
+      type: 'education',
+      skills: ['Java', 'C++', 'Embedded Systems', 'IoT']
+    },
+    {
+      id: 'exp-2',
+      title: 'Full-Stack Developer Intern',
+      company: 'CodeCraft Innovations',
+      position: 'Intern',
+      duration: 'Jul 2023 - Oct 2023',
+      description: [
+        'Developed and maintained company’s e-commerce platform',
+        'Integrated payment gateway APIs',
+        'Improved website load time by 40%'
+      ],
+      type: 'experience',
+      skills: ['React.js', 'Node.js', 'MongoDB', 'Express']
+    },
+    {
+      id: 'cert-2',
+      title: 'AWS Certified Cloud Practitioner',
+      company: 'Amazon Web Services',
+      duration: 'Jun 2023',
+      description: [
+        'Learned AWS core services: EC2, S3, Lambda',
+        'Deployed serverless applications using AWS Lambda and API Gateway'
+      ],
+      type: 'certification',
+      skills: ['AWS', 'Cloud Computing', 'Serverless']
+    },
+    {
+      id: 'edu-3',
+      title: 'Higher Secondary Schooling',
+      institution: 'Sunrise Senior Secondary School',
+      duration: '2016 - 2018',
+      description: [
+        'Major subjects: Physics, Chemistry, Mathematics, Computer Science',
+        'Secured 91% in final board exams'
+      ],
+      type: 'education',
+      skills: ['Physics', 'Maths', 'Problem Solving']
+    },
+    {
+      id: 'exp-3',
+      title: 'Campus Ambassador',
+      company: 'TechFest Global',
+      position: 'Ambassador',
+      duration: 'Feb 2023 - May 2023',
+      description: [
+        'Promoted national-level coding contests on campus',
+        'Managed event logistics and student registrations',
+        'Increased event participation by 35%'
+      ],
+      type: 'experience',
+      skills: ['Public Speaking', 'Event Management', 'Networking']
+    },
+    {
+      id: 'cert-3',
+      title: 'Python for Data Science',
+      company: 'edX (Microsoft)',
+      duration: 'Mar 2023',
+      description: [
+        'Mastered data wrangling, visualization, and predictive analytics',
+        'Built final project: Customer churn prediction using logistic regression'
+      ],
+      type: 'certification',
+      skills: ['Python', 'Pandas', 'Seaborn', 'Scikit-learn']
+    },
+    {
+      id: 'cert-4',
+      title: 'Git & GitHub Essentials',
+      company: 'Udemy',
+      duration: 'Jan 2023',
+      description: [
+        'Covered version control fundamentals and collaborative workflows',
+        'Built team projects using branches, pull requests, and merge conflicts'
+      ],
+      type: 'certification',
+      skills: ['Git', 'GitHub', 'Version Control']
+    }
   ];
 
   const filteredData = timelineData.filter(item => item.type === activeTab || 
@@ -178,16 +195,16 @@ const UltraEnhancedPortfolio = () => {
     setExpandedItem(expandedItem === id ? null : id);
   };
 
-  const getIcon = (type: string, size = 20) => {
+  const getIcon = (type: 'education' | 'experience' | 'certification', size = 20) => {
     switch (type) {
       case 'education': return <FaGraduationCap className="text-blue-400" size={size} />;
       case 'experience': return <FaLaptopCode className="text-green-400" size={size} />;
       case 'certification': return <FaCertificate className="text-purple-400" size={size} />;
-      default: return null;
+      default: return <FiCode className="text-gray-400" size={size} />;
     }
   };
 
-  const getTabColor = (tab: string) => {
+  const getTabColor = (tab: TabType) => {
     switch (tab) {
       case 'education': return 'bg-gradient-to-r from-blue-500 to-blue-600';
       case 'experience': return 'bg-gradient-to-r from-green-500 to-green-600';
@@ -195,6 +212,12 @@ const UltraEnhancedPortfolio = () => {
       default: return 'bg-gradient-to-r from-gray-500 to-gray-600';
     }
   };
+
+  const tabs = [
+    { id: 'education', label: 'Education', icon: <FaGraduationCap /> },
+    { id: 'experience', label: 'Experience', icon: <FaLaptopCode /> },
+    { id: 'certifications', label: 'Certifications', icon: <FaCertificate /> }
+  ] as const;
 
   const Particle = ({ x, y, color }: { x: string; y: string; color: string }) => (
     <motion.div
@@ -262,11 +285,7 @@ const UltraEnhancedPortfolio = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
-          {[
-            { id: 'education', label: 'Education', icon: <FaGraduationCap /> },
-            { id: 'experience', label: 'Experience', icon: <FaLaptopCode /> },
-            { id: 'certifications', label: 'Certifications', icon: <FaCertificate /> }
-          ].map((tab) => (
+          {tabs.map((tab) => (
             <motion.button
               key={tab.id}
               whileHover={{ 
@@ -276,7 +295,7 @@ const UltraEnhancedPortfolio = () => {
               }}
               whileTap={{ scale: 0.95 }}
               onClick={() => {
-                setActiveTab(tab.id as 'education' | 'experience' | 'certifications');
+                setActiveTab(tab.id);
                 setExpandedItem(null);
               }}
               className={`px-6 py-3 rounded-xl font-medium transition-all relative overflow-hidden flex items-center gap-2 ${
@@ -299,14 +318,12 @@ const UltraEnhancedPortfolio = () => {
         </motion.div>
 
         <div className="relative">
-          {!isMobile && (
-            <motion.div 
-              className="absolute left-4 md:left-8 top-0 h-full w-1 bg-gradient-to-b from-blue-500 via-purple-500 to-green-500 rounded-full hidden md:block"
-              initial={{ scaleY: 0 }}
-              animate={{ scaleY: 1 }}
-              transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-            />
-          )}
+          <motion.div 
+            className="absolute left-4 md:left-8 top-0 h-full w-1 bg-gradient-to-b from-blue-500 via-purple-500 to-green-500 rounded-full hidden md:block"
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+          />
 
           {isMobile && (
             <div className="absolute left-4 top-0 h-full w-2 flex flex-col items-center">
@@ -347,29 +364,27 @@ const UltraEnhancedPortfolio = () => {
                   onMouseEnter={() => !isMobile && setIsHovering(item.id)}
                   onMouseLeave={() => !isMobile && setIsHovering(null)}
                 >
-                  {!isMobile && (
-                    <motion.div
-                      animate={{
-                        scale: isHovering === item.id || expandedItem === item.id ? [1, 1.1, 1] : 1,
-                        boxShadow: isHovering === item.id || expandedItem === item.id ? 
-                          `0 0 15px ${item.type === 'education' ? 'rgba(96, 165, 250, 0.7)' : 
-                           item.type === 'experience' ? 'rgba(74, 222, 128, 0.7)' : 
-                           'rgba(167, 139, 250, 0.7)'}` : 'none'
-                      }}
-                      transition={{ 
-                        duration: 2, 
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                      className={`absolute left-0 md:left-8 top-6 h-5 w-5 rounded-full ${
-                        item.type === 'education' ? 'bg-blue-500' :
-                        item.type === 'experience' ? 'bg-green-500' :
-                        'bg-purple-500'
-                      } transform -translate-x-1/2 z-10 flex items-center justify-center shadow-lg`}
-                    >
-                      {getIcon(item.type, 14)}
-                    </motion.div>
-                  )}
+                  <motion.div
+                    animate={{
+                      scale: isHovering === item.id || expandedItem === item.id ? [1, 1.1, 1] : 1,
+                      boxShadow: isHovering === item.id || expandedItem === item.id ? 
+                        `0 0 15px ${item.type === 'education' ? 'rgba(96, 165, 250, 0.7)' : 
+                         item.type === 'experience' ? 'rgba(74, 222, 128, 0.7)' : 
+                         'rgba(167, 139, 250, 0.7)'}` : 'none'
+                    }}
+                    transition={{ 
+                      duration: 2, 
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    className={`absolute left-0 md:left-8 top-6 h-5 w-5 rounded-full ${
+                      item.type === 'education' ? 'bg-blue-500' :
+                      item.type === 'experience' ? 'bg-green-500' :
+                      'bg-purple-500'
+                    } transform -translate-x-1/2 z-10 flex items-center justify-center shadow-lg`}
+                  >
+                    {getIcon(item.type, 14)}
+                  </motion.div>
 
                   <motion.div
                     layout
