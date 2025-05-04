@@ -1,3 +1,4 @@
+import Contact from '@/components/portfolio/Contact'
 import Edu from '@/components/portfolio/Edu'
 import Project from '@/components/portfolio/Project'
 import Skill from '@/components/portfolio/Skill'
@@ -9,6 +10,8 @@ const page = () => {
       <Edu/>
       <Skill/>
       <Project/>
+      <Contact/>
+      
     </div>
   )
 }
