@@ -1,21 +1,22 @@
 'use client';
+
 import { motion } from 'framer-motion';
 import { TypeAnimation } from 'react-type-animation';
 import TechShowcase from './TechShowcase';
 
 export default function Hero() {
   return (
-    <section className="container mx-auto px-6 py-24 md:py-32">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-12">
+    <section className="w-full px-4 sm:px-6 lg:px-8 py-20 sm:py-24 md:py-32">
+      <div className="max-w-7xl mx-auto flex flex-col-reverse lg:flex-row items-center justify-between gap-12">
         {/* Left Column - Text Content */}
         <motion.div 
-          className="md:w-1/2 space-y-8"
+          className="w-full lg:w-1/2 space-y-6 sm:space-y-8 text-center lg:text-left"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
         >
           <motion.h1 
-            className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-500"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-500"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -36,7 +37,7 @@ export default function Hero() {
           </motion.h1>
 
           <motion.p 
-            className="text-lg md:text-xl text-gray-300"
+            className="text-base sm:text-lg md:text-xl text-gray-300"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
@@ -46,22 +47,22 @@ export default function Hero() {
           </motion.p>
 
           <motion.div
+            className="flex flex-wrap justify-center lg:justify-start gap-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="flex flex-wrap gap-4"
           >
             <motion.button
-              whileHover={{ scale: 1.05, boxShadow: "0 0 15px rgba(124, 58, 237, 0.5)" }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 rounded-lg font-medium"
+              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 rounded-lg font-medium text-white"
             >
               Explore Projects
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-6 py-3 border-2 border-purple-400 rounded-lg font-medium"
+              className="px-6 py-3 border-2 border-purple-400 rounded-lg font-medium text-white"
             >
               Contact Me
             </motion.button>
@@ -70,7 +71,7 @@ export default function Hero() {
 
         {/* Right Column - Animated Tech Showcase */}
         <motion.div 
-          className="md:w-1/2 relative"
+          className="w-full lg:w-1/2"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
