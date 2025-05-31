@@ -59,10 +59,10 @@ export default function Navbar() {
                 transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
                 className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center text-white font-bold"
               >
-                D
+                I
               </motion.span>
               <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">
-                DarkTheme
+               Developer&apos;s Community
               </span>
             </Link>
           </motion.div>

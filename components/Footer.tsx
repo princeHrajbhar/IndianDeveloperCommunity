@@ -86,10 +86,10 @@ export default function Footer() {
                 transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
                 className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center text-white font-bold text-lg" // Match hero gradient
               >
-                D
+                I
               </motion.span>
               <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-500 group-hover:from-purple-300 group-hover:to-blue-400 transition-all"> {/* Match hero text gradient */}
-                DarkTheme
+                Developer&apos;s Community
               </span>
             </Link>
             <p className="text-sm text-gray-300 text-center md:text-left max-w-xs"> {/* Matched text color */}
