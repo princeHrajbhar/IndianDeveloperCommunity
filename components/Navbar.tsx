@@ -1,176 +1,130 @@
-'use client';
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+"use client"
 
-interface NavLink {
-  name: string;
-  href: string;
-}
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
+import { ChevronDown, Settings, Menu, X } from "lucide-react"
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState<boolean>(false);
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [activeLink, setActiveLink] = useState<string>('/');
+  const pathname = usePathname()
+  const [isOpen, setIsOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
+    let lastScroll = 0
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+      const currentScroll = window.scrollY
 
-  const navLinks: NavLink[] = [
-    { name: 'Home', href: '/' },
-    { name: 'Contact', href: '/contact' },
-    { name: 'Team', href: '/team' },
-    { name: 'TechExplore', href: '/techexplore' },
-    { name: 'Vision', href: '/vision' },
-  ];
+      if (currentScroll > 20) {
+        setIsScrolled(true)
+      } else {
+        setIsScrolled(false)
+      }
 
-  const hoverAnimation = {
-    scale: 1.05,
-    transition: { duration: 0.2 },
-  };
+      lastScroll = currentScroll
+    }
 
-  const tapAnimation = {
-    scale: 0.95,
-  };
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  const navItems = [
+    { name: "Home", href: "/" },
+    { name: "Services", href: "/services" },
+    { name: "About", href: "/about" },
+    { name: "Blog", href: "/blog" },
+    { name: "Careers", href: "/careers" },
+  ]
 
   return (
-    <motion.header
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className={`fixed w-full z-50 ${
-        isScrolled
-          ? 'dark:bg-gray-900/90 bg-white/90 backdrop-blur-md shadow-lg'
-          : 'dark:bg-gray-900/50 bg-white/50 backdrop-blur-sm'
-      }`}
-    >
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex justify-between items-center">
-          {/* Logo */}
-          <motion.div whileHover={{ rotate: [-5, 5, -5], transition: { duration: 0.5 } }}>
-            <Link href="/" className="flex items-center space-x-2">
-              <motion.span
-                animate={{ rotate: 360 }}
-                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center text-white font-bold"
-              >
-                I
-              </motion.span>
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">
-               Developer&apos;s Community
-              </span>
-            </Link>
-          </motion.div>
+    <nav
+  className={`
+    fixed w-full z-50
+    transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]
+    ${isScrolled
+      ? "bg-black border-b border-white/10"
+      : "bg-transparent border-transparent"}
+  `}
+>
+      <div
+        className={`
+          max-w-7xl mx-auto px-6 py-4 flex items-center justify-between
+          transition-all duration-700
+          ${isScrolled ? "py-3" : "py-5"}
+        `}
+      >
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
-            {navLinks.map((link) => (
-              <motion.div
-                key={link.href}
-                whileHover={hoverAnimation}
-                whileTap={tapAnimation}
-              >
-                <Link
-                  href={link.href}
-                  className={`relative px-2 py-1 ${
-                    activeLink === link.href
-                      ? 'text-purple-400 font-medium'
-                      : 'hover:text-purple-300'
-                  }`}
-                  onClick={() => setActiveLink(link.href)}
-                >
-                  {link.name}
-                  {activeLink === link.href && (
-                    <motion.span
-                      layoutId="activeLink"
-                      className="absolute left-0 bottom-0 w-full h-0.5 bg-purple-500"
-                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                    />
-                  )}
-                </Link>
-              </motion.div>
-            ))}
-          </nav>
+        {/* Logo */}
+        <Link href="/" className="flex items-center space-x-2">
+          <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center font-bold text-white">
+            SG
+          </div>
+          <span className="text-white text-xl font-semibold">
+            Site<span className="text-blue-500">Guru</span>
+          </span>
+        </Link>
 
-          {/* Mobile menu button */}
-          <motion.button
-            whileHover={hoverAnimation}
-            whileTap={tapAnimation}
-            className="md:hidden focus:outline-none"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            <div className="w-6 flex flex-col space-y-1">
-              <motion.span
-                animate={
-                  isMenuOpen
-                    ? { rotate: 45, y: 6, backgroundColor: '#a78bfa' }
-                    : { rotate: 0, backgroundColor: '#ffffff' }
-                }
-                className="h-0.5 bg-white w-full"
-              />
-              <motion.span
-                animate={
-                  isMenuOpen ? { opacity: 0 } : { opacity: 1, backgroundColor: '#ffffff' }
-                }
-                className="h-0.5 bg-white w-full"
-              />
-              <motion.span
-                animate={
-                  isMenuOpen
-                    ? { rotate: -45, y: -6, backgroundColor: '#a78bfa' }
-                    : { rotate: 0, backgroundColor: '#ffffff' }
-                }
-                className="h-0.5 bg-white w-full"
-              />
-            </div>
-          </motion.button>
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center space-x-10 text-gray-300 font-medium">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="relative group hover:text-white transition duration-300"
+              >
+                {item.name}
+
+                {item.name === "Services" && (
+                  <ChevronDown size={16} className="inline ml-1 opacity-70" />
+                )}
+
+                {isActive && (
+                  <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-2 h-2 bg-blue-500 rounded-full transition-all duration-500"></span>
+                )}
+              </Link>
+            )
+          })}
         </div>
 
-        {/* Mobile Menu */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <motion.nav
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="md:hidden overflow-hidden"
-            >
-              <div className="pt-4 pb-2 space-y-2">
-                {navLinks.map((link) => (
-                  <motion.div
-                    key={link.href}
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.1 * navLinks.indexOf(link) }}
-                  >
-                    <Link
-                      href={link.href}
-                      className={`block px-3 py-2 rounded-md text-base font-medium ${
-                        activeLink === link.href
-                          ? 'bg-gray-800 text-purple-400'
-                          : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                      }`}
-                      onClick={() => {
-                        setActiveLink(link.href);
-                        setIsMenuOpen(false);
-                      }}
-                    >
-                      {link.name}
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.nav>
-          )}
-        </AnimatePresence>
+        {/* Right Section */}
+        <div className="hidden md:flex items-center space-x-4">
+
+          <button className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 hover:bg-white/10 transition duration-300">
+            <Settings size={18} />
+          </button>
+
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-blue-500 to-blue-700 flex items-center justify-center text-white font-semibold">
+            P
+          </div>
+
+          <Link
+            href="/contact"
+            className="px-6 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-700 text-white font-medium shadow-lg hover:scale-105 transition duration-300"
+          >
+            🚀 Start a Project
+          </Link>
+        </div>
+
+        {/* Mobile Button */}
+        <div className="md:hidden text-white">
+          <button onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
       </div>
-    </motion.header>
-  );
+
+      {isOpen && (
+        <div className="md:hidden bg-[#0b1120] border-t border-white/10 px-6 py-6 space-y-4 text-gray-300">
+          {navItems.map((item) => (
+            <Link key={item.name} href={item.href} className="block">
+              {item.name}
+            </Link>
+          ))}
+        </div>
+      )}
+    </nav>
+  )
 }

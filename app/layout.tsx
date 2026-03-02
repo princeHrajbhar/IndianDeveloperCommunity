@@ -14,7 +14,17 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" className="dark">
+    <html
+      lang="en"
+      className="dark"
+      suppressHydrationWarning
+      translate="no"   // ✅ Prevent browser translation
+    >
+      <head>
+        {/* ✅ Prevent Google Translate from modifying DOM */}
+        <meta name="google" content="notranslate" />
+      </head>
+
       <body className="dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-grow">{children}</main>
