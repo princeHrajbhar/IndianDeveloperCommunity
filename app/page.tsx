@@ -1,13 +1,24 @@
-// File: app/page.tsx (partial, showing just how to import the Hero section)
+// File: app/page.tsx
 'use client';
+
 import Hero from '@/components/Hero';
-import Test from '@/components/test';
-// Other imports would go here...
+import ProcessStep from '@/components/ProcessStep';
+import TechStack from '@/components/TechStack';
+import ProcessStepVertical from '@/components/ProcessStepsVertical'
+import ServicesShowcase from '@/components/ServicesShowcase';
+import ShowcaseStats from '@/components/ShowcaseStats';
+
 
 export default function Landing() {
   return (
-
+    <>
       <Hero />
-   
+       <TechStack />
+
+       <ProcessStep/>
+       <ProcessStepVertical/>
+       <ServicesShowcase/>
+       <ShowcaseStats/>
+    </>
   );
 }

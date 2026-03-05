@@ -1,6 +1,7 @@
 // app/components/VideoHero.tsx
 'use client';
 
+import LoadingScreen from './LoadingScreen';
 import { useRef, useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import Link from 'next/link';
@@ -36,15 +37,15 @@ export default function VideoHero() {
   };
 
   // Initialize video and set timeout
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (!isVideoLoaded) {
-        console.log("Video loading timeout - showing content anyway");
-        setIsVideoLoaded(true);
-      }
-    }, 3000);
+ useEffect(() => {
+  const timeoutId = setTimeout(() => {
+    if (!isVideoLoaded) {
+      console.log("Video loading timeout - showing content anyway");
+      setIsVideoLoaded(true);
+    }
+  }, 3000);
 
-    const videoElement = videoRef.current;
+  const videoElement = videoRef.current;
     
     if (videoElement) {
       const handleLoadedData = () => {
@@ -90,7 +91,7 @@ export default function VideoHero() {
       setIsVideoLoaded(true);
       clearTimeout(timeoutId);
     }
-  }, []);
+  },[isVideoLoaded]);
 
   // Animated text variants
   const titleVariants = {
@@ -247,18 +248,18 @@ export default function VideoHero() {
       </motion.div>
 
       {/* Main Content Container - Split Layout */}
-      <div className="relative z-20 w-full h-full flex flex-col lg:flex-row items-center justify-between px-8 lg:px-16 xl:px-24">
+      <div className="relative z-20 w-full h-full flex flex-col lg:flex-row items-center justify-between px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24">
         
         {/* LEFT SIDE - Main Content */}
-        <div className="w-full lg:w-1/2 flex flex-col items-start justify-center h-full pt-20 lg:pt-0">
+        <div className="w-full lg:w-1/2 flex flex-col items-start justify-center h-full pt-16 sm:pt-20 lg:pt-0">
           {/* Top Badge */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="mb-6 px-6 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 backdrop-blur-sm"
+            className="mb-4 sm:mb-6 px-4 sm:px-6 py-1.5 sm:py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 backdrop-blur-sm"
           >
-            <span className="text-cyan-400 text-sm font-mono tracking-[0.3em]">
+            <span className="text-cyan-400 text-xs sm:text-sm font-mono tracking-[0.2em] sm:tracking-[0.3em]">
               ⚡ SYSTEM SECURE v2.0 ⚡
             </span>
           </motion.div>
@@ -268,9 +269,9 @@ export default function VideoHero() {
             variants={titleVariants}
             initial="hidden"
             animate="visible"
-            className="mb-4 overflow-hidden"
+            className="mb-2 sm:mb-4 overflow-hidden"
           >
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-6xl xl:text-7xl font-black tracking-tighter">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-black tracking-tighter">
               {titleLetters.map((letter, index) => (
                 <motion.span
                   key={index}
@@ -299,7 +300,7 @@ export default function VideoHero() {
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-4 text-xl sm:text-2xl md:text-3xl text-cyan-300/90 font-light tracking-wider"
+            className="mb-2 sm:mb-4 text-lg sm:text-xl md:text-2xl lg:text-2xl xl:text-3xl text-cyan-300/90 font-light tracking-wider"
           >
             Neural Network Defense System
           </motion.p>
@@ -309,7 +310,7 @@ export default function VideoHero() {
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.6, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="max-w-xl mb-10 text-base sm:text-lg text-white/70 font-light leading-relaxed"
+            className="max-w-xl mb-6 sm:mb-8 md:mb-10 text-sm sm:text-base md:text-lg text-white/70 font-light leading-relaxed"
           >
             Advanced quantum encryption protocols protecting digital assets 
             across the metaverse. Real-time threat neutralization with 
@@ -326,7 +327,7 @@ export default function VideoHero() {
           >
             <Link href="/join" passHref>
               <motion.button
-                className="group relative px-10 py-5 text-lg font-mono font-semibold text-white overflow-hidden rounded-lg bg-transparent border-2 border-cyan-500/50 shadow-[0_0_30px_rgba(0,255,255,0.3)]"
+                className="group relative px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 text-sm sm:text-base md:text-lg font-mono font-semibold text-white overflow-hidden rounded-lg bg-transparent border-2 border-cyan-500/50 shadow-[0_0_30px_rgba(0,255,255,0.3)]"
                 whileHover={{ 
                   boxShadow: '0 0 60px rgba(0,255,255,0.6)',
                   borderColor: '#00ffff',
@@ -339,12 +340,12 @@ export default function VideoHero() {
                   transition={{ duration: 0.4, ease: 'easeInOut' }}
                 />
                 
-                <span className="relative z-10 flex items-center gap-4">
-                  <span className="text-cyan-300">[</span>
-                  INITIALIZE PROTOCOL
-                  <span className="text-cyan-300">]</span>
+                <span className="relative z-10 flex items-center gap-2 sm:gap-3 md:gap-4">
+                  <span className="text-cyan-300 hidden xs:inline">[</span>
+                  <span className="whitespace-nowrap">INITIALIZE PROTOCOL</span>
+                  <span className="text-cyan-300 hidden xs:inline">]</span>
                   <motion.svg 
-                    className="w-6 h-6"
+                    className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6"
                     animate={{ 
                       x: [0, 8, 0],
                       rotate: [0, 90, 0],
@@ -367,32 +368,32 @@ export default function VideoHero() {
           variants={statVariants}
           initial="hidden"
           animate="visible"
-          className="w-full lg:w-1/2 flex flex-col items-end justify-center h-full pb-20 lg:pb-0"
+          className="w-full lg:w-1/2 flex flex-col items-center lg:items-end justify-center h-full pb-16 sm:pb-20 lg:pb-0"
         >
           {/* Simple Stats Card */}
-          <div className="w-full max-w-sm bg-black/40 backdrop-blur-xl border border-cyan-500/20 rounded-2xl p-8 shadow-2xl">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="text-cyan-400 font-mono text-sm tracking-wider">
+          <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-sm xl:max-w-md bg-black/40 backdrop-blur-xl border border-cyan-500/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl">
+            <div className="flex items-center justify-between mb-4 sm:mb-6 md:mb-8">
+              <h3 className="text-cyan-400 font-mono text-xs sm:text-sm tracking-wider">
                 SYSTEM STATUS
               </h3>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 sm:gap-2">
                 <motion.div 
-                  className="w-2 h-2 bg-green-400 rounded-full"
+                  className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-green-400 rounded-full"
                   animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
                   transition={{ repeat: Infinity, duration: 2 }}
                 />
-                <span className="text-green-400/60 text-xs">ONLINE</span>
+                <span className="text-green-400/60 text-[10px] sm:text-xs">ONLINE</span>
               </div>
             </div>
             
             {/* Stats */}
-            <div className="space-y-6">
+            <div className="space-y-3 sm:space-y-4 md:space-y-6">
               <div>
-                <div className="flex justify-between text-white/60 font-mono text-xs mb-2">
+                <div className="flex justify-between text-white/60 font-mono text-[10px] sm:text-xs mb-1 sm:mb-2">
                   <span>QUANTUM NODES</span>
                   <span className="text-cyan-400">10,248</span>
                 </div>
-                <div className="w-full h-1 bg-cyan-500/20 rounded-full overflow-hidden">
+                <div className="w-full h-0.5 sm:h-1 bg-cyan-500/20 rounded-full overflow-hidden">
                   <motion.div 
                     className="h-full bg-gradient-to-r from-cyan-400 to-purple-400"
                     initial={{ width: 0 }}
@@ -403,11 +404,11 @@ export default function VideoHero() {
               </div>
 
               <div>
-                <div className="flex justify-between text-white/60 font-mono text-xs mb-2">
+                <div className="flex justify-between text-white/60 font-mono text-[10px] sm:text-xs mb-1 sm:mb-2">
                   <span>THREATS NEUTRALIZED</span>
                   <span className="text-cyan-400">2.5M</span>
                 </div>
-                <div className="w-full h-1 bg-cyan-500/20 rounded-full overflow-hidden">
+                <div className="w-full h-0.5 sm:h-1 bg-cyan-500/20 rounded-full overflow-hidden">
                   <motion.div 
                     className="h-full bg-gradient-to-r from-cyan-400 to-purple-400"
                     initial={{ width: 0 }}
@@ -418,11 +419,11 @@ export default function VideoHero() {
               </div>
 
               <div>
-                <div className="flex justify-between text-white/60 font-mono text-xs mb-2">
+                <div className="flex justify-between text-white/60 font-mono text-[10px] sm:text-xs mb-1 sm:mb-2">
                   <span>RESPONSE TIME</span>
                   <span className="text-cyan-400">0.003ms</span>
                 </div>
-                <div className="w-full h-1 bg-cyan-500/20 rounded-full overflow-hidden">
+                <div className="w-full h-0.5 sm:h-1 bg-cyan-500/20 rounded-full overflow-hidden">
                   <motion.div 
                     className="h-full bg-gradient-to-r from-cyan-400 to-purple-400"
                     initial={{ width: 0 }}
@@ -433,11 +434,11 @@ export default function VideoHero() {
               </div>
 
               <div>
-                <div className="flex justify-between text-white/60 font-mono text-xs mb-2">
+                <div className="flex justify-between text-white/60 font-mono text-[10px] sm:text-xs mb-1 sm:mb-2">
                   <span>ENCRYPTION LEVEL</span>
                   <span className="text-purple-400">QUANTUM</span>
                 </div>
-                <div className="w-full h-1 bg-cyan-500/20 rounded-full overflow-hidden">
+                <div className="w-full h-0.5 sm:h-1 bg-cyan-500/20 rounded-full overflow-hidden">
                   <motion.div 
                     className="h-full bg-gradient-to-r from-purple-400 to-cyan-400"
                     initial={{ width: 0 }}
@@ -449,10 +450,10 @@ export default function VideoHero() {
             </div>
 
             {/* Simple Footer */}
-            <div className="mt-8 pt-6 border-t border-cyan-500/20">
+            <div className="mt-4 sm:mt-6 md:mt-8 pt-4 sm:pt-5 md:pt-6 border-t border-cyan-500/20">
               <div className="flex justify-between items-center">
-                <span className="text-white/40 font-mono text-xs">PROTOCOL v2.0</span>
-                <span className="text-cyan-400 font-mono text-xs tracking-wider">⚡ ACTIVE</span>
+                <span className="text-white/40 font-mono text-[10px] sm:text-xs">PROTOCOL v2.0</span>
+                <span className="text-cyan-400 font-mono text-[10px] sm:text-xs tracking-wider">⚡ ACTIVE</span>
               </div>
             </div>
           </div>
@@ -460,40 +461,25 @@ export default function VideoHero() {
       </div>
 
       {/* Loading state */}
-      {!isVideoLoaded && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center bg-black">
-          <div className="text-center">
-            <motion.div 
-              className="relative w-24 h-24 mx-auto mb-6"
-            >
-              <motion.div 
-                className="absolute inset-0 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full"
-                animate={{ rotate: 360 }}
-                transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-              />
-              <motion.div 
-                className="absolute inset-2 border-4 border-blue-500/20 border-b-blue-500 rounded-full"
-                animate={{ rotate: -360 }}
-                transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-              />
-              <motion.div 
-                className="absolute inset-[38px] bg-cyan-400 rounded-full"
-                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-              />
-            </motion.div>
-            <motion.p 
-              className="text-cyan-400 font-mono text-lg tracking-[0.3em]"
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
-            >
-              <span className="text-cyan-600">{'<'}</span>
-              ESTABLISHING SECURE CONNECTION
-              <span className="text-cyan-600">{'/>'}</span>
-            </motion.p>
-          </div>
-        </div>
-      )}
+      {!isVideoLoaded && <LoadingScreen />}
+
+      {/* Add responsive styles for scanline animation */}
+      <style jsx>{`
+        @keyframes scanline {
+          0% {
+            transform: translateY(-100%);
+          }
+          100% {
+            transform: translateY(100%);
+          }
+        }
+        
+        @media (max-width: 640px) {
+          .scanline {
+            animation-duration: 20s;
+          }
+        }
+      `}</style>
     </div>
   );
 }

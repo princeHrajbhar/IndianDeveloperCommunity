@@ -10,24 +10,30 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
 
-  useEffect(() => {
-    let lastScroll = 0
+useEffect(() => {
+  let lastScroll = 0
 
-    const handleScroll = () => {
-      const currentScroll = window.scrollY
+  const handleScroll = () => {
+    const currentScroll = window.scrollY
 
-      if (currentScroll > 20) {
-        setIsScrolled(true)
-      } else {
-        setIsScrolled(false)
-      }
-
-      lastScroll = currentScroll
+    if (currentScroll > lastScroll) {
+      console.log("Scrolling Down")
+    } else {
+      console.log("Scrolling Up")
     }
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+    if (currentScroll > 20) {
+      setIsScrolled(true)
+    } else {
+      setIsScrolled(false)
+    }
+
+    lastScroll = currentScroll
+  }
+
+  window.addEventListener("scroll", handleScroll)
+  return () => window.removeEventListener("scroll", handleScroll)
+}, [])
 
   const navItems = [
     { name: "Home", href: "/" },
