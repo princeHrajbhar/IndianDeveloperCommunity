@@ -464,7 +464,7 @@ export default function VideoHero() {
       {!isVideoLoaded && <LoadingScreen />}
 
       {/* Add responsive styles for scanline animation */}
-      <style jsx>{`
+     <style>{`
         @keyframes scanline {
           0% {
             transform: translateY(-100%);
