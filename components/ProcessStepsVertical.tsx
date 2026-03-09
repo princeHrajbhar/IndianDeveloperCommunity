@@ -119,17 +119,17 @@ export default function OurProcess() {
             <span className="text-cyan-400 text-[10px] sm:text-xs md:text-sm font-mono tracking-wider">3 SIMPLE STEPS</span>
           </motion.div>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black mb-3 sm:mb-4 font-mono">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-5xl font-black mb-3 sm:mb-4 font-mono">
             <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
               OUR PROCESS
             </span>
           </h2>
           
           <div className="space-y-1 sm:space-y-2">
-            <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-white font-mono">
+            <p className="text-xl sm:text-2xl md:text-3xl lg:text-3xl font-black text-white font-mono">
               100% Transparent.
             </p>
-            <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 font-mono">
+            <p className="text-xl sm:text-2xl md:text-3xl lg:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 font-mono">
               100% Trustworthy.
             </p>
           </div>

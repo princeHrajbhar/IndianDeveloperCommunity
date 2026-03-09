@@ -14,19 +14,10 @@ import {
 } from 'react-icons/hi2';
 
 export default function ShowcaseStats() {
-  const [windowWidth, setWindowWidth] = useState(0);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    setWindowWidth(window.innerWidth);
-    
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Matrix rain characters
@@ -60,6 +51,51 @@ export default function ShowcaseStats() {
     }
   ];
 
+  // Fixed positions for digital rain - using percentage strings
+  const rainPositions = [
+    { left: '5%', delay: 0 },
+    { left: '20%', delay: 2 },
+    { left: '35%', delay: 4 },
+    { left: '50%', delay: 6 },
+    { left: '65%', delay: 8 },
+    { left: '80%', delay: 10 },
+    { left: '95%', delay: 12 },
+  ];
+
+  // Fixed positions for particles - using percentage strings to avoid Math.random() hydration mismatch
+  const particlePositions = [
+    { top: '10%', left: '15%', delay: 0, duration: 4 },
+    { top: '25%', left: '75%', delay: 1, duration: 5 },
+    { top: '40%', left: '30%', delay: 2, duration: 6 },
+    { top: '55%', left: '85%', delay: 3, duration: 4 },
+    { top: '70%', left: '20%', delay: 4, duration: 7 },
+    { top: '85%', left: '60%', delay: 5, duration: 5 },
+    { top: '15%', left: '45%', delay: 6, duration: 6 },
+    { top: '35%', left: '90%', delay: 0, duration: 5 },
+    { top: '50%', left: '10%', delay: 1, duration: 4 },
+    { top: '65%', left: '55%', delay: 2, duration: 7 },
+    { top: '80%', left: '35%', delay: 3, duration: 5 },
+    { top: '95%', left: '70%', delay: 4, duration: 6 },
+    { top: '20%', left: '95%', delay: 5, duration: 4 },
+    { top: '45%', left: '5%', delay: 6, duration: 5 },
+    { top: '60%', left: '40%', delay: 0, duration: 6 },
+    { top: '75%', left: '80%', delay: 1, duration: 7 },
+    { top: '30%', left: '50%', delay: 2, duration: 4 },
+    { top: '48%', left: '65%', delay: 3, duration: 5 },
+    { top: '62%', left: '25%', delay: 4, duration: 6 },
+    { top: '77%', left: '88%', delay: 5, duration: 4 },
+    { top: '88%', left: '15%', delay: 6, duration: 5 },
+    { top: '12%', left: '72%', delay: 0, duration: 7 },
+    { top: '28%', left: '38%', delay: 1, duration: 4 },
+    { top: '43%', left: '92%', delay: 2, duration: 5 },
+    { top: '58%', left: '8%', delay: 3, duration: 6 },
+    { top: '73%', left: '48%', delay: 4, duration: 7 },
+    { top: '89%', left: '58%', delay: 5, duration: 4 },
+    { top: '22%', left: '82%', delay: 6, duration: 5 },
+    { top: '38%', left: '22%', delay: 0, duration: 6 },
+    { top: '53%', left: '68%', delay: 1, duration: 4 },
+  ];
+
   return (
     <section className="relative w-full min-h-screen py-16 sm:py-20 md:py-24 overflow-hidden bg-black">
       {/* Cyber Grid Background */}
@@ -68,52 +104,54 @@ export default function ShowcaseStats() {
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-purple-500/10" />
       </div>
 
-      {/* Digital Rain Effect */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none">
-        {[...Array(8)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute text-cyan-500/30 text-xs font-mono whitespace-nowrap"
-            style={{
-              left: `${i * 12}%`,
-              top: '-20%',
-              writingMode: 'vertical-rl',
-            }}
-            animate={{
-              y: ['0vh', '120vh'],
-            }}
-            transition={{
-              duration: 20 + i * 3,
-              repeat: Infinity,
-              ease: 'linear',
-              delay: i * 2,
-            }}
-          >
-            {matrixChars.repeat(30)}
-          </motion.div>
-        ))}
-      </div>
+      {/* Digital Rain Effect - Only render after mount */}
+      {mounted && (
+        <div className="absolute inset-0 opacity-20 pointer-events-none">
+          {rainPositions.map((pos, i) => (
+            <motion.div
+              key={i}
+              className="absolute text-cyan-500/30 text-xs font-mono whitespace-nowrap"
+              style={{
+                left: pos.left,
+                top: '-20%',
+                writingMode: 'vertical-rl',
+              }}
+              animate={{
+                y: ['0vh', '120vh'],
+              }}
+              transition={{
+                duration: 20 + i * 2,
+                repeat: Infinity,
+                ease: 'linear',
+                delay: pos.delay,
+              }}
+            >
+              {matrixChars.substring(0, 40)}
+            </motion.div>
+          ))}
+        </div>
+      )}
 
-      {/* Animated Particles */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(30)].map((_, i) => (
+      {/* Animated Particles - Fixed positions */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {particlePositions.map((pos, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-cyan-400/30 rounded-full"
-            initial={{ 
-              x: Math.random() * (mounted ? windowWidth : 1000), 
-              y: Math.random() * 1000,
-              scale: 0
+            style={{
+              top: pos.top,
+              left: pos.left,
             }}
             animate={{
-              y: [null, -30, 30, -30],
+              y: [-30, 30, -30],
               scale: [0, 1, 0],
               opacity: [0, 0.5, 0]
             }}
             transition={{
-              duration: 4 + Math.random() * 6,
+              duration: pos.duration,
               repeat: Infinity,
-              delay: Math.random() * 5
+              delay: pos.delay,
+              ease: "easeInOut"
             }}
           />
         ))}

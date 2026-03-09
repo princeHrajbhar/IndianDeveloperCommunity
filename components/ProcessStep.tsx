@@ -2,6 +2,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { 
   HiOutlineDocumentText, 
   HiOutlineUsers, 
@@ -46,6 +47,37 @@ const processSteps = [
 ];
 
 export default function OurProcess() {
+  // Use state to handle client-side only rendering for particles
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Fixed positions for particles to avoid hydration mismatch
+  const particlePositions = [
+    { x: 150, y: 200 },
+    { x: 450, y: 300 },
+    { x: 750, y: 150 },
+    { x: 250, y: 500 },
+    { x: 550, y: 450 },
+    { x: 850, y: 350 },
+    { x: 120, y: 600 },
+    { x: 320, y: 700 },
+    { x: 620, y: 550 },
+    { x: 920, y: 650 },
+    { x: 180, y: 800 },
+    { x: 480, y: 850 },
+    { x: 780, y: 750 },
+    { x: 280, y: 950 },
+    { x: 580, y: 900 },
+    { x: 880, y: 400 },
+    { x: 380, y: 250 },
+    { x: 680, y: 100 },
+    { x: 980, y: 500 },
+    { x: 50, y: 400 },
+  ];
+
   return (
     <section className="relative w-full py-24 overflow-hidden bg-black">
       {/* Background Effects */}
@@ -54,28 +86,31 @@ export default function OurProcess() {
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-purple-500/5" />
       </div>
 
-      {/* Animated particles */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-cyan-500/20 rounded-full"
-            initial={{ 
-              x: Math.random() * 2000, 
-              y: Math.random() * 1000 
-            }}
-            animate={{
-              y: [null, -30, 30, -30],
-              opacity: [0.2, 0.5, 0.2]
-            }}
-            transition={{
-              duration: 5 + Math.random() * 5,
-              repeat: Infinity,
-              delay: Math.random() * 5
-            }}
-          />
-        ))}
-      </div>
+      {/* Animated particles - Only render on client to avoid hydration mismatch */}
+      {isMounted && (
+        <div className="absolute inset-0 overflow-hidden">
+          {particlePositions.map((pos, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-cyan-500/20 rounded-full"
+              style={{
+                x: pos.x,
+                y: pos.y,
+              }}
+              animate={{
+                y: [pos.y, pos.y - 30, pos.y + 30, pos.y - 30],
+                opacity: [0.2, 0.5, 0.2]
+              }}
+              transition={{
+                duration: 5 + (i % 5),
+                repeat: Infinity,
+                delay: i * 0.2,
+                ease: "easeInOut"
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 max-sm:px-4">
         {/* Header */}
@@ -97,23 +132,23 @@ export default function OurProcess() {
             <span className="text-cyan-400 text-sm font-mono tracking-wider max-sm:text-xs">3 SIMPLE STEPS</span>
           </motion.div>
 
-          <h2 className="text-5xl md:text-7xl font-black mb-4 font-mono max-md:text-4xl max-sm:text-3xl">
+          <h2 className="text-5xl md:text-5xl font-black mb-4 font-mono max-md:text-4xl max-sm:text-3xl">
             <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
               OUR PROCESS
             </span>
           </h2>
           
           <div className="space-y-2">
-            <p className="text-3xl md:text-4xl font-black text-white font-mono max-md:text-2xl max-sm:text-xl">
+            <p className="text-3xl md:text-3xl font-black text-white font-mono max-md:text-2xl max-sm:text-xl">
               100% Transparent.
             </p>
-            <p className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 font-mono max-md:text-2xl max-sm:text-xl">
+            <p className="text-3xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 font-mono max-md:text-2xl max-sm:text-xl">
               100% Trustworthy.
             </p>
           </div>
 
           <p className="max-w-2xl mx-auto mt-6 text-base text-gray-400 font-mono leading-relaxed max-md:text-sm max-sm:text-xs max-sm:px-2">
-            We believe every client deserves full visibility into their project. From day one, you get real-time access to your project&apos;s progress progress, your dedicated team, and every document — all in one platform.
+            We believe every client deserves full visibility into their project. From day one, you get real-time access to your project&apos;s progress, your dedicated team, and every document — all in one platform.
           </p>
         </motion.div>
 

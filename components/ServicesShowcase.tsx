@@ -2,6 +2,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { HiOutlineDeviceMobile } from 'react-icons/hi';
 import { 
   HiOutlineComputerDesktop,
@@ -13,7 +14,6 @@ import {
   HiOutlineClock,
   HiOutlineStar,
   HiOutlineRocketLaunch,
-
 } from 'react-icons/hi2';
 
 const services = [
@@ -70,7 +70,17 @@ const services = [
 // Matrix rain characters for cyber effect
 const matrixChars = "01アイウエオカキクケコサシスセソタチツテト";
 
+// Fixed positions for digital rain to avoid hydration mismatch
+const rainPositions = [0, 25, 50, 75];
+
 export default function ServicesShowcase() {
+  // Use state to handle client-side only rendering for animated effects
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <section className="relative w-full py-24 overflow-hidden bg-black">
       {/* Background Effects - Cyber grid with cyan/purple theme */}
@@ -78,31 +88,33 @@ export default function ServicesShowcase() {
         <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,0,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-purple-500/5" />
         
-        {/* Digital rain effect - subtle */}
-        <div className="absolute inset-0 opacity-10">
-          {[...Array(5)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute text-cyan-500/20 text-xs font-mono whitespace-nowrap"
-              style={{
-                left: `${i * 25}%`,
-                top: '-20%',
-                writingMode: 'vertical-rl',
-              }}
-              animate={{
-                y: ['0vh', '120vh'],
-              }}
-              transition={{
-                duration: 20 + i * 5,
-                repeat: Infinity,
-                ease: 'linear',
-                delay: i * 2,
-              }}
-            >
-              {matrixChars.repeat(30)}
-            </motion.div>
-          ))}
-        </div>
+        {/* Digital rain effect - subtle - Only render on client */}
+        {isMounted && (
+          <div className="absolute inset-0 opacity-10">
+            {rainPositions.map((position, i) => (
+              <motion.div
+                key={i}
+                className="absolute text-cyan-500/20 text-xs font-mono whitespace-nowrap"
+                style={{
+                  left: `${position}%`,
+                  top: '-20%',
+                  writingMode: 'vertical-rl',
+                }}
+                animate={{
+                  y: ['0vh', '120vh'],
+                }}
+                transition={{
+                  duration: 20 + i * 5,
+                  repeat: Infinity,
+                  ease: 'linear',
+                  delay: i * 2,
+                }}
+              >
+                {matrixChars.repeat(30)}
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -124,7 +136,7 @@ export default function ServicesShowcase() {
             <span className="text-cyan-400 text-sm font-mono tracking-wider">⚡ AI-POWERED SOLUTIONS ⚡</span>
           </motion.div>
 
-          <h2 className="text-5xl md:text-7xl font-black mb-4 font-mono">
+          <h2 className="text-5xl md:text-5xl font-black mb-4 font-mono">
             <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
               OUR SERVICES
             </span>
