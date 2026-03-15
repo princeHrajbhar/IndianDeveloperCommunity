@@ -1,24 +1,24 @@
 // File: app/page.tsx
-'use client';
+"use client";
 
-import Hero from '@/components/Hero';
-import ProcessStep from '@/components/ProcessStep';
-import TechStack from '@/components/TechStack';
-import ProcessStepVertical from '@/components/ProcessStepsVertical'
-import ServicesShowcase from '@/components/ServicesShowcase';
-import ShowcaseStats from '@/components/ShowcaseStats';
-
+import Hero from "@/components/home/Hero";
+import ProcessStep from "@/components/home/ProcessStep";
+import TechStack from "@/components/home/TechStack";
+import ProcessStepVertical from "@/components/home/ProcessStepsVertical";
+import ServicesShowcase from "@/components/home/ServicesShowcase";
+import ShowcaseStats from "@/components/home/ShowcaseStats";
 
 export default function Landing() {
   return (
     <>
       <Hero />
-       <TechStack />
+      <TechStack />
 
-       <ProcessStep/>
-       <ProcessStepVertical/>
-       <ServicesShowcase/>
-       <ShowcaseStats/>
+      <ProcessStep />
+
+      <ServicesShowcase />
+      <ShowcaseStats />
+      <ProcessStepVertical />
     </>
   );
 }

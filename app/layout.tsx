@@ -1,11 +1,11 @@
-import './globals.css';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import { ReactNode } from 'react';
+import "./globals.css";
+import Navbar from "@/components/home/Navbar";
+import Footer from "@/components/Footer";
+import { ReactNode } from "react";
 
 export const metadata = {
-  title: 'Dark Theme Website',
-  description: 'A responsive website with dark theme',
+  title: "Dark Theme Website",
+  description: "A responsive website with dark theme",
 };
 
 interface RootLayoutProps {
@@ -18,7 +18,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       lang="en"
       className="dark"
       suppressHydrationWarning
-      translate="no"   // ✅ Prevent browser translation
+      translate="no" // ✅ Prevent browser translation
     >
       <head>
         {/* ✅ Prevent Google Translate from modifying DOM */}

@@ -6,43 +6,61 @@ import { useState, useEffect } from 'react';
 import { 
   HiOutlineDocumentText, 
   HiOutlineUsers, 
-  HiOutlineDownload,
-  HiOutlineChatAlt,
+  HiOutlineArrowDownTray,
+  HiOutlineChatBubbleLeft,
   HiOutlineClock,
   HiOutlineCheckCircle,
-  HiOutlineArrowRight
-} from 'react-icons/hi';
+  HiOutlineArrowRight,
+  HiOutlineCog6Tooth,
+  HiOutlineChartBar,
+  HiOutlineCodeBracket,
+  HiOutlineCloudArrowUp
+} from 'react-icons/hi2';
 
 const processSteps = [
   {
     step: "STEP 1",
-    title: "Discovery & Requirement",
-    description: "Share your vision through our simple project form or schedule a free consultation",
-    icon: HiOutlineChatAlt,
+    title: "AI Discovery & Strategy",
+    description: "Share your business challenges and goals. Our AI specialists analyze your workflows to identify the perfect AI solutions for your needs.",
+    icon: HiOutlineChatBubbleLeft,
     color: "cyan",
-    duration: "30-60 min"
+    duration: "45-60 min",
+    features: [
+      "Business Goal Analysis",
+      "AI Opportunity Assessment",
+      "Data Infrastructure Review",
+      "ROI Projections"
+    ]
   },
   {
     step: "STEP 2",
-    title: "Detailed Quotation",
-    description: "Receive a transparent, itemized quotation breaking down every feature, module, and deliverable with clear pricing.",
-    icon: HiOutlineDocumentText,
+    title: "Custom AI Solution Design",
+    description: "We architect a tailored AI solution with transparent pricing, implementation roadmap, and proof of concept development.",
+    icon: HiOutlineCog6Tooth,
     color: "cyan",
     features: [
-      "Itemized Breakdown",
+      "Solution Architecture",
+      "Model Selection",
+      "API Design",
+      "Implementation Timeline",
       "Transparent Pricing",
-      "Approve / Request Changes",
-      "PDF Download"
+      "Proof of Concept"
     ]
   },
   {
     step: "STEP 3",
-    title: "Team Assignment",
-    description: "A dedicated team is assigned to your project — designer, developer, project manager.",
-    icon: HiOutlineUsers,
+    title: "Deployment & Integration",
+    description: "Our AI engineers deploy your solution, integrate it with your existing systems, and provide comprehensive team training.",
+    icon: HiOutlineCloudArrowUp,
     color: "purple",
-    team: ["Designer", "Developer", "Project Manager"],
-    contacts: ["WhatsApp", "Email", "Meetings"]
+    team: ["AI Engineers", "Integration Specialists", "Success Manager"],
+    contacts: ["Slack", "Email", "Video Calls", "Dashboard"],
+    features: [
+      "Seamless Integration",
+      "Team Training",
+      "Performance Monitoring",
+      "24/7 AI Support"
+    ]
   }
 ];
 
@@ -116,26 +134,27 @@ export default function OurProcess() {
             className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 backdrop-blur-sm mb-4 sm:mb-6"
           >
             <HiOutlineClock className="w-3 h-3 sm:w-4 sm:h-4 text-cyan-400" />
-            <span className="text-cyan-400 text-[10px] sm:text-xs md:text-sm font-mono tracking-wider">3 SIMPLE STEPS</span>
+            <span className="text-cyan-400 text-[10px] sm:text-xs md:text-sm font-mono tracking-wider">AI IMPLEMENTATION IN 3 STEPS</span>
           </motion.div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-5xl font-black mb-3 sm:mb-4 font-mono">
             <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-              OUR PROCESS
+              YOUR AI JOURNEY
             </span>
           </h2>
           
           <div className="space-y-1 sm:space-y-2">
             <p className="text-xl sm:text-2xl md:text-3xl lg:text-3xl font-black text-white font-mono">
-              100% Transparent.
+              From Concept to Deployment.
             </p>
             <p className="text-xl sm:text-2xl md:text-3xl lg:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 font-mono">
-              100% Trustworthy.
+              Fast, Scalable, Transparent.
             </p>
           </div>
 
           <p className="max-w-xs sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto mt-4 sm:mt-6 text-xs sm:text-sm md:text-base text-gray-400 font-mono leading-relaxed px-2">
-            We believe every client deserves full visibility into their project. From day one, you get real-time access to your project&apos;s progress, your dedicated team, and every document — all in one platform.
+            We don&apos;t just provide AI tools — we partner with you to transform your business. 
+            From initial strategy to seamless integration, every step is transparent and tailored to your goals.
           </p>
         </motion.div>
 
@@ -255,7 +274,7 @@ export default function OurProcess() {
                         {step.description}
                       </p>
 
-                      {/* Features for Step 2 */}
+                      {/* Features for Steps */}
                       {step.features && (
                         <div className="space-y-3 sm:space-y-4">
                           <div className="grid grid-cols-1 xs:grid-cols-2 gap-2 sm:gap-3">
@@ -269,8 +288,8 @@ export default function OurProcess() {
                               >
                                 <HiOutlineCheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-cyan-400 flex-shrink-0" />
                                 <span className="text-gray-300 font-mono text-[10px] sm:text-xs">{feature}</span>
-                                {feature.includes('PDF') && (
-                                  <HiOutlineDownload className="w-2 h-2 sm:w-3 sm:h-3 text-purple-400" />
+                                {(feature.includes('API') || feature.includes('Pricing')) && (
+                                  <HiOutlineArrowDownTray className="w-2 h-2 sm:w-3 sm:h-3 text-purple-400" />
                                 )}
                               </motion.div>
                             ))}
@@ -343,7 +362,7 @@ export default function OurProcess() {
             whileTap={{ scale: 0.98 }}
             className="w-full sm:w-auto px-6 sm:px-8 md:px-10 py-3 sm:py-4 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-lg sm:rounded-xl text-white font-mono text-xs sm:text-sm md:text-base font-bold tracking-wider"
           >
-            START YOUR PROJECT
+            START YOUR AI TRANSFORMATION
           </motion.button>
         </motion.div>
       </div>

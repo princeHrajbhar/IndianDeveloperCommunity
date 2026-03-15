@@ -10,7 +10,11 @@ import {
   HiOutlineArrowTrendingUp,
   HiOutlineCodeBracket,
   HiOutlineRocketLaunch,
-  HiOutlineCpuChip
+  HiOutlineCpuChip,
+  HiOutlineCommandLine,
+  HiOutlineCloudArrowUp,
+  HiOutlineChartBar,
+  HiOutlineGlobeAlt
 } from 'react-icons/hi2';
 
 export default function ShowcaseStats() {
@@ -23,30 +27,30 @@ export default function ShowcaseStats() {
   // Matrix rain characters
   const matrixChars = "01アイウエオカキクケコサシスセソタチツテト";
 
-  // Features data
+  // Features data - Updated for AI company
   const features = [
     {
-      title: "Stunning UI/UX Design",
-      description: "Pixel-perfect interfaces with intuitive funnels that convert visitors into paying customers.",
-      icon: HiOutlineSparkles,
+      title: "Multi-Model AI Architecture",
+      description: "Orchestrate multiple AI models (LLMs, vision, speech) through a unified API with automatic model selection for optimal performance.",
+      icon: HiOutlineCpuChip,
       gradient: "from-cyan-400 to-blue-400"
     },
     {
-      title: "Performance Engineered",
-      description: "Lightning-fast load times, optimized assets, and clean architecture for the best user experience.",
-      icon: HiOutlineRocketLaunch,
+      title: "Real-Time Learning",
+      description: "Models continuously improve from your data with automated retraining pipelines and performance monitoring dashboards.",
+      icon: HiOutlineChartBar,
       gradient: "from-blue-400 to-purple-400"
     },
     {
-      title: "Enterprise Security",
-      description: "Bank-grade security, encrypted data, role-based access, and compliance-ready infrastructure.",
+      title: "Enterprise Security & Compliance",
+      description: "SOC2, GDPR, HIPAA-ready infrastructure with end-to-end encryption, private VPC deployments, and audit logging.",
       icon: HiOutlineShieldCheck,
       gradient: "from-purple-400 to-pink-400"
     },
     {
-      title: "Scalable Architecture",
-      description: "Cloud-native solutions built to grow with your business — from startup to enterprise scale.",
-      icon: HiOutlineCube,
+      title: "Global AI Infrastructure",
+      description: "Deploy AI models across 20+ global regions with sub-100ms latency, auto-scaling, and 99.99% uptime SLA.",
+      icon: HiOutlineGlobeAlt,
       gradient: "from-pink-400 to-rose-400"
     }
   ];
@@ -170,7 +174,7 @@ export default function ShowcaseStats() {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 backdrop-blur-sm"
             >
               <HiOutlineCpuChip className="w-4 h-4 text-cyan-400" />
-              <span className="text-cyan-400 text-xs sm:text-sm font-mono tracking-wider">⚡ QUANTUM CORE v2.0 ⚡</span>
+              <span className="text-cyan-400 text-xs sm:text-sm font-mono tracking-wider">⚡ AI INFRASTRUCTURE v3.0 ⚡</span>
             </motion.div>
 
             {/* Features List */}
@@ -219,7 +223,7 @@ export default function ShowcaseStats() {
 
                     {/* Binary Code Decorator */}
                     <div className="absolute bottom-2 right-3 text-[6px] sm:text-[8px] font-mono text-cyan-500/30">
-                      01101110 01100101 01111000 01110101 01110011
+                      01000001 01001001 00100000 01010010 01000101 01000001 01000100 01011001
                     </div>
                   </div>
                 </motion.div>
@@ -245,7 +249,7 @@ export default function ShowcaseStats() {
               <div className="relative flex items-center justify-between mb-6 sm:mb-8">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 sm:w-3 sm:h-3 bg-cyan-400 rounded-full animate-pulse" />
-                  <span className="text-cyan-400 font-mono text-xs sm:text-sm">dashboard.site.guru</span>
+                  <span className="text-cyan-400 font-mono text-xs sm:text-sm">ai.dashboard.nexus</span>
                 </div>
                 <div className="flex gap-1">
                   <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-400/50 rounded-full" />
@@ -254,58 +258,64 @@ export default function ShowcaseStats() {
                 </div>
               </div>
 
-              {/* Main Stats */}
+              {/* Main Stats - AI Performance Metrics */}
               <div className="relative mb-8 sm:mb-12">
-                <div className="text-center">
+                <div className="grid grid-cols-2 gap-4 text-center">
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.6, type: "spring", stiffness: 100 }}
-                    className="inline-block"
                   >
-                    <span className="text-5xl sm:text-6xl md:text-7xl font-black font-mono bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                      +247%
+                    <span className="text-3xl sm:text-4xl md:text-5xl font-black font-mono bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                      99.97%
                     </span>
+                    <div className="text-xs text-gray-400 font-mono mt-1">MODEL ACCURACY</div>
                   </motion.div>
-                  <div className="flex items-center justify-center gap-2 mt-2">
-                    <HiOutlineArrowTrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
-                    <span className="text-xs sm:text-sm text-gray-400 font-mono tracking-wider">vs last month</span>
-                  </div>
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.7, type: "spring", stiffness: 100 }}
+                  >
+                    <span className="text-3xl sm:text-4xl md:text-5xl font-black font-mono bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                      &lt;50ms
+                    </span>
+                    <div className="text-xs text-gray-400 font-mono mt-1">INFERENCE LATENCY</div>
+                  </motion.div>
                 </div>
 
-                {/* Conversion Label */}
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-500/20 px-3 py-1 rounded-full border border-purple-500/30">
-                  <span className="text-purple-400 font-mono text-[10px] sm:text-xs tracking-wider">CONVERSION</span>
+                {/* Performance Label */}
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-500/20 px-3 py-1 rounded-full border border-purple-500/30 whitespace-nowrap">
+                  <span className="text-purple-400 font-mono text-[10px] sm:text-xs tracking-wider">REAL-TIME METRICS</span>
                 </div>
               </div>
 
-              {/* Progress Bar */}
+              {/* Progress Bar - API Usage */}
               <div className="relative space-y-4">
                 <div className="flex justify-between text-[10px] sm:text-xs font-mono">
-                  <span className="text-cyan-400">TARGET</span>
-                  <span className="text-white">$2.5M</span>
+                  <span className="text-cyan-400">API THROUGHPUT</span>
+                  <span className="text-white">2.4M req/min</span>
                 </div>
                 <div className="w-full h-1.5 sm:h-2 bg-cyan-500/20 rounded-full overflow-hidden">
                   <motion.div 
                     className="h-full bg-gradient-to-r from-cyan-400 to-purple-400"
                     initial={{ width: 0 }}
-                    animate={{ width: '78%' }}
+                    animate={{ width: '86%' }}
                     transition={{ delay: 0.8, duration: 1.5, ease: "easeOut" }}
                   />
                 </div>
                 <div className="flex justify-between text-[10px] sm:text-xs font-mono">
-                  <span className="text-gray-500">ACHIEVED</span>
-                  <span className="text-cyan-400">$1.95M</span>
+                  <span className="text-gray-500">CAPACITY</span>
+                  <span className="text-cyan-400">86% UTILIZED</span>
                 </div>
               </div>
 
               {/* Cyber Decorations */}
               <div className="absolute top-4 right-4 text-[8px] font-mono text-cyan-500/30 hidden sm:block">
-                0x7F3A • 0x9B2C
+                AI-7F3A • ML-9B2C
               </div>
             </div>
 
-            {/* Code Snippet Card */}
+            {/* Code Snippet Card - AI Training Script */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -316,11 +326,15 @@ export default function ShowcaseStats() {
               <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,0,255,0.02)_1px,transparent_1px)] bg-[size:15px_15px]" />
               
               <div className="relative font-mono text-xs sm:text-sm">
-                <div className="text-purple-400 mb-2">{`const growth = 'exponential';`}</div>
-                <div className="text-cyan-400 mb-2">{`await siteGuru.build(dream);`}</div>
+                <div className="text-purple-400 mb-2">{`const model = await nexusAI.load('gpt-4-vision');`}</div>
+                <div className="text-cyan-400 mb-2">{`const result = model.process({`}</div>
+                <div className="text-green-400/70 ml-4 mb-2">{`  input: 'real-time_data_stream',`}</div>
+                <div className="text-green-400/70 ml-4 mb-2">{`  threshold: 0.95,`}</div>
+                <div className="text-green-400/70 ml-4 mb-2">{`  latency: '<50ms'`}</div>
+                <div className="text-cyan-400 mb-2">{`});`}</div>
                 <div className="text-green-400/70 flex items-center gap-2">
-                <span className="animate-pulse">{'//'}</span>
-                  <span>Launching...</span>
+                  <span className="animate-pulse">{'//'}</span>
+                  <span>Training pipeline active...</span>
                   <motion.span
                     animate={{ opacity: [1, 0, 1] }}
                     transition={{ repeat: Infinity, duration: 1.5 }}
@@ -331,7 +345,7 @@ export default function ShowcaseStats() {
 
               {/* Copy Button */}
               <button className="absolute top-2 right-2 text-cyan-500/50 hover:text-cyan-400 transition-colors">
-                <HiOutlineCodeBracket className="w-4 h-4" />
+                <HiOutlineCommandLine className="w-4 h-4" />
               </button>
             </motion.div>
 
@@ -342,11 +356,11 @@ export default function ShowcaseStats() {
               transition={{ delay: 1.2 }}
               className="flex items-center justify-center gap-3 text-[10px] sm:text-xs font-mono"
             >
-              <span className="text-cyan-500/50">secure.site.guru</span>
+              <span className="text-cyan-500/50">ai.nexus.cloud</span>
               <span className="w-1 h-1 bg-cyan-400 rounded-full" />
-              <span className="text-purple-400">ENCRYPTED</span>
+              <span className="text-purple-400">SOC2 • HIPAA</span>
               <span className="w-1 h-1 bg-purple-400 rounded-full" />
-              <span className="text-cyan-500/50">QUANTUM SAFE</span>
+              <span className="text-cyan-500/50">ENCRYPTED</span>
             </motion.div>
           </motion.div>
         </div>

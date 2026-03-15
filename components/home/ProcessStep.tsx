@@ -5,44 +5,56 @@ import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { 
   HiOutlineDocumentText, 
-  HiOutlineUsers, 
   HiOutlineDownload,
   HiOutlineChatAlt,
   HiOutlineClock,
   HiOutlineCheckCircle,
-  HiOutlineArrowRight
+  HiOutlineArrowRight,
+  HiOutlineCog,
 } from 'react-icons/hi';
 
 const processSteps = [
   {
     step: "STEP 1",
-    title: "Discovery & Requirement",
-    description: "Share your vision through our simple project form or schedule a free consultation",
+    title: "AI Consultation & Needs Analysis",
+    description: "Share your business challenges and goals. Our AI specialists analyze your requirements to recommend the perfect AI tools stack.",
     icon: HiOutlineChatAlt,
     color: "cyan",
-    duration: "30-60 min"
+    duration: "45-60 min",
+    features: [
+      "Business Goal Analysis",
+      "AI Tool Recommendations",
+      "Integration Assessment",
+      "ROI Projections"
+    ]
   },
   {
     step: "STEP 2",
-    title: "Detailed Quotation",
-    description: "Receive a transparent, itemized quotation breaking down every feature, module, and deliverable with clear pricing.",
+    title: "Custom AI Solution Design",
+    description: "Get a tailored AI solution blueprint with transparent pricing and implementation roadmap.",
     icon: HiOutlineDocumentText,
     color: "cyan",
     features: [
-      "Itemized Breakdown",
+      "Custom AI Architecture",
       "Transparent Pricing",
-      "Approve / Request Changes",
-      "PDF Download"
+      "Implementation Timeline",
+      "API Documentation"
     ]
   },
   {
     step: "STEP 3",
-    title: "Team Assignment",
-    description: "A dedicated team is assigned to your project — designer, developer, project manager.",
-    icon: HiOutlineUsers,
+    title: "Deployment & Integration",
+    description: "Our AI engineers deploy and integrate your chosen AI tools seamlessly into your existing workflow.",
+    icon: HiOutlineCog,
     color: "purple",
-    team: ["Designer", "Developer", "Project Manager"],
-    contacts: ["WhatsApp", "Email", "Meetings"]
+    team: ["AI Engineers", "Integration Specialists", "Success Manager"],
+    contacts: ["Slack", "Email", "Video Calls"],
+    features: [
+      "Seamless Integration",
+      "Team Training",
+      "24/7 AI Support",
+      "Performance Monitoring"
+    ]
   }
 ];
 
@@ -129,26 +141,27 @@ export default function OurProcess() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 backdrop-blur-sm mb-6 max-sm:mb-4 max-sm:px-3 max-sm:py-1.5"
           >
             <HiOutlineClock className="w-4 h-4 text-cyan-400 max-sm:w-3 max-sm:h-3" />
-            <span className="text-cyan-400 text-sm font-mono tracking-wider max-sm:text-xs">3 SIMPLE STEPS</span>
+            <span className="text-cyan-400 text-sm font-mono tracking-wider max-sm:text-xs">3-STEP AI IMPLEMENTATION</span>
           </motion.div>
 
           <h2 className="text-5xl md:text-5xl font-black mb-4 font-mono max-md:text-4xl max-sm:text-3xl">
             <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-              OUR PROCESS
+              YOUR AI JOURNEY
             </span>
           </h2>
           
           <div className="space-y-2">
             <p className="text-3xl md:text-3xl font-black text-white font-mono max-md:text-2xl max-sm:text-xl">
-              100% Transparent.
+              From Concept to Deployment.
             </p>
             <p className="text-3xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 font-mono max-md:text-2xl max-sm:text-xl">
-              100% Trustworthy.
+              Fast, Transparent, Scalable.
             </p>
           </div>
 
           <p className="max-w-2xl mx-auto mt-6 text-base text-gray-400 font-mono leading-relaxed max-md:text-sm max-sm:text-xs max-sm:px-2">
-            We believe every client deserves full visibility into their project. From day one, you get real-time access to your project&apos;s progress, your dedicated team, and every document — all in one platform.
+            We don&apos;t just provide AI tools — we partner with you to transform your business. 
+            From initial consultation to seamless integration, every step is transparent and tailored to your goals.
           </p>
         </motion.div>
 
@@ -261,7 +274,7 @@ export default function OurProcess() {
                         {step.description}
                       </p>
 
-                      {/* Features for Step 2 */}
+                      {/* Features Grid */}
                       {step.features && (
                         <div className="space-y-4 max-sm:space-y-3">
                           <div className="grid grid-cols-2 gap-3 max-sm:gap-2">
@@ -275,7 +288,7 @@ export default function OurProcess() {
                               >
                                 <HiOutlineCheckCircle className="w-4 h-4 text-cyan-400 flex-shrink-0 max-sm:w-3 max-sm:h-3" />
                                 <span className="text-gray-300 font-mono text-xs max-sm:text-[10px]">{feature}</span>
-                                {feature.includes('PDF') && (
+                                {(feature.includes('API') || feature.includes('Documentation')) && (
                                   <HiOutlineDownload className="w-3 h-3 text-purple-400 max-sm:w-2 max-sm:h-2" />
                                 )}
                               </motion.div>
@@ -348,7 +361,7 @@ export default function OurProcess() {
             }}
             className="px-10 py-4 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-xl text-white font-mono text-sm font-bold tracking-wider max-md:px-8 max-md:py-3 max-md:text-xs max-sm:px-6 max-sm:py-2.5"
           >
-            START YOUR PROJECT
+            START YOUR AI TRANSFORMATION
           </motion.button>
         </motion.div>
       </div>

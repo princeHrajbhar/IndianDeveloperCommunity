@@ -3,9 +3,9 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { HiOutlineDeviceMobile } from 'react-icons/hi';
 import { 
-  HiOutlineComputerDesktop,
+  HiOutlineCpuChip,
+  HiOutlineCloud,
   HiOutlineChartBar,
   HiOutlineCube,
   HiOutlineChartPie,
@@ -14,55 +14,87 @@ import {
   HiOutlineClock,
   HiOutlineStar,
   HiOutlineRocketLaunch,
+  HiOutlineSparkles,
+  HiOutlineCommandLine,
+  HiOutlineLanguage,
+  HiOutlineMicrophone,
+  HiOutlinePhoto,
+  HiOutlineDocumentText,
+  HiOutlineEye,
+  HiOutlineChatBubbleLeftRight
 } from 'react-icons/hi2';
 
 const services = [
   {
     id: "01",
-    title: "Website Development",
-    description: "Professional, SEO-optimized, and responsive websites crafted using modern frameworks for seamless performance across all devices and blazing-fast load times.",
-    icon: HiOutlineComputerDesktop,
+    title: "Conversational AI Agents",
+    description: "Custom-trained chatbots and voice assistants that understand your business context and deliver human-like interactions 24/7.",
+    icon: HiOutlineChatBubbleLeftRight,
     color: "from-cyan-400 to-blue-400",
     stats: [
-      { label: "USERS SERVED", value: "50K+", icon: HiOutlineUsers }
+      { label: "QUERY RESOLUTION", value: "95%", icon: HiOutlineUsers }
     ],
-    features: ["Responsive", "SEO", "Performance", "CMS", "Analytics"],
+    features: ["LLM-Powered", "Voice Support", "Multi-Language", "Custom Training"],
     exploreText: "Explore"
   },
   {
     id: "02",
-    title: "App Development",
-    description: "Custom-built mobile and web applications with real-time features, sleek UI, and high performance for Android, iOS, and cross-platform deployments.",
-    icon: HiOutlineDeviceMobile,
+    title: "Document Intelligence",
+    description: "Extract, analyze, and summarize documents at scale. Process contracts, reports, and PDFs with enterprise-grade accuracy.",
+    icon: HiOutlineDocumentText,
     color: "from-blue-400 to-purple-400",
     stats: [
-      { label: "MORE TRAFFIC", value: "3x", icon: HiOutlineChartBar }
+      { label: "TIME SAVED", value: "85%", icon: HiOutlineChartBar }
     ],
-    features: ["Cross-Platform", "Real-time", "Push Notifications", "Offline"],
+    features: ["Data Extraction", "Summarization", "OCR", "Compliance Check"],
     exploreText: "Explore"
   },
   {
     id: "03",
-    title: "CRM Solutions",
-    description: "Custom CRM systems to manage leads, clients, sales, and support with integrated communication tools and analytics dashboards that boost conversions.",
-    icon: HiOutlineUsers,
+    title: "AI Vision Solutions",
+    description: "Real-time image and video analysis for quality control, security, and business intelligence with custom-trained computer vision models.",
+    icon: HiOutlineEye,
     color: "from-purple-400 to-pink-400",
     stats: [
-      { label: "COST REDUCED", value: "40%", icon: HiOutlineChartPie }
+      { label: "ACCURACY", value: "99%", icon: HiOutlineChartPie }
     ],
-    features: ["Lead Mgmt", "Sales Pipeline", "Analytics", "Automation"],
+    features: ["Object Detection", "Face Recognition", "Video Analytics", "Quality Control"],
     exploreText: "Explore"
   },
   {
     id: "04",
-    title: "ERP Systems",
-    description: "Scalable and modular ERP systems to streamline business processes like HR, finance, inventory, and production using cloud-backed architecture.",
-    icon: HiOutlineCube,
+    title: "Predictive Analytics",
+    description: "Forecast trends, customer behavior, and business outcomes with advanced ML models that learn from your data in real-time.",
+    icon: HiOutlineChartBar,
     color: "from-pink-400 to-rose-400",
     stats: [
-      { label: "CONV. RATE UP", value: "85%", icon: HiOutlineRocketLaunch }
+      { label: "FORECAST ACCURACY", value: "94%", icon: HiOutlineRocketLaunch }
     ],
-    features: ["Multi-Module", "Cloud", "Role-Based", "Realtime Reports"],
+    features: ["Demand Prediction", "Customer Churn", "Risk Analysis", "Anomaly Detection"],
+    exploreText: "Explore"
+  },
+  {
+    id: "05",
+    title: "Generative AI Studio",
+    description: "Create custom content, images, and code with fine-tuned generative models trained specifically for your industry needs.",
+    icon: HiOutlineSparkles,
+    color: "from-cyan-400 to-purple-400",
+    stats: [
+      { label: "CONTENT OUTPUT", value: "10x", icon: HiOutlineRocketLaunch }
+    ],
+    features: ["Text Generation", "Image Creation", "Code Assistant", "Brand Voice"],
+    exploreText: "Explore"
+  },
+  {
+    id: "06",
+    title: "AI Integration Layer",
+    description: "Seamlessly connect AI capabilities to your existing tools via unified APIs. Deploy once, use across your entire stack.",
+    icon: HiOutlineCloud,
+    color: "from-blue-400 to-pink-400",
+    stats: [
+      { label: "INTEGRATIONS", value: "50+", icon: HiOutlineCube }
+    ],
+    features: ["REST APIs", "Webhooks", "SDKs", "Real-time Sync"],
     exploreText: "Explore"
   }
 ];
@@ -71,7 +103,7 @@ const services = [
 const matrixChars = "01アイウエオカキクケコサシスセソタチツテト";
 
 // Fixed positions for digital rain to avoid hydration mismatch
-const rainPositions = [0, 25, 50, 75];
+const rainPositions = [0, 16, 33, 50, 66, 83];
 
 export default function ServicesShowcase() {
   // Use state to handle client-side only rendering for animated effects
@@ -133,21 +165,21 @@ export default function ServicesShowcase() {
             transition={{ delay: 0.2 }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 backdrop-blur-sm mb-6"
           >
-            <span className="text-cyan-400 text-sm font-mono tracking-wider">⚡ AI-POWERED SOLUTIONS ⚡</span>
+            <span className="text-cyan-400 text-sm font-mono tracking-wider">⚡ ENTERPRISE AI SOLUTIONS ⚡</span>
           </motion.div>
 
           <h2 className="text-5xl md:text-5xl font-black mb-4 font-mono">
             <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              OUR SERVICES
+              AI SERVICES
             </span>
           </h2>
           <p className="text-xl text-cyan-400/70 font-mono tracking-wider">
-            &lt; Neural Network Integrated /&gt;
+            &lt; Powered by Advanced Neural Networks /&gt;
           </p>
         </motion.div>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+        {/* Services Grid - 3 columns on large screens */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {services.map((service, index) => {
             const Icon = service.icon;
             
@@ -161,7 +193,7 @@ export default function ServicesShowcase() {
                 className="group relative"
               >
                 {/* Service Card - Semi-transparent with top highlight strip */}
-                <div className="relative bg-black/60 backdrop-blur-md border border-cyan-500/20 rounded-2xl p-8 transition-all duration-500 overflow-hidden
+                <div className="relative bg-black/60 backdrop-blur-md border border-cyan-500/20 rounded-2xl p-8 transition-all duration-500 overflow-hidden h-full
                   before:absolute before:top-0 before:left-0 before:w-full before:h-[2px] before:bg-gradient-to-r before:from-transparent before:via-cyan-400/50 before:to-transparent before:translate-x-[-100%] group-hover:before:translate-x-[100%] before:transition-transform before:duration-700
                   after:absolute after:inset-0 after:bg-gradient-to-r after:from-cyan-500/0 after:via-cyan-500/0 after:to-purple-500/0 group-hover:after:from-cyan-500/5 group-hover:after:via-purple-500/5 group-hover:after:to-pink-500/5 after:transition-all after:duration-500 after:pointer-events-none
                   hover:border-cyan-400/50 hover:shadow-[0_0_30px_rgba(0,255,255,0.2)]">
@@ -249,7 +281,7 @@ export default function ServicesShowcase() {
 
                   {/* Bottom binary code line */}
                   <div className="absolute bottom-2 right-4 text-[8px] font-mono text-cyan-500/30">
-                    01101001 01101110 01101001 01110100
+                    01000001 01001001 00100000 01010010 01000101 01000001 01000100 01011001
                   </div>
                 </div>
               </motion.div>
@@ -266,10 +298,10 @@ export default function ServicesShowcase() {
           className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4"
         >
           {[
-            { value: "500+", label: "PROJECTS COMPLETED", icon: HiOutlineRocketLaunch },
-            { value: "98%", label: "CLIENT SATISFACTION", icon: HiOutlineChartBar },
-            { value: "24/7", label: "SUPPORT AVAILABLE", icon: HiOutlineClock },
-            { value: "10+", label: "INDUSTRY AWARDS", icon: HiOutlineStar }
+            { value: "1M+", label: "AI REQUESTS/DAY", icon: HiOutlineRocketLaunch },
+            { value: "99.9%", label: "UPTIME SLA", icon: HiOutlineChartBar },
+            { value: "24/7", label: "AI SUPPORT", icon: HiOutlineClock },
+            { value: "50+", label: "PRE-TRAINED MODELS", icon: HiOutlineStar }
           ].map((stat, i) => {
             const StatIcon = stat.icon;
             return (
@@ -298,7 +330,7 @@ export default function ServicesShowcase() {
         <div className="mt-12 text-center">
           <div className="inline-flex items-center gap-3 px-4 py-2 bg-cyan-500/5 border border-cyan-500/20 rounded-full">
             <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
-            <span className="text-xs font-mono text-cyan-400/60">SECURED BY QUANTUM ENCRYPTION • AI-PROTECTED • v2.0</span>
+            <span className="text-xs font-mono text-cyan-400/60">ENTERPRISE-GRADE AI • FULLY ENCRYPTED • v2.0</span>
             <span className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" />
           </div>
         </div>
