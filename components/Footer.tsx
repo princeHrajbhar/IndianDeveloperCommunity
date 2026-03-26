@@ -110,7 +110,7 @@ const CyberFooter = () => {
             <div className="flex items-center space-x-2 mb-4">
               <Zap className="w-8 h-8 text-cyan-400" />
               <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Site Guru
+               Aadharix
               </span>
             </div>
             <p className="text-sm text-gray-400 mb-4 leading-relaxed">
