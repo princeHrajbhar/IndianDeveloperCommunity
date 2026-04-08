@@ -1,142 +1,88 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* 1. Define your custom 'cyber' colors here */
+  --color-cyber-black: #050505;
+  --color-cyber-dark: #111111;
+  --color-cyber-neon: #00ff9d;
+  --color-cyber-blue: #0070f3;
+  --color-cyber-red: #ff3366;
+
+  /* 2. System Overrides */
+  --color-background: white;
+  --color-foreground: #171717;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui;
+
+  /* 3. Consolidated Animations */
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-gradient-x: gradient-x 5s ease infinite;
+  --animate-in: slideInFromTop 0.3s ease-out;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes gradient-x {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  @keyframes slideInFromTop {
+    from { transform: translateY(-10%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
 }
 
+/* Dark Mode Variables */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-background: #0a0a0a;
+    --color-foreground: #ededed;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-/* Custom animations */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
+/* --- Base Layer --- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
   }
-  50% {
-    transform: translateY(-10px);
-  }
-}
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+  body {
+    /* Now 'bg-cyber-black' is a known utility */
+    @apply bg-cyber-black text-gray-100 overflow-x-hidden;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar { @apply w-2; }
+  ::-webkit-scrollbar-track { @apply bg-cyber-dark; }
+  ::-webkit-scrollbar-thumb { @apply bg-cyber-neon rounded-full; }
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
-
-
-
-@keyframes gradient-x {
-  0% {
-    background-position: 0% 50%;
+/* --- Utilities Layer --- */
+@layer utilities {
+  .glass-morphism {
+    @apply backdrop-blur-xl bg-white/5 border border-white/10;
   }
-  50% {
-    background-position: 100% 50%;
+  
+  .neon-border {
+    @apply border border-cyber-neon shadow-[0_0_10px_rgba(0,255,157,0.5)];
   }
-  100% {
-    background-position: 0% 50%;
+  
+  .cyber-grid {
+    background-image: 
+      linear-gradient(rgba(0, 255, 157, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 157, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
   }
-}
-
-.animate-gradient-x {
-  background-size: 200% 200%;
-  animation: gradient-x 5s ease infinite;
-}
-
-
-/* Hide horizontal scrollbar */
-.hide-scrollbar {
-  -ms-overflow-style: none; /* IE & Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
-.hide-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
-}
-
-
-
-
-/* Animation background */
-@keyframes float {
-  0% {
-    transform: translateY(0px) translateX(0px);
+  
+  .text-glow {
+    text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
   }
-  25% {
-    transform: translateY(-40px) translateX(20px);
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
-  50% {
-    transform: translateY(30px) translateX(-20px);
-  }
-  75% {
-    transform: translateY(-20px) translateX(10px);
-  }
-  100% {
-    transform: translateY(0px) translateX(0px);
-  }
-}
-
-.animate-float {
-  animation: float linear infinite;
-}
-
-
-
-
-
-
-
-
-
-
-/* Animation for mobile menu */
-@keyframes slideInFromTop {
-  from {
-    transform: translateY(-10%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.animate-in {
-  animation: slideInFromTop 0.3s ease-out;
-}
-
-
-
-/* partical css*/
-@keyframes float {
-  0% {
-    transform: translateY(0px);
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-200px);
-    opacity: 0;
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }
