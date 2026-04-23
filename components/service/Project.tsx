@@ -137,7 +137,7 @@ const CategoryFilter = ({ categories, activeCategory, setActiveCategory }: {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setActiveCategory("all")}
-        className={`px-6 py-3 rounded-full font-mono text-sm transition-all ${
+        className={`px-6 py-3 rounded-full font-mono text-sm transition-all tracking-wider ${
           activeCategory === "all" 
             ? "bg-cyan-500 text-black shadow-[0_0_20px_rgba(0,255,255,0.5)]" 
             : "border border-white/10 bg-white/5 hover:bg-white/10 text-gray-300"
@@ -151,7 +151,7 @@ const CategoryFilter = ({ categories, activeCategory, setActiveCategory }: {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setActiveCategory(category)}
-          className={`px-6 py-3 rounded-full font-mono text-sm transition-all ${
+          className={`px-6 py-3 rounded-full font-mono text-sm transition-all tracking-wider ${
             activeCategory === category 
               ? "bg-cyan-500 text-black shadow-[0_0_20px_rgba(0,255,255,0.5)]" 
               : "border border-white/10 bg-white/5 hover:bg-white/10 text-gray-300"
@@ -215,18 +215,18 @@ const ProjectCard = ({ project, index }: { project: typeof projects[0], index: n
 
           {/* Category Tag */}
           <div className="absolute top-4 left-4 px-3 py-1 bg-black/60 backdrop-blur-sm border border-cyan-500/30 rounded-full">
-            <span className="text-xs font-mono text-cyan-400">{project.category}</span>
+            <span className="text-xs font-mono text-cyan-400 tracking-wider">{project.category}</span>
           </div>
         </div>
 
         {/* Content */}
         <div className="p-6">
-          <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+          <h3 className="text-xl font-bold mb-2 flex items-center gap-2 font-mono">
             <span className={`w-2 h-2 rounded-full bg-gradient-to-r ${project.gradient}`} />
             {project.title}
           </h3>
           
-          <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+          <p className="text-gray-400 text-sm mb-4 line-clamp-2 font-mono">
             {project.description}
           </p>
 
@@ -245,21 +245,21 @@ const ProjectCard = ({ project, index }: { project: typeof projects[0], index: n
           {/* Metrics */}
           <div className="grid grid-cols-3 gap-2 pt-4 border-t border-white/10">
             <div>
-              <div className="flex items-center gap-1 text-xs text-gray-400">
+              <div className="flex items-center gap-1 text-xs text-gray-400 font-mono">
                 <HiOutlineChartBar className="w-3 h-3" />
                 Perf
               </div>
               <div className="text-sm font-mono text-cyan-400">{project.metrics.performance}%</div>
             </div>
             <div>
-              <div className="flex items-center gap-1 text-xs text-gray-400">
+              <div className="flex items-center gap-1 text-xs text-gray-400 font-mono">
                 <HiOutlineShieldCheck className="w-3 h-3" />
                 Sec
               </div>
               <div className="text-sm font-mono text-fuchsia-400">{project.metrics.security}%</div>
             </div>
             <div>
-              <div className="flex items-center gap-1 text-xs text-gray-400">
+              <div className="flex items-center gap-1 text-xs text-gray-400 font-mono">
                 <HiOutlineServer className="w-3 h-3" />
                 Uptime
               </div>
@@ -310,8 +310,8 @@ export default function Portfolio() {
             key={i}
             className="absolute w-1 h-1 bg-cyan-500/30 rounded-full"
             initial={{ 
-              x: Math.random() * window.innerWidth, 
-              y: Math.random() * window.innerHeight,
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000), 
+              y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1000),
               scale: 0
             }}
             animate={{ 
@@ -342,7 +342,7 @@ export default function Portfolio() {
               boxShadow: ["0 0 20px rgba(0,255,255,0.3)", "0 0 40px rgba(255,0,255,0.3)", "0 0 20px rgba(0,255,255,0.3)"]
             }}
             transition={{ duration: 3, repeat: Infinity }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-sm mb-6 font-mono tracking-wide"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-sm mb-6 font-mono tracking-wider"
           >
             <motion.span
               animate={{ rotate: 360 }}
@@ -354,7 +354,7 @@ export default function Portfolio() {
           </motion.div>
 
           {/* Title */}
-          <h1 className="text-5xl md:text-5xl font-black mb-6">
+          <h1 className="text-5xl md:text-5xl font-black mb-6 font-mono">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-fuchsia-400">
               Digital Excellence
             </span>
@@ -363,7 +363,7 @@ export default function Portfolio() {
           </h1>
 
           {/* Description */}
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8 font-mono">
             Explore our latest AI-powered systems and cyber infrastructure projects, 
             delivered with cutting-edge technology and innovative solutions.
           </p>
@@ -377,15 +377,15 @@ export default function Portfolio() {
           >
             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
               <div className="text-3xl font-mono text-cyan-400">{totalProjects}</div>
-              <div className="text-sm text-gray-400">Total Projects</div>
+              <div className="text-sm font-mono text-gray-400">Total Projects</div>
             </div>
             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
               <div className="text-3xl font-mono text-fuchsia-400">{avgPerformance}%</div>
-              <div className="text-sm text-gray-400">Avg. Performance</div>
+              <div className="text-sm font-mono text-gray-400">Avg. Performance</div>
             </div>
             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
               <div className="text-3xl font-mono text-blue-400">{totalTech}</div>
-              <div className="text-sm text-gray-400">Technologies</div>
+              <div className="text-sm font-mono text-gray-400">Technologies</div>
             </div>
           </motion.div>
         </motion.div>
@@ -414,7 +414,7 @@ export default function Portfolio() {
           <motion.button
             whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(0,255,255,0.5)" }}
             whileTap={{ scale: 0.95 }}
-            className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold relative overflow-hidden"
+            className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold relative overflow-hidden font-mono"
           >
             <span className="absolute inset-0 bg-gradient-to-r from-fuchsia-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />
             <HiOutlineMagnifyingGlassPlus className="relative z-10 w-5 h-5" />

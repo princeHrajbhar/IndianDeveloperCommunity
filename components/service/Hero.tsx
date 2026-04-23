@@ -31,7 +31,7 @@ export default function Hero() {
           </div>
 
           {/* heading */}
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-5">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-5 font-mono">
 
             Intelligent Platforms
             <br />
@@ -49,7 +49,7 @@ export default function Hero() {
           </h1>
 
           {/* description */}
-          <p className="text-gray-400 max-w-lg mb-8 text-base leading-relaxed">
+          <p className="text-gray-400 max-w-lg mb-8 text-base leading-relaxed font-mono">
             We design cyber-grade digital infrastructure powered by AI.
             Every system is optimized for speed, intelligence and
             scalable architecture built for the next generation of web.
@@ -61,7 +61,7 @@ export default function Hero() {
             <button className="flex items-center gap-2 px-6 py-3 rounded-lg
             bg-gradient-to-r from-cyan-500 to-blue-500
             hover:scale-105 transition
-            shadow-[0_0_25px_rgba(0,255,255,0.35)] text-sm">
+            shadow-[0_0_25px_rgba(0,255,255,0.35)] text-sm font-mono">
 
               <HiOutlineRocketLaunch />
               Start AI Project
@@ -70,7 +70,7 @@ export default function Hero() {
 
             <button className="flex items-center gap-2 px-6 py-3 rounded-lg
             border border-cyan-400/30 bg-white/5
-            hover:bg-white/10 transition text-sm">
+            hover:bg-white/10 transition text-sm font-mono">
 
               Explore Process
               <HiOutlineArrowDown />
@@ -119,8 +119,8 @@ export default function Hero() {
                 <HiOutlineLightningBolt />
               </div>
               <div>
-                <p className="text-xs font-semibold text-cyan-300">AI Optimized</p>
-                <p className="text-[10px] text-gray-400">Ultra Performance</p>
+                <p className="text-xs font-semibold text-cyan-300 font-mono">AI Optimized</p>
+                <p className="text-[10px] text-gray-400 font-mono">Ultra Performance</p>
               </div>
             </div>
           </motion.div>
@@ -137,8 +137,8 @@ export default function Hero() {
                 <HiOutlineSearch />
               </div>
               <div>
-                <p className="text-xs font-semibold text-purple-300">SEO AI</p>
-                <p className="text-[10px] text-gray-400">Rank Intelligence</p>
+                <p className="text-xs font-semibold text-purple-300 font-mono">SEO AI</p>
+                <p className="text-[10px] text-gray-400 font-mono">Rank Intelligence</p>
               </div>
             </div>
           </motion.div>
@@ -155,8 +155,8 @@ export default function Hero() {
                 <HiOutlineDeviceMobile />
               </div>
               <div>
-                <p className="text-xs font-semibold text-blue-300">Adaptive UI</p>
-                <p className="text-[10px] text-gray-400">All Devices</p>
+                <p className="text-xs font-semibold text-blue-300 font-mono">Adaptive UI</p>
+                <p className="text-[10px] text-gray-400 font-mono">All Devices</p>
               </div>
             </div>
           </motion.div>

@@ -60,8 +60,8 @@ const TimelineItem = ({ year, title, description, icon: Icon, index }: { year: s
 
       {/* Content */}
       <div className="flex-1 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-cyan-500/30 transition-all group">
-        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-400 transition">{title}</h3>
-        <p className="text-gray-400">{description}</p>
+        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-400 transition font-mono">{title}</h3>
+        <p className="text-gray-400 font-mono">{description}</p>
       </div>
     </motion.div>
   )
@@ -85,12 +85,12 @@ const SkillCard = ({ icon: Icon, title, skills, gradient, delay }: { icon: any, 
         <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${gradient} p-3 mb-4`}>
           <Icon className="w-6 h-6 text-white" />
         </div>
-        <h3 className="text-lg font-bold text-white mb-3">{title}</h3>
+        <h3 className="text-lg font-bold text-white mb-3 font-mono">{title}</h3>
         <div className="space-y-2">
           {skills.map((skill, i) => (
             <div key={i} className="flex items-center gap-2">
               <div className="w-1 h-1 rounded-full bg-cyan-400" />
-              <span className="text-sm text-gray-300">{skill}</span>
+              <span className="text-sm text-gray-300 font-mono">{skill}</span>
             </div>
           ))}
         </div>
@@ -119,8 +119,8 @@ const ProjectHighlight = ({ title, description, impact, icon: Icon, gradient, in
             <Icon className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
-            <p className="text-sm text-gray-400 mb-3">{description}</p>
+            <h3 className="text-lg font-bold text-white mb-2 font-mono">{title}</h3>
+            <p className="text-sm text-gray-400 mb-3 font-mono">{description}</p>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded-full">
               <HiOutlineBolt className="w-3 h-3 text-cyan-400" />
               <span className="text-xs font-mono text-cyan-400">{impact}</span>
@@ -144,8 +144,8 @@ const PhilosophyCard = ({ icon: Icon, title, description, gradient }: { icon: an
         <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradient} p-4 mx-auto mb-4`}>
           <Icon className="w-8 h-8 text-white" />
         </div>
-        <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
-        <p className="text-sm text-gray-400">{description}</p>
+        <h3 className="text-lg font-bold text-white mb-2 font-mono">{title}</h3>
+        <p className="text-sm text-gray-400 font-mono">{description}</p>
       </div>
     </motion.div>
   )
@@ -300,16 +300,16 @@ export default function AboutDetail() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 backdrop-blur-sm mb-6">
             <HiOutlineCpuChip className="w-4 h-4 text-cyan-400" />
-            <span className="text-sm font-mono text-cyan-400">THE JOURNEY • INNOVATION STORY</span>
+            <span className="text-sm font-mono text-cyan-400 tracking-wider">THE JOURNEY • INNOVATION STORY</span>
           </div>
           
-          <h2 className="text-4xl md:text-5xl font-black mb-6">
+          <h2 className="text-4xl md:text-5xl font-black mb-6 font-mono">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-fuchsia-400">
               From Vision to Reality
             </span>
           </h2>
           
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto font-mono">
             Every line of code, every neural network, every product — built with 
             passion and precision to make AI accessible and impactful.
           </p>
@@ -317,7 +317,7 @@ export default function AboutDetail() {
 
         {/* Timeline Section */}
         <div className="mb-32">
-          <h3 className="text-2xl font-bold text-center mb-16 flex items-center justify-center gap-3">
+          <h3 className="text-2xl font-bold text-center mb-16 flex items-center justify-center gap-3 font-mono">
             <HiOutlineCalendar className="w-6 h-6 text-cyan-400" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-400">
               The Evolution
@@ -333,7 +333,7 @@ export default function AboutDetail() {
 
         {/* Skills Grid */}
         <div className="mb-32">
-          <h3 className="text-2xl font-bold text-center mb-16 flex items-center justify-center gap-3">
+          <h3 className="text-2xl font-bold text-center mb-16 flex items-center justify-center gap-3 font-mono">
             <HiOutlineCog6Tooth className="w-6 h-6 text-cyan-400" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-400">
               Technical Arsenal
@@ -349,7 +349,7 @@ export default function AboutDetail() {
 
         {/* Featured Projects */}
         <div className="mb-32">
-          <h3 className="text-2xl font-bold text-center mb-16 flex items-center justify-center gap-3">
+          <h3 className="text-2xl font-bold text-center mb-16 flex items-center justify-center gap-3 font-mono">
             <HiOutlineCube className="w-6 h-6 text-cyan-400" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-400">
               Flagship Products
@@ -380,7 +380,7 @@ export default function AboutDetail() {
                 <div className="text-2xl font-mono text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-400">
                   {stat.value}
                 </div>
-                <div className="text-xs text-gray-400 mt-1">{stat.label}</div>
+                <div className="text-xs font-mono text-gray-400 mt-1">{stat.label}</div>
               </div>
             ))}
           </motion.div>
@@ -388,7 +388,7 @@ export default function AboutDetail() {
 
         {/* Philosophy Section */}
         <div className="mb-20">
-          <h3 className="text-2xl font-bold text-center mb-16 flex items-center justify-center gap-3">
+          <h3 className="text-2xl font-bold text-center mb-16 flex items-center justify-center gap-3 font-mono">
             <HiOutlineSparkles className="w-6 h-6 text-cyan-400" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-400">
               Building Philosophy
@@ -411,7 +411,7 @@ export default function AboutDetail() {
         >
           <div className="relative inline-block">
             <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-fuchsia-500 rounded-full blur-xl opacity-50" />
-            <button className="relative bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-12 py-5 rounded-full font-bold text-lg group overflow-hidden">
+            <button className="relative bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-12 py-5 rounded-full font-bold text-lg group overflow-hidden font-mono">
               <span className="absolute inset-0 bg-gradient-to-r from-fuchsia-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />
               <span className="relative z-10 flex items-center gap-3">
                 <HiOutlineRocketLaunch className="w-5 h-5" />

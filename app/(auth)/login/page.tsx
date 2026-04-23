@@ -82,9 +82,9 @@ export default function LoginPage() {
         duration: 2000,
       });
 
-      setTimeout(() => {
-        router.push('/profile');
-      }, 1500);
+setTimeout(() => {
+  window.location.replace("/profile"); // ✅ full reload + redirect
+}, 1500);
 
     } catch (error: any) {
       toast.error(error.message || 'Invalid email or password', {

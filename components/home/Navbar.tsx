@@ -1,23 +1,89 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Menu, X, ChevronDown, Zap } from "lucide-react"
+import { Menu, X, ChevronDown, Zap, User } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 export default function Navbar() {
   const pathname = usePathname()
+  const router = useRouter()
+
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
+  // ✅ Scroll effect
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20)
-    }
+    const handleScroll = () => setIsScrolled(window.scrollY > 20)
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  // ✅ Auth check (with refresh token)
+  const checkAuth = async () => {
+    try {
+      let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+        credentials: "include",
+      })
+
+      // 🔥 If access token expired → refresh
+      if (res.status === 401) {
+        const refreshRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
+          {
+            method: "POST",
+            credentials: "include",
+          }
+        )
+
+        if (!refreshRes.ok) {
+          setUser(null)
+          return
+        }
+
+        // retry
+        res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+          credentials: "include",
+        })
+      }
+
+      if (!res.ok) {
+        setUser(null)
+      } else {
+        const data = await res.json()
+        setUser(data.data)
+      }
+    } catch {
+      setUser(null)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    checkAuth()
+
+    // 🔥 Listen for login/logout changes globally
+    const handler = () => checkAuth()
+    window.addEventListener("authChanged", handler)
+
+    return () => window.removeEventListener("authChanged", handler)
+  }, [])
+
+  // ✅ Logout
+  const handleLogout = async () => {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    })
+
+    setUser(null)
+    window.dispatchEvent(new Event("authChanged")) // 🔥 update navbar everywhere
+    router.push("/login")
+  }
 
   const navItems = [
     { name: "Home", href: "/" },
@@ -29,10 +95,12 @@ export default function Navbar() {
   return (
     <nav
       className={`
-        fixed w-full z-50 transition-all duration-500
-        ${isScrolled
-          ? "bg-black/70 backdrop-blur-xl border-b border-cyan-500/20"
-          : "bg-transparent"}
+        fixed w-full z-50 transition-all duration-500 font-mono
+        ${
+         isScrolled
+  ? "bg-black/80 backdrop-blur-md shadow-md"
+  : "bg-transparent"
+        }
       `}
     >
       <div className="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
@@ -70,14 +138,32 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* CTA */}
-        <div className="hidden md:flex">
-          <Link
-            href="/contact"
-            className="px-5 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-600 text-white text-sm font-semibold hover:scale-105 transition"
-          >
-            Start Project
-          </Link>
+        {/* ✅ RIGHT SIDE (Dynamic) */}
+        <div className="hidden md:flex items-center space-x-4">
+
+          {loading ? (
+            <span className="text-gray-400 text-sm">...</span>
+          ) : user ? (
+            <Link
+              href="/profile"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:scale-105 transition"
+            >
+              {/* 🔥 Option 1: Icon */}
+              <User className="text-white w-5 h-5" />
+
+              {/* 🔥 Option 2 (better): Uncomment to use initial */}
+              {/* <span className="text-white font-bold">
+                {user.userId?.charAt(0).toUpperCase()}
+              </span> */}
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="px-5 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-600 text-white text-sm font-semibold"
+            >
+              Login
+            </Link>
+          )}
         </div>
 
         {/* 📱 Mobile Button */}
@@ -89,7 +175,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* 🔥 MOBILE SIDE DRAWER */}
+      {/* 🔥 MOBILE DRAWER */}
       <AnimatePresence>
         {isOpen && (
           <>
@@ -108,7 +194,7 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", stiffness: 260, damping: 25 }}
-              className="fixed top-0 left-0 h-full w-[80%] max-w-sm bg-gradient-to-b from-gray-900 via-black to-black border-r border-cyan-500/20 z-50 p-6"
+              className="fixed top-0 left-0 h-full w-[80%] max-w-sm bg-black z-50 p-6 font-mono"
             >
               {/* Header */}
               <div className="flex items-center justify-between mb-10">
@@ -116,7 +202,7 @@ export default function Navbar() {
                   Aadharix
                 </span>
                 <button onClick={() => setIsOpen(false)}>
-                  <X size={24} className="text-white" />
+                  <X size={24} />
                 </button>
               </div>
 
@@ -132,16 +218,25 @@ export default function Navbar() {
                     {item.name}
                   </Link>
                 ))}
-              </div>
 
-              {/* CTA */}
-              <div className="mt-10">
-                <Link
-                  href="/contact"
-                  className="block text-center px-5 py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-semibold"
-                >
-                  Start Project
-                </Link>
+                {/* ✅ Mobile Auth */}
+                {user ? (
+                  <Link
+                    href="/profile"
+                    onClick={() => setIsOpen(false)}
+                    className="text-lg hover:text-cyan-400"
+                  >
+                    Profile
+                  </Link>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setIsOpen(false)}
+                    className="text-lg hover:text-cyan-400"
+                  >
+                    Login
+                  </Link>
+                )}
               </div>
             </motion.div>
           </>
