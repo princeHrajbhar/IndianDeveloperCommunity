@@ -1,0 +1,313 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* 1. Define your custom 'cyber' colors here */
+  --color-cyber-black: #050505;
+  --color-cyber-dark: #111111;
+  --color-cyber-neon: #00ff9d;
+  --color-cyber-blue: #0070f3;
+  --color-cyber-red: #ff3366;
+
+  /* 2. System Overrides */
+  --color-background: white;
+  --color-foreground: #171717;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui;
+
+  /* 3. Consolidated Animations */
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-gradient-x: gradient-x 5s ease infinite;
+  --animate-in: slideInFromTop 0.3s ease-out;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes gradient-x {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  @keyframes slideInFromTop {
+    from { transform: translateY(-10%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+}
+
+/* Dark Mode Variables */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #0a0a0a;
+    --color-foreground: #ededed;
+  }
+}
+
+/* --- Base Layer --- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    /* Now 'bg-cyber-black' is a known utility */
+    @apply bg-cyber-black text-gray-100 overflow-x-hidden;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar { @apply w-2; }
+  ::-webkit-scrollbar-track { @apply bg-cyber-dark; }
+  ::-webkit-scrollbar-thumb { @apply bg-cyber-neon rounded-full; }
+}
+
+/* --- Utilities Layer --- */
+@layer utilities {
+  .glass-morphism {
+    @apply backdrop-blur-xl bg-white/5 border border-white/10;
+  }
+  
+  .neon-border {
+    @apply border border-cyber-neon shadow-[0_0_10px_rgba(0,255,157,0.5)];
+  }
+  
+  .cyber-grid {
+    background-image: 
+      linear-gradient(rgba(0, 255, 157, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 157, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+  
+  .text-glow {
+    text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+
+ /* suggested css */
+
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  background: #030712;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: #030712;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: #030712;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f8fafc;
+  box-shadow: 0 0 0 1000px #07101f inset;
+  transition: background-color 9999s ease-out;
+}
+
+::selection {
+  background: rgba(103, 232, 249, 0.25);
+  color: #fff;
+}
+
+
+
+
+
+
+
+
+
+/*career page */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animation-delay-150 {
+  animation-delay: 150ms;
+}
+
+
+
+/* Add to your global CSS for smooth scrolling and mobile optimizations */
+@media (max-width: 1024px) {
+  .no-scroll {
+    overflow: hidden;
+  }
+}
+
+/* Custom scrollbar for mobile sidebar */
+.mobile-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.mobile-sidebar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.mobile-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(6, 182, 212, 0.5);
+  border-radius: 10px;
+}
+
+.mobile-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 182, 212, 0.8);
+}
+
+
+
+
+
+
+/* dashboard css */
+
+/* QuantumFinix content modules ------------------------------------------------
+   The feature-complete CMS components are scoped here so their layout and
+   behavior remain intact while inheriting QuantumFinix's dark cinematic UI. */
+.qf-content-module,
+.qf-admin-content-module {
+  color: #f8fafc;
+}
+.qf-content-module :is(.bg-white, .bg-gray-50, .bg-slate-50),
+.qf-admin-content-module :is(.bg-white, .bg-gray-50, .bg-slate-50) {
+  background-color: rgba(255, 255, 255, 0.035) !important;
+}
+.qf-content-module :is(.bg-gray-100, .bg-slate-100),
+.qf-admin-content-module :is(.bg-gray-100, .bg-slate-100) {
+  background-color: rgba(148, 163, 184, 0.08) !important;
+}
+.qf-content-module :is(.text-gray-900, .text-gray-800, .text-gray-700, .text-slate-900, .text-slate-800, .text-slate-700),
+.qf-admin-content-module :is(.text-gray-900, .text-gray-800, .text-gray-700, .text-slate-900, .text-slate-800, .text-slate-700) {
+  color: #f8fafc !important;
+}
+.qf-content-module :is(.text-gray-600, .text-gray-500, .text-gray-400, .text-slate-600, .text-slate-500, .text-slate-400),
+.qf-admin-content-module :is(.text-gray-600, .text-gray-500, .text-gray-400, .text-slate-600, .text-slate-500, .text-slate-400) {
+  color: #94a3b8 !important;
+}
+.qf-content-module :is(.border-gray-100, .border-gray-200, .border-gray-300, .border-slate-100, .border-slate-200, .border-slate-300),
+.qf-admin-content-module :is(.border-gray-100, .border-gray-200, .border-gray-300, .border-slate-100, .border-slate-200, .border-slate-300) {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.qf-content-module :is(input, textarea, select),
+.qf-admin-content-module :is(input, textarea, select) {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background-color: rgba(2, 7, 17, 0.78) !important;
+  color: #f8fafc !important;
+}
+.qf-content-module :is(input, textarea)::placeholder,
+.qf-admin-content-module :is(input, textarea)::placeholder {
+  color: #64748b !important;
+}
+.qf-content-module .shadow-sm,
+.qf-content-module .shadow-md,
+.qf-content-module .shadow-lg,
+.qf-admin-content-module .shadow-sm,
+.qf-admin-content-module .shadow-md,
+.qf-admin-content-module .shadow-lg {
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.32) !important;
+}
+.qf-content-module .prose,
+.qf-admin-content-module .prose {
+  color: #cbd5e1;
+}
+.qf-content-module .prose :is(h1, h2, h3, h4, strong),
+.qf-admin-content-module .prose :is(h1, h2, h3, h4, strong) {
+  color: #f8fafc;
+}
+.qf-content-module .prose a,
+.qf-admin-content-module .prose a {
+  color: #67e8f9;
+}
+
+/* QuantumFinix dashboard compatibility layer for imported content editors. */
+.qf-admin-surface {
+  color: #f8fafc;
+}
+.qf-admin-surface .bg-gray-50,
+.qf-admin-surface .bg-gray-100,
+.qf-admin-surface .bg-white {
+  background-color: rgba(7, 16, 31, 0.92) !important;
+}
+.qf-admin-surface .text-gray-900,
+.qf-admin-surface .text-gray-800,
+.qf-admin-surface .text-gray-700 {
+  color: #f1f5f9 !important;
+}
+.qf-admin-surface .text-gray-600,
+.qf-admin-surface .text-gray-500,
+.qf-admin-surface .text-gray-400 {
+  color: #94a3b8 !important;
+}
+.qf-admin-surface .border-gray-100,
+.qf-admin-surface .border-gray-200,
+.qf-admin-surface .border-gray-300 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.qf-admin-surface input:not([type="checkbox"]):not([type="radio"]),
+.qf-admin-surface select,
+.qf-admin-surface textarea {
+  border-color: rgba(255, 255, 255, 0.11) !important;
+  background: #07101f !important;
+  color: #f8fafc !important;
+}
+.qf-admin-surface input::placeholder,
+.qf-admin-surface textarea::placeholder {
+  color: #64748b !important;
+}
+.qf-admin-surface .shadow-sm,
+.qf-admin-surface .shadow-md,
+.qf-admin-surface .shadow-lg,
+.qf-admin-surface .shadow-xl {
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.2) !important;
+}
+.qf-admin-surface .bg-blue-50,
+.qf-admin-surface .bg-teal-50,
+.qf-admin-surface .bg-emerald-50,
+.qf-admin-surface .bg-green-50 {
+  background-color: rgba(34, 211, 238, 0.07) !important;
+}
+.qf-admin-surface .bg-red-50 {
+  background-color: rgba(251, 113, 133, 0.08) !important;
+}
+.qf-admin-surface .sticky {
+  scroll-margin-top: 1rem;
+}
+.qf-sidebar-scroll {
+  scrollbar-gutter: stable;
+}

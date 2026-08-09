@@ -1,0 +1,257 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  BookOpen,
+  BriefcaseBusiness,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  FileText,
+  FileUser,
+  FolderCog,
+  Home,
+  LogOut,
+  Mail,
+  MailCheck,
+  Menu,
+  Newspaper,
+  PanelsTopLeft,
+  ShieldAlert,
+  ShieldCheck,
+  Tags,
+  UserRoundSearch,
+  Users,
+  Video,
+  X,
+} from "lucide-react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useGetMeQuery, useLogoutMutation } from "@/src/lib/features/auth/auth-api";
+import { useGetProfileQuery } from "@/src/lib/features/profiles/profile-api";
+
+type NavigationItem = {
+  href: string;
+  label: string;
+  icon: typeof Home;
+  exact?: boolean;
+  permission: string;
+};
+
+const navigation: NavigationItem[] = [
+  { href: "/dashboard", label: "Overview", icon: Home, exact: true, permission: "dashboard.view" },
+  { href: "/dashboard/courses", label: "Courses", icon: BookOpen, permission: "courses.manage" },
+  { href: "/dashboard/course-categories", label: "Course Categories", icon: Tags, permission: "course-categories.manage" },
+  { href: "/dashboard/blog", label: "Blog", icon: Newspaper, permission: "blogs.manage" },
+  { href: "/dashboard/blog-category", label: "Blog Categories", icon: Tags, permission: "blog-categories.manage" },
+  { href: "/dashboard/videos", label: "Videos", icon: Video, permission: "videos.manage" },
+  { href: "/dashboard/services", label: "Service Pages", icon: PanelsTopLeft, permission: "services.manage" },
+  { href: "/dashboard/job", label: "Jobs", icon: BriefcaseBusiness, permission: "jobs.manage" },
+  { href: "/dashboard/application", label: "Applications", icon: FileUser, permission: "applications.manage" },
+  { href: "/dashboard/lead", label: "Leads", icon: UserRoundSearch, permission: "leads.manage" },
+  { href: "/dashboard/user", label: "Users & Profiles", icon: Users, permission: "users.manage" },
+  { href: "/dashboard/document", label: "Documents", icon: FileText, permission: "documents.manage" },
+  { href: "/dashboard/file", label: "Files", icon: FolderCog, permission: "files.manage" },
+  { href: "/dashboard/email", label: "Bulk Email", icon: Mail, permission: "email.manage" },
+  { href: "/dashboard/queue", label: "Queues", icon: MailCheck, permission: "queues.manage" },
+  { href: "/dashboard/roles", label: "Roles & Access", icon: ShieldCheck, permission: "roles.manage" },
+  { href: "/dashboard/security", label: "Security", icon: ShieldAlert, permission: "security.manage" },
+];
+
+function getRouteLabel(pathname: string): string {
+  const match = [...navigation]
+    .sort((a, b) => b.href.length - a.href.length)
+    .find((item) => item.exact ? pathname === item.href : pathname === item.href || pathname.startsWith(`${item.href}/`));
+  return match?.label ?? "Dashboard";
+}
+
+export function AdminShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [logout, logoutState] = useLogoutMutation();
+  const me = useGetMeQuery();
+  const profile = useGetProfileQuery();
+
+  useEffect(() => {
+    setCollapsed(window.localStorage.getItem("qf-admin-sidebar-collapsed") === "true");
+  }, []);
+
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  function toggleCollapsed() {
+    setCollapsed((value) => {
+      const next = !value;
+      window.localStorage.setItem("qf-admin-sidebar-collapsed", String(next));
+      return next;
+    });
+  }
+
+  const user = me.data?.data;
+  const can = (permission: string) =>
+    user?.role === "super-admin" || Boolean(user?.permissions?.includes(permission));
+  const allowedNavigation = useMemo(
+    () => navigation.filter((item) => can(item.permission)),
+    [user?.permissions, user?.role],
+  );
+  const currentLabel = useMemo(() => getRouteLabel(pathname), [pathname]);
+  const currentNavigationItem = [...navigation]
+    .sort((a, b) => b.href.length - a.href.length)
+    .find((item) => item.exact ? pathname === item.href : pathname === item.href || pathname.startsWith(`${item.href}/`));
+  const hasPageAccess = !currentNavigationItem || can(currentNavigationItem.permission);
+  const email = user?.email ?? "Administrator";
+  const profilePicture = profile.data?.data.profilePicture?.url;
+  const initials = (profile.data?.data.fullName || email).split(/\s+|@/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "U";
+
+  return (
+    <div className="relative flex h-screen overflow-hidden bg-[#030712] text-white">
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_8%_4%,rgba(34,211,238,.10),transparent_26%),radial-gradient(circle_at_92%_12%,rgba(59,130,246,.10),transparent_28%)]" />
+
+      {mobileOpen ? (
+        <button
+          aria-label="Close dashboard navigation"
+          className="fixed inset-0 z-40 bg-black/70 lg:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      ) : null}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen min-h-0 flex-col border-r border-white/10 bg-[#050a14]/98 p-3 shadow-2xl transition-[width,transform] duration-300 lg:relative lg:inset-auto lg:translate-x-0 ${
+          collapsed ? "lg:w-20" : "lg:w-72"
+        } ${mobileOpen ? "w-72 translate-x-0" : "w-72 -translate-x-full"}`}
+      >
+        <div className="flex h-16 shrink-0 items-center justify-between gap-2 px-1">
+          <Link href="/" className="flex min-w-0 items-center gap-3 overflow-hidden">
+            <img
+              src="/logo.png"
+              alt="QuantumFinix"
+              className={`object-contain transition-all ${collapsed ? "h-9 w-12 object-left lg:w-12" : "h-10 w-[150px] object-left"}`}
+            />
+          </Link>
+          <button
+            type="button"
+            onClick={() => setMobileOpen(false)}
+            className="rounded-xl border border-white/10 p-2 lg:hidden"
+            aria-label="Close navigation"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <nav className="qf-sidebar-scroll mt-4 min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain pr-1">
+          {allowedNavigation.map((item) => {
+            const Icon = item.icon;
+            const selected = item.exact
+              ? pathname === item.href
+              : pathname === item.href || pathname.startsWith(`${item.href}/`);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                title={collapsed ? item.label : undefined}
+                className={`flex h-12 items-center rounded-xl text-sm font-bold transition ${
+                  collapsed ? "justify-center px-2" : "gap-3 px-4"
+                } ${
+                  selected
+                    ? "bg-cyan-300 text-slate-950 shadow-[0_0_28px_rgba(34,211,238,.18)]"
+                    : "text-slate-400 hover:bg-white/[0.05] hover:text-white"
+                }`}
+              >
+                <Icon size={19} className="shrink-0" />
+                <span className={collapsed ? "lg:hidden" : ""}>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="shrink-0 space-y-2 border-t border-white/10 pt-3">
+          <Link
+            href="/profile/personal"
+            title={collapsed ? "My profile" : undefined}
+            className={`flex h-11 items-center rounded-xl border border-white/10 text-sm font-bold text-slate-300 transition hover:border-cyan-300/30 ${
+              collapsed ? "justify-center px-2" : "justify-center px-4"
+            }`}
+          >
+            <Users size={17} className={collapsed ? "" : "mr-2"} />
+            <span className={collapsed ? "lg:hidden" : ""}>My profile</span>
+          </Link>
+          <button
+            type="button"
+            disabled={logoutState.isLoading}
+            onClick={() => void logout()}
+            title={collapsed ? "Sign out" : undefined}
+            className={`flex h-11 w-full items-center rounded-xl border border-rose-300/15 bg-rose-300/[0.06] text-sm font-bold text-rose-200 transition hover:bg-rose-300/[0.1] ${
+              collapsed ? "justify-center px-2" : "justify-center gap-2 px-4"
+            }`}
+          >
+            <LogOut size={17} />
+            <span className={collapsed ? "lg:hidden" : ""}>Sign out</span>
+          </button>
+          <button
+            type="button"
+            onClick={toggleCollapsed}
+            className="hidden h-10 w-full items-center justify-center rounded-xl border border-white/10 text-slate-400 transition hover:text-white lg:flex"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+          </button>
+        </div>
+      </aside>
+
+      <div className="relative z-10 flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
+        <header className="z-30 flex h-20 shrink-0 items-center justify-between border-b border-white/10 bg-[#030712]/92 px-5 backdrop-blur-xl lg:px-8">
+          <div className="flex min-w-0 items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setMobileOpen(true)}
+              className="rounded-xl border border-white/10 p-2.5 lg:hidden"
+              aria-label="Open dashboard navigation"
+            >
+              <Menu size={20} />
+            </button>
+            <div className="min-w-0">
+              <p className="truncate text-[10px] font-black uppercase tracking-[0.2em] text-cyan-300">Admin workspace</p>
+              <div className="mt-1 flex min-w-0 items-center gap-2 text-sm">
+                <Link href="/dashboard" className="font-semibold text-slate-500 transition hover:text-white">Dashboard</Link>
+                <ChevronRight size={14} className="shrink-0 text-slate-700" />
+                <span className="truncate font-bold text-slate-200">{currentLabel}</span>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              href="/"
+              target="_blank"
+              className="hidden items-center gap-2 rounded-xl border border-white/10 px-4 py-2 text-sm font-bold transition hover:border-cyan-300/30 md:inline-flex"
+            >
+              Public site <ExternalLink size={15} />
+            </Link>
+            <div className="hidden max-w-52 text-right sm:block">
+              <p className="truncate text-xs font-bold text-slate-200">{email}</p>
+              <p className="mt-0.5 text-[10px] font-black uppercase tracking-widest text-cyan-300">{user?.role?.replace(/-/g, " ") || "Administrator"}</p>
+            </div>
+            <Link href="/profile/personal" className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full border border-white/15 bg-white/[0.06] text-xs font-black text-slate-200" aria-label="Open my profile">
+              {profilePicture ? <img src={profilePicture} alt={profile.data?.data.fullName || "Profile"} className="h-full w-full object-cover" /> : initials}
+            </Link>
+          </div>
+        </header>
+
+        <main className="qf-admin-surface min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-7 lg:px-8">
+          <div className="mx-auto w-full max-w-[1600px]">
+            {hasPageAccess ? children : (
+              <div className="grid min-h-[60vh] place-items-center">
+                <div className="max-w-lg rounded-3xl border border-amber-300/20 bg-amber-300/[0.06] p-8 text-center">
+                  <ShieldAlert className="mx-auto text-amber-200" size={34} />
+                  <h1 className="mt-5 text-2xl font-black">Module access required</h1>
+                  <p className="mt-3 leading-7 text-slate-400">Your role does not include access to this dashboard module. Ask a Super Admin to update the role permissions.</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}

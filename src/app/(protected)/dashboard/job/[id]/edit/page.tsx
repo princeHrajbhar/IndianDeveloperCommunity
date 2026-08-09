@@ -1,0 +1,5 @@
+import { JobEditor } from "@/src/components/admin/jobs-panel";
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return <JobEditor jobId={id} />;
+}
