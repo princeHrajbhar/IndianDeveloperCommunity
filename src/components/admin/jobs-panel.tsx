@@ -1480,8 +1480,29 @@ function buildPayload(
     );
   }
 
-  const iso = (value: string) =>
-    value ? new Date(value).toISOString() : undefined;
+  const iso = (value: string, label: string) => {
+    if (!value) return undefined;
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      throw new Error(`${label} is not a valid date/time.`);
+    }
+    return date.toISOString();
+  };
+
+  const deadline = iso(form.deadline, "Application deadline");
+  const expiresAt = iso(form.expiresAt, "Job expiry date");
+
+  if (deadline && expiresAt && new Date(deadline) > new Date(expiresAt)) {
+    throw new Error("Application deadline cannot be later than the job expiry date.");
+  }
+
+  const now = Date.now();
+  if (deadline && new Date(deadline).getTime() <= now) {
+    throw new Error("Application deadline must be in the future.");
+  }
+  if (expiresAt && new Date(expiresAt).getTime() <= now) {
+    throw new Error("Job expiry date must be in the future.");
+  }
 
   const screeningQuestions = form.screeningQuestions
     .filter((item) => item.question.trim())
@@ -1569,7 +1590,7 @@ function buildPayload(
     benefits: splitLines(form.benefits),
     perks: splitLines(form.perks),
     applicationSettings: {
-      ...(iso(form.deadline) ? { deadline: iso(form.deadline) } : {}),
+      ...(deadline ? { deadline } : {}),
       vacancies: Math.max(1, Number(form.vacancies || 1)),
       allowReferral: form.allowReferral,
       ...(form.externalApplyLink.trim()
@@ -1593,8 +1614,8 @@ function buildPayload(
         : {}),
     isFeatured: form.isFeatured,
     isUrgentHiring: form.isUrgentHiring,
-    ...(iso(form.expiresAt)
-      ? { expiresAt: iso(form.expiresAt) }
+    ...(expiresAt
+      ? { expiresAt }
       : allowNulls
         ? { expiresAt: null }
         : {}),

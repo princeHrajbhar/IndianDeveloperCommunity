@@ -402,7 +402,7 @@ function JobApplicationForm() {
         !validDocument(coverLetter))
     ) {
       setLocalError(
-        "Resume and cover letter must be PDF/DOC/DOCX; an optional photo must be JPG, PNG, WEBP, GIF, or AVIF. Maximum size is 10 MB.",
+        "Resume and an optional cover letter must be PDF/DOC/DOCX; an optional photo must be JPG, PNG, WEBP, GIF, or AVIF. Maximum size is 10 MB.",
       );
 
       return;
@@ -1067,7 +1067,7 @@ function JobApplicationForm() {
             />
 
             <FileField
-              label="Cover letter"
+              label="Cover letter (optional)"
               accept=".pdf,.doc,.docx"
               file={coverLetter}
               onChange={

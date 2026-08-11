@@ -16,14 +16,20 @@ export function getApiErrorMessage(error: unknown): string {
     if (typeof error.data === "string" && error.data.trim()) return error.data;
 
     const payload = error.data as ErrorPayload | undefined;
-    if (typeof payload?.message === "string") return payload.message;
-    if (typeof payload?.error?.message === "string") return payload.error.message;
+
+    // Validation endpoints often return a generic top-level "Validation failed"
+    // message plus a useful field-level reason. Show the actionable reason first.
+    const validationError = payload?.errors?.find((item) => typeof item.message === "string");
+    if (typeof validationError?.message === "string") {
+      const field = typeof validationError.field === "string" ? validationError.field : "";
+      return field ? `${field}: ${validationError.message}` : validationError.message;
+    }
 
     const issue = payload?.issues?.find((item) => typeof item.message === "string");
     if (typeof issue?.message === "string") return issue.message;
 
-    const validationError = payload?.errors?.find((item) => typeof item.message === "string");
-    if (typeof validationError?.message === "string") return validationError.message;
+    if (typeof payload?.error?.message === "string") return payload.error.message;
+    if (typeof payload?.message === "string") return payload.message;
 
     if (error.status === "FETCH_ERROR") {
       return "Unable to reach the API. Check that the backend is running.";

@@ -5,11 +5,13 @@ import { usePathname } from "next/navigation";
 import {
   BookOpen,
   BriefcaseBusiness,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
   FileText,
   FileUser,
+  Folder,
   FolderCog,
   Home,
   LogOut,
@@ -38,24 +40,84 @@ type NavigationItem = {
   permission: string;
 };
 
+type NavigationGroup = {
+  label: string;
+  icon: typeof Home;
+  items: NavigationItem[];
+};
+
+const overviewNavigation: NavigationItem = {
+  href: "/dashboard",
+  label: "Overview",
+  icon: Home,
+  exact: true,
+  permission: "dashboard.view",
+};
+
+const navigationGroups: NavigationGroup[] = [
+  {
+    label: "Content Management",
+    icon: Folder,
+    items: [
+      { href: "/dashboard/courses", label: "Courses", icon: BookOpen, permission: "courses.manage" },
+      { href: "/dashboard/course-categories", label: "Course Categories", icon: Tags, permission: "course-categories.manage" },
+      { href: "/dashboard/blog", label: "Blog", icon: Newspaper, permission: "blogs.manage" },
+      { href: "/dashboard/blog-category", label: "Blog Categories", icon: Tags, permission: "blog-categories.manage" },
+      { href: "/dashboard/videos", label: "Videos", icon: Video, permission: "videos.manage" },
+      { href: "/dashboard/services", label: "Service Pages", icon: PanelsTopLeft, permission: "services.manage" },
+    ],
+  },
+  {
+    label: "Recruitment",
+    icon: BriefcaseBusiness,
+    items: [
+      { href: "/dashboard/job", label: "Jobs", icon: BriefcaseBusiness, permission: "jobs.manage" },
+      { href: "/dashboard/application", label: "Applications", icon: FileUser, permission: "applications.manage" },
+    ],
+  },
+  {
+    label: "Lead Management",
+    icon: UserRoundSearch,
+    items: [
+      { href: "/dashboard/lead", label: "Leads", icon: UserRoundSearch, permission: "leads.manage" },
+    ],
+  },
+  {
+    label: "User Management",
+    icon: Users,
+    items: [
+      { href: "/dashboard/user", label: "Users & Profiles", icon: Users, permission: "users.manage" },
+      { href: "/dashboard/roles", label: "Roles & Access", icon: ShieldCheck, permission: "roles.manage" },
+    ],
+  },
+  {
+    label: "File Management",
+    icon: FolderCog,
+    items: [
+      { href: "/dashboard/document", label: "Documents", icon: FileText, permission: "documents.manage" },
+      { href: "/dashboard/file", label: "Files", icon: FolderCog, permission: "files.manage" },
+    ],
+  },
+  {
+    label: "Communications",
+    icon: Mail,
+    items: [
+      { href: "/dashboard/email", label: "Bulk Email", icon: Mail, permission: "email.manage" },
+      { href: "/dashboard/queue", label: "Queues", icon: MailCheck, permission: "queues.manage" },
+    ],
+  },
+  {
+    label: "Administration",
+    icon: ShieldAlert,
+    items: [
+      { href: "/dashboard/security", label: "Security", icon: ShieldAlert, permission: "security.manage" },
+    ],
+  },
+];
+
 const navigation: NavigationItem[] = [
-  { href: "/dashboard", label: "Overview", icon: Home, exact: true, permission: "dashboard.view" },
-  { href: "/dashboard/courses", label: "Courses", icon: BookOpen, permission: "courses.manage" },
-  { href: "/dashboard/course-categories", label: "Course Categories", icon: Tags, permission: "course-categories.manage" },
-  { href: "/dashboard/blog", label: "Blog", icon: Newspaper, permission: "blogs.manage" },
-  { href: "/dashboard/blog-category", label: "Blog Categories", icon: Tags, permission: "blog-categories.manage" },
-  { href: "/dashboard/videos", label: "Videos", icon: Video, permission: "videos.manage" },
-  { href: "/dashboard/services", label: "Service Pages", icon: PanelsTopLeft, permission: "services.manage" },
-  { href: "/dashboard/job", label: "Jobs", icon: BriefcaseBusiness, permission: "jobs.manage" },
-  { href: "/dashboard/application", label: "Applications", icon: FileUser, permission: "applications.manage" },
-  { href: "/dashboard/lead", label: "Leads", icon: UserRoundSearch, permission: "leads.manage" },
-  { href: "/dashboard/user", label: "Users & Profiles", icon: Users, permission: "users.manage" },
-  { href: "/dashboard/document", label: "Documents", icon: FileText, permission: "documents.manage" },
-  { href: "/dashboard/file", label: "Files", icon: FolderCog, permission: "files.manage" },
-  { href: "/dashboard/email", label: "Bulk Email", icon: Mail, permission: "email.manage" },
-  { href: "/dashboard/queue", label: "Queues", icon: MailCheck, permission: "queues.manage" },
-  { href: "/dashboard/roles", label: "Roles & Access", icon: ShieldCheck, permission: "roles.manage" },
-  { href: "/dashboard/security", label: "Security", icon: ShieldAlert, permission: "security.manage" },
+  overviewNavigation,
+  ...navigationGroups.flatMap((group) => group.items),
 ];
 
 function getRouteLabel(pathname: string): string {
@@ -65,10 +127,45 @@ function getRouteLabel(pathname: string): string {
   return match?.label ?? "Dashboard";
 }
 
+function SidebarLink({
+  item,
+  pathname,
+  collapsed,
+  nested = false,
+}: {
+  item: NavigationItem;
+  pathname: string;
+  collapsed: boolean;
+  nested?: boolean;
+}) {
+  const Icon = item.icon;
+  const selected = item.exact
+    ? pathname === item.href
+    : pathname === item.href || pathname.startsWith(`${item.href}/`);
+
+  return (
+    <Link
+      href={item.href}
+      title={collapsed ? item.label : undefined}
+      className={`flex items-center rounded-xl text-sm font-bold transition ${
+        nested ? "h-10" : "h-12"
+      } ${collapsed ? "justify-center px-2" : nested ? "gap-3 px-3" : "gap-3 px-4"} ${
+        selected
+          ? "bg-cyan-300 text-slate-950 shadow-[0_0_28px_rgba(34,211,238,.18)]"
+          : "text-slate-400 hover:bg-white/[0.05] hover:text-white"
+      }`}
+    >
+      <Icon size={nested ? 17 : 19} className="shrink-0" />
+      <span className={collapsed ? "lg:hidden" : ""}>{item.label}</span>
+    </Link>
+  );
+}
+
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
   const [logout, logoutState] = useLogoutMutation();
   const me = useGetMeQuery();
   const profile = useGetProfileQuery();
@@ -79,6 +176,22 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setMobileOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const activeGroup = navigationGroups.find((group) =>
+      group.items.some((item) =>
+        item.exact
+          ? pathname === item.href
+          : pathname === item.href || pathname.startsWith(`${item.href}/`),
+      ),
+    );
+    if (!activeGroup) return;
+    setExpandedGroups((current) =>
+      current[activeGroup.label] === undefined
+        ? { ...current, [activeGroup.label]: true }
+        : current,
+    );
   }, [pathname]);
 
   function toggleCollapsed() {
@@ -92,8 +205,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const user = me.data?.data;
   const can = (permission: string) =>
     user?.role === "super-admin" || Boolean(user?.permissions?.includes(permission));
-  const allowedNavigation = useMemo(
-    () => navigation.filter((item) => can(item.permission)),
+  const allowedGroups = useMemo(
+    () => navigationGroups
+      .map((group) => ({ ...group, items: group.items.filter((item) => can(item.permission)) }))
+      .filter((group) => group.items.length > 0),
     [user?.permissions, user?.role],
   );
   const currentLabel = useMemo(() => getRouteLabel(pathname), [pathname]);
@@ -140,28 +255,68 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </button>
         </div>
 
-        <nav className="qf-sidebar-scroll mt-4 min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain pr-1">
-          {allowedNavigation.map((item) => {
-            const Icon = item.icon;
-            const selected = item.exact
-              ? pathname === item.href
-              : pathname === item.href || pathname.startsWith(`${item.href}/`);
+        <nav className="qf-sidebar-scroll mt-4 min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain pr-1">
+          {can(overviewNavigation.permission) ? (
+            <SidebarLink
+              item={overviewNavigation}
+              pathname={pathname}
+              collapsed={collapsed}
+            />
+          ) : null}
+
+          {allowedGroups.map((group) => {
+            const GroupIcon = group.icon;
+            const groupActive = group.items.some((item) =>
+              item.exact
+                ? pathname === item.href
+                : pathname === item.href || pathname.startsWith(`${item.href}/`),
+            );
+            const expanded = expandedGroups[group.label] ?? groupActive;
+
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                title={collapsed ? item.label : undefined}
-                className={`flex h-12 items-center rounded-xl text-sm font-bold transition ${
-                  collapsed ? "justify-center px-2" : "gap-3 px-4"
-                } ${
-                  selected
-                    ? "bg-cyan-300 text-slate-950 shadow-[0_0_28px_rgba(34,211,238,.18)]"
-                    : "text-slate-400 hover:bg-white/[0.05] hover:text-white"
-                }`}
-              >
-                <Icon size={19} className="shrink-0" />
-                <span className={collapsed ? "lg:hidden" : ""}>{item.label}</span>
-              </Link>
+              <div key={group.label} className="rounded-2xl border border-white/[0.06] bg-white/[0.015] p-1.5">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setExpandedGroups((current) => ({
+                      ...current,
+                      [group.label]: !(current[group.label] ?? groupActive),
+                    }))
+                  }
+                  title={collapsed ? group.label : undefined}
+                  aria-expanded={expanded}
+                  className={`flex h-10 w-full items-center rounded-xl text-xs font-black uppercase tracking-[0.12em] transition ${
+                    collapsed ? "justify-center px-2" : "gap-3 px-3"
+                  } ${
+                    groupActive
+                      ? "text-cyan-200"
+                      : "text-slate-500 hover:bg-white/[0.04] hover:text-slate-300"
+                  }`}
+                >
+                  <GroupIcon size={17} className="shrink-0" />
+                  <span className={`min-w-0 flex-1 truncate text-left ${collapsed ? "lg:hidden" : ""}`}>
+                    {group.label}
+                  </span>
+                  <ChevronDown
+                    size={15}
+                    className={`${collapsed ? "hidden" : ""} shrink-0 transition-transform ${expanded ? "rotate-180" : ""}`}
+                  />
+                </button>
+
+                {expanded ? (
+                  <div className="mt-1 space-y-1">
+                    {group.items.map((item) => (
+                      <SidebarLink
+                        key={item.href}
+                        item={item}
+                        pathname={pathname}
+                        collapsed={collapsed}
+                        nested
+                      />
+                    ))}
+                  </div>
+                ) : null}
+              </div>
             );
           })}
         </nav>
