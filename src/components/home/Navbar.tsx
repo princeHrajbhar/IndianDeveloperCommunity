@@ -8,36 +8,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useGetMeQuery } from "@/src/lib/features/auth/auth-api";
 import { useGetPublishedServicePagesQuery } from "@/src/lib/features/service-pages/service-page-api";
 
-type DropdownName = "services" | "more" | null;
+type DropdownName = "buy" | "build" | "grow" | "more" | null;
 
 type DropdownItem = {
   title: string;
   description: string;
   href: string;
 };
-
-const staticServices: DropdownItem[] = [
-  {
-    title: "AI Software Development",
-    description: "Custom AI products designed around your business.",
-    href: "/services/ai-software-development",
-  },
-  {
-    title: "Custom Software Development",
-    description: "Scalable web, mobile, cloud and enterprise software.",
-    href: "/services/custom-software-development",
-  },
-  {
-    title: "Automation & Integration",
-    description: "Automate workflows and connect your existing systems.",
-    href: "/services/automation-integration",
-  },
-  {
-    title: "Research & Development",
-    description: "Future-focused technology research and experimentation.",
-    href: "/services/research-development",
-  },
-];
 
 const moreItems: DropdownItem[] = [
   {
@@ -49,16 +26,6 @@ const moreItems: DropdownItem[] = [
     title: "About",
     description: "Learn more about QuantumFinix, our mission and our team.",
     href: "/about",
-  },
-  {
-    title: "Videos",
-    description: "Watch product explainers, tutorials and technology videos.",
-    href: "/videos",
-  },
-  {
-    title: "Case Studies",
-    description: "Explore real projects, solutions and measurable outcomes.",
-    href: "/case-studies",
   },
 ];
 
@@ -76,18 +43,25 @@ export default function Navbar() {
     { page: 1, limit: 100 },
     { refetchOnMountOrArgChange: true, refetchOnFocus: true },
   );
-  const services = useMemo<DropdownItem[]>(() => {
-    const dynamic = (publishedServices.data?.data ?? []).map((item) => ({
-      title: item.title,
-      description: item.description || item.seoDescription || "Explore this QuantumFinix service.",
-      href: `/services/${item.slug}`,
-    }));
-    const byHref = new Map<string, DropdownItem>();
-    [...dynamic, ...staticServices].forEach((item) => {
-      if (!byHref.has(item.href)) byHref.set(item.href, item);
+  const serviceItems = useMemo(() => {
+    const grouped: Record<"buy" | "build" | "grow", DropdownItem[]> = {
+      buy: [],
+      build: [],
+      grow: [],
+    };
+    (publishedServices.data?.data ?? []).forEach((item) => {
+      const category = item.category || "build";
+      grouped[category].push({
+        title: item.title,
+        description: item.description || item.seoDescription || "Explore this QuantumFinix service.",
+        href: `/services/${item.slug}`,
+      });
     });
-    return [...byHref.values()];
+    return grouped;
   }, [publishedServices.data]);
+  const buyItems = serviceItems.buy;
+  const buildItems = serviceItems.build;
+  const growItems = serviceItems.grow;
 
   const [desktopDropdown, setDesktopDropdown] =
     useState<DropdownName>(null);
@@ -161,28 +135,35 @@ export default function Navbar() {
           className="hidden items-center gap-1 xl:flex"
         >
           <DesktopDropdown
-            name="services"
-            label="Services"
-            items={services}
+            name="buy"
+            label="Buy"
+            items={buyItems}
             activeDropdown={desktopDropdown}
             setActiveDropdown={setDesktopDropdown}
+            showViewAll={false}
           />
 
-          <DesktopLink
-            label="AI Solutions"
-            href="/ai-solutions"
-            onClick={closeAllMenus}
+          <DesktopDropdown
+            name="build"
+            label="Build"
+            items={buildItems}
+            activeDropdown={desktopDropdown}
+            setActiveDropdown={setDesktopDropdown}
+            showViewAll={false}
+          />
+
+          <DesktopDropdown
+            name="grow"
+            label="Grow"
+            items={growItems}
+            activeDropdown={desktopDropdown}
+            setActiveDropdown={setDesktopDropdown}
+            showViewAll={false}
           />
 
           <DesktopLink
             label="Careers"
             href="/job"
-            onClick={closeAllMenus}
-          />
-
-          <DesktopLink
-            label="Courses"
-            href="/course"
             onClick={closeAllMenus}
           />
 
@@ -335,29 +316,35 @@ export default function Navbar() {
             <div className="max-h-[calc(100dvh-80px)] overflow-y-auto px-5 py-5 sm:px-7">
               <div className="mx-auto max-w-2xl">
                 <MobileDropdown
-                  name="services"
-                  label="Services"
-                  items={services}
+                  name="buy"
+                  label="Buy"
+                  items={buyItems}
+                  activeDropdown={mobileDropdown}
+                  setActiveDropdown={setMobileDropdown}
+                  closeMenu={closeAllMenus}
+                />
+
+                <MobileDropdown
+                  name="build"
+                  label="Build"
+                  items={buildItems}
+                  activeDropdown={mobileDropdown}
+                  setActiveDropdown={setMobileDropdown}
+                  closeMenu={closeAllMenus}
+                />
+
+                <MobileDropdown
+                  name="grow"
+                  label="Grow"
+                  items={growItems}
                   activeDropdown={mobileDropdown}
                   setActiveDropdown={setMobileDropdown}
                   closeMenu={closeAllMenus}
                 />
 
                 <MobileLink
-                  label="AI Solutions"
-                  href="/ai-solutions"
-                  onClick={closeAllMenus}
-                />
-
-                <MobileLink
                   label="Careers"
                   href="/job"
-                  onClick={closeAllMenus}
-                />
-
-                <MobileLink
-                  label="Courses"
-                  href="/course"
                   onClick={closeAllMenus}
                 />
 
@@ -490,6 +477,8 @@ type DesktopDropdownProps = {
   activeDropdown: DropdownName;
   setActiveDropdown: (name: DropdownName) => void;
   showViewAll?: boolean;
+  viewAllHref?: string;
+  viewAllLabel?: string;
 };
 
 function DesktopDropdown({
@@ -499,6 +488,8 @@ function DesktopDropdown({
   activeDropdown,
   setActiveDropdown,
   showViewAll = true,
+  viewAllHref,
+  viewAllLabel,
 }: DesktopDropdownProps) {
   const open = activeDropdown === name;
 
@@ -588,11 +579,11 @@ function DesktopDropdown({
               {showViewAll ? (
                 <div className="mt-2 border-t border-white/[0.07] px-4 pb-2 pt-4">
                   <Link
-                    href={`/${name}`}
+                    href={viewAllHref ?? `/${name}`}
                     onClick={() => setActiveDropdown(null)}
                     className="group flex items-center justify-between text-xs font-medium text-cyan-200"
                   >
-                    View all {label.toLowerCase()}
+                    {viewAllLabel ?? `View all ${label.toLowerCase()}`}
 
                     <span className="transition group-hover:translate-x-1">
                       <ArrowIcon />
@@ -635,6 +626,8 @@ type MobileDropdownProps = {
   activeDropdown: DropdownName;
   setActiveDropdown: (name: DropdownName) => void;
   closeMenu: () => void;
+  viewAllHref?: string;
+  viewAllLabel?: string;
 };
 
 function MobileDropdown({
@@ -644,6 +637,8 @@ function MobileDropdown({
   activeDropdown,
   setActiveDropdown,
   closeMenu,
+  viewAllHref,
+  viewAllLabel,
 }: MobileDropdownProps) {
   const open = activeDropdown === name;
 
@@ -700,6 +695,17 @@ function MobileDropdown({
                   </span>
                 </Link>
               ))}
+
+              {viewAllHref ? (
+                <Link
+                  href={viewAllHref}
+                  onClick={closeMenu}
+                  className="mt-2 flex items-center justify-between border-t border-white/[0.07] px-4 pt-4 text-xs font-semibold text-cyan-200"
+                >
+                  {viewAllLabel ?? `View all ${label.toLowerCase()}`}
+                  <ArrowIcon />
+                </Link>
+              ) : null}
             </div>
           </motion.div>
         )}

@@ -194,7 +194,6 @@ function HeroSection({ reduceMotion }: { reduceMotion: boolean }) {
 
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
             <PrimaryButton href="/contact">Work With Us</PrimaryButton>
-            <SecondaryButton href="/work">Explore Our Work</SecondaryButton>
           </div>
 
           <div className="mt-12 flex flex-wrap gap-x-7 gap-y-3 border-t border-white/[0.08] pt-6 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
@@ -673,9 +672,6 @@ function FinalCtaSection({ reduceMotion }: { reduceMotion: boolean }) {
 
           <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
             <PrimaryButton href="/contact">Start a Conversation</PrimaryButton>
-            <SecondaryButton href="/case-studies">
-              View Case Studies
-            </SecondaryButton>
           </div>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-[9px] font-semibold uppercase tracking-[0.16em] text-slate-500">
@@ -742,24 +738,6 @@ function PrimaryButton({
     <a
       href={href}
       className="group inline-flex min-h-12 items-center justify-center gap-3 bg-cyan-300 px-6 text-sm font-bold text-slate-950 transition-colors hover:bg-cyan-200 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-2 focus:ring-offset-slate-950"
-    >
-      {children}
-      <ArrowIcon className="transition-transform duration-300 group-hover:translate-x-1" />
-    </a>
-  );
-}
-
-function SecondaryButton({
-  href,
-  children,
-}: {
-  href: string;
-  children: ReactNode;
-}) {
-  return (
-    <a
-      href={href}
-      className="group inline-flex min-h-12 items-center justify-center gap-3 border border-white/[0.13] px-6 text-sm font-bold text-white transition-colors hover:border-cyan-300/40 hover:bg-cyan-300/[0.05] focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-2 focus:ring-offset-slate-950"
     >
       {children}
       <ArrowIcon className="transition-transform duration-300 group-hover:translate-x-1" />

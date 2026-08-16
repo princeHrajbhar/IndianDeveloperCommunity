@@ -1,59 +1,75 @@
-import type { Metadata } from "next";
-// File: app/page.tsx
-import AICinematicShell from "@/src/components/background/AICinematicShell";
-import StartupCredibility from "@/src/components/home/StartupCredibility";
-import TechnologyTrustStrip from "@/src/components/home/TechnologyTrustStrip";
-import ProblemsOutcomes from "@/src/components/home/ProblemsOutcomes";
-import CoreServices from "@/src/components/home/CoreServices";
-import FeaturedCaseStudies from "@/src/components/home/FeaturedCaseStudies";
-import RemainingHomeSections from "@/src/components/home/RemainingHomeSections";
-import Hero from "@/src/components/home/Hero";
-import ControlledAIImplementation from "@/src/components/home/test/ControlledAIImplementation";
-import DifferentDevelopmentPartner from "@/src/components/home/test/DifferentDevelopmentPartner";
-import EngineeringKnowledge from "@/src/components/home/test/EngineeringKnowledge";
-import FoundingYearTransparency from "@/src/components/home/test/FoundingYearTransparency";
-import FrequentlyAskedQuestions from "@/src/components/home/test/FrequentlyAskedQuestions";
-import IndustrySolutionPathways from "@/src/components/home/test/IndustrySolutionPathways";
-import LongTermMission from "@/src/components/home/test/LongTermMission";
-import ProjectConversationsOpen from "@/src/components/home/test/ProjectConversationsOpen";
-import VisibleDeliverySystem from "@/src/components/home/test/VisibleDeliverySystem";
 
+import type { Metadata } from "next";
+
+import BuyBuildGrow from "@/src/components/home/BuyBuildGrow";
+import ClientFAQSection from "@/src/components/home/ClientFAQSection";
+import CustomSolutionsBuildStudio from "@/src/components/home/CustomSolutionsBuildStudio";
+import DigitalMarketingGrowthSystem from "@/src/components/home/DigitalMarketingGrowthSystem";
+import FeaturedSolutions from "@/src/components/home/FeaturedSolutions";
+import FinalCTAThreePaths from "@/src/components/home/FinalCTAThreePaths";
+import Hero from "@/src/components/home/Hero";
+import HowWeWorkProjectRunway from "@/src/components/home/HowWeWorkProjectRunway";
+import ProofCaseStudiesEvidenceBoard from "@/src/components/home/ProofCaseStudiesEvidenceBoard";
+import SEOContentHub from "@/src/components/home/SEOContentHub";
 
 export const metadata: Metadata = {
-  title: "AI, automation and software engineering",
-  description: "QuantumFinix builds responsible AI products, workflow automation, custom software and research-led digital systems for modern organizations.",
+  title:
+    "QuantumFinix | AI Software Development, Custom Software, Automation & Digital Marketing",
+
+  description:
+    "QuantumFinix builds AI software, custom software, business automation, API integrations and ready-made solutions, with digital marketing services including SEO, PPC, social media, email, content and CRO.",
+
+  alternates: {
+    canonical: "https://quantumfinix.com/",
+  },
+
+  openGraph: {
+    type: "website",
+    url: "https://quantumfinix.com/",
+    siteName: "QuantumFinix",
+    title:
+      "QuantumFinix | AI Software, Custom Development, Automation & Digital Growth",
+    description:
+      "AI software development, custom software, automation, integrations, ready-made solutions and digital marketing built around real business problems.",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title:
+      "QuantumFinix | AI Software, Custom Development, Automation & Digital Growth",
+    description:
+      "AI software development, custom software, automation, integrations, ready-made solutions and digital marketing built around real business problems.",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
-export default function Landing() {
+export default function Home() {
   return (
-    <>
+    <main>
       <Hero />
-       <AICinematicShell showLogoWatermark>
-      <TechnologyTrustStrip />
 
-      <StartupCredibility/>
-        {/* <ProblemsOutcomes /> */}
-   <CoreServices />
- {/* <FeaturedCaseStudies /> */}
-  {/* <RemainingHomeSections /> */}
-  <ControlledAIImplementation/>
-{/* <DifferentDevelopmentPartner/> */}
-{/* <EngineeringKnowledge/> */}
+      <BuyBuildGrow />
 
-<IndustrySolutionPathways/>
-<ProjectConversationsOpen/>
-<VisibleDeliverySystem/>
-<FoundingYearTransparency/>
-<FrequentlyAskedQuestions/>
-{/* <LongTermMission/> */}
+      <FeaturedSolutions />
 
+      <CustomSolutionsBuildStudio />
 
+      <DigitalMarketingGrowthSystem />
 
+      <ProofCaseStudiesEvidenceBoard />
 
+      <HowWeWorkProjectRunway />
 
+      <FinalCTAThreePaths />
 
-    </AICinematicShell>
-     
-    </>
+      <ClientFAQSection />
+
+      {/* Large crawlable SEO content near the bottom */}
+      <SEOContentHub />
+    </main>
   );
 }
