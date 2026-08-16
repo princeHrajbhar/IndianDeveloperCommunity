@@ -84,9 +84,9 @@ export default function Footer() {
             <FooterBrand />
 
             <p className="mt-6 max-w-lg text-sm leading-7 text-slate-500">
-              QuantumFinix creates intelligent software, advanced AI
-              solutions and future-focused research for organizations
-              ready to build, innovate and grow.
+              QuantumFinix creates intelligent software, advanced AI solutions
+              and future-focused research for organizations ready to build,
+              innovate and grow.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -136,9 +136,7 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col gap-6 pt-8 text-xs text-slate-600 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {currentYear} QuantumFinix. All rights reserved.
-          </p>
+          <p>© {currentYear} QuantumFinix. All rights reserved.</p>
 
           <div className="flex flex-wrap items-center gap-5">
             <a
@@ -167,32 +165,33 @@ function FooterBrand() {
       aria-label="QuantumFinix home"
       className="group inline-flex items-center gap-4"
     >
-      <span className="relative flex h-14 w-14 items-center justify-center">
-        <span className="absolute inset-1 rounded-full bg-cyan-400/20 opacity-60 blur-xl transition group-hover:opacity-100" />
+      {/* Logo — no card / no box */}
+      <div className="relative flex h-20 w-20 shrink-0 items-center justify-center sm:h-24 sm:w-24">
+        {/* subtle glow only */}
+        <div className="absolute inset-2 rounded-full bg-cyan-400/15 blur-2xl transition duration-500 group-hover:bg-cyan-400/25" />
 
-        <span className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-cyan-300/20 bg-[#04111e] shadow-[inset_0_0_25px_rgba(34,211,238,0.1)]">
-          <Image
-            src="/quantumfinix-mark.png"
-            alt=""
-            width={112}
-            height={112}
-            className="h-full w-full object-contain p-1"
-          />
-        </span>
-      </span>
+        <Image
+          src="/quantumfinix-mark.png"
+          alt="QuantumFinix"
+          width={180}
+          height={180}
+          priority
+          className="relative h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
+        />
+      </div>
 
-      <span>
-        <span className="block text-base font-bold tracking-[0.13em] text-white">
+      <div>
+        <div className="text-lg font-bold tracking-[0.13em] text-white sm:text-xl">
           QUANTUM
-          <span className="bg-gradient-to-r from-cyan-300 to-blue-500 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
             FINIX
           </span>
-        </span>
+        </div>
 
-        <span className="mt-1 block text-[8px] uppercase tracking-[0.3em] text-slate-600">
+        <div className="mt-1.5 text-[8px] uppercase tracking-[0.3em] text-slate-600 transition-colors duration-300 group-hover:text-cyan-200/60">
           Innovate intelligently
-        </span>
-      </span>
+        </div>
+      </div>
     </Link>
   );
 }
