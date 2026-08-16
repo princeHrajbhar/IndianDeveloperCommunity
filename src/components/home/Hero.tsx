@@ -22,24 +22,24 @@ const particles = Array.from({ length: 32 }, (_, index) => ({
 }));
 
 const capabilities = [
-  "Generative AI",
-  "Intelligent Automation",
-  "Custom Software",
-  "Applied Research",
+  "AI",
+  "Automation",
+  "Software",
+  "Digital Growth",
 ];
 
 const highlights = [
   {
-    title: "AI Strategy",
-    description: "From opportunity discovery to a practical AI roadmap.",
+    title: "AI",
+    description: "AI-powered systems built around real business needs.",
   },
   {
-    title: "Product Engineering",
-    description: "Production-ready software built for scale and reliability.",
+    title: "Software",
+    description: "Custom software designed for your workflows and growth.",
   },
   {
-    title: "Future Research",
-    description: "Exploring intelligent systems and emerging technology.",
+    title: "Digital Growth",
+    description: "Marketing systems designed to create measurable growth.",
   },
 ];
 
@@ -248,7 +248,7 @@ export default function Hero() {
                 <span className="relative h-2 w-2 rounded-full bg-emerald-300" />
               </span>
 
-              AI software and research centre
+              AI • Software • Automation • Digital Growth
             </motion.div>
 
             <h1 className="max-w-full font-black uppercase leading-[0.92] tracking-[-0.045em] sm:leading-[0.88] sm:tracking-[-0.06em]">
@@ -270,7 +270,7 @@ export default function Hero() {
                 }}
                 className="block break-words text-[clamp(2.45rem,12.5vw,3.4rem)] text-white sm:text-[clamp(3.4rem,7.2vw,7.4rem)] lg:whitespace-nowrap lg:text-[clamp(3.8rem,5.25vw,5.75rem)] xl:text-[clamp(4.5rem,5.4vw,6.25rem)]"
               >
-                Intelligence
+                Build.
               </motion.span>
 
               <motion.span
@@ -291,7 +291,7 @@ export default function Hero() {
                 }}
                 className="block break-words bg-gradient-to-r from-blue-400 via-cyan-100 to-cyan-400 bg-clip-text text-[clamp(2.45rem,12.5vw,3.4rem)] text-transparent sm:text-[clamp(3.4rem,7.2vw,7.4rem)]"
               >
-                Without Limits.
+                Automate. Grow.
               </motion.span>
             </h1>
 
@@ -310,10 +310,8 @@ export default function Hero() {
               }}
               className="mt-6 max-w-2xl text-[15px] leading-7 text-slate-400 sm:mt-8 sm:text-lg sm:leading-8"
             >
-              QuantumFinix creates advanced AI software,
-              intelligent automation and future-focused
-              research that turns bold ideas into practical,
-              scalable innovation.
+              AI-powered solutions, custom software, business automation
+              and digital marketing designed to solve real business problems.
             </motion.p>
 
             <motion.div
@@ -347,31 +345,36 @@ export default function Hero() {
                   <span className="absolute inset-0 -translate-x-[140%] bg-gradient-to-r from-transparent via-white/65 to-transparent transition-transform duration-700 group-hover:translate-x-[140%]" />
 
                   <span className="relative flex items-center gap-3">
-                    Book a Free Consultation
+                    Explore Solutions
                     <ArrowIcon />
                   </span>
                 </Link>
               </motion.div>
 
-              <motion.div
-                whileHover={{
-                  y: -3,
-                }}
-                whileTap={{
-                  scale: 0.98,
-                }}
+            </motion.div>
+
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                duration: 0.7,
+                delay: 0.8,
+              }}
+              className="mt-4"
+            >
+              <Link
+                href="/digital-marketing"
+                className="inline-flex items-center gap-2 text-sm font-medium text-cyan-200/75 transition hover:text-cyan-100"
               >
-                <Link
-                  href="/ai-solutions"
-                  className="group inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-full border border-white/10 bg-white/[0.035] px-7 text-sm font-semibold text-white backdrop-blur-xl transition hover:border-cyan-300/30 hover:bg-cyan-300/[0.06] sm:w-auto"
-                >
-                  Explore AI Solutions
-
-                  <span className="transition group-hover:translate-x-1">
-                    <ArrowIcon />
-                  </span>
-                </Link>
-              </motion.div>
+                Explore Digital Marketing
+                <span aria-hidden="true">→</span>
+              </Link>
             </motion.div>
 
             <motion.div
@@ -579,26 +582,26 @@ export default function Hero() {
 
               <div className="absolute -bottom-8 text-center sm:-bottom-11">
                 <p className="text-[9px] uppercase tracking-[0.35em] text-cyan-100/50">
-                  Quantum intelligence
+                  AI • Software • Automation • Marketing
                 </p>
 
                 <p className="mt-1 text-xs font-semibold tracking-[0.2em] text-cyan-100">
-                  ACTIVE
+                  CONNECTED
                 </p>
               </div>
             </motion.div>
 
             <FloatingCard
               className="left-0 top-[17%]"
-              title="AI model status"
-              value="Learning"
+              title="AI"
+              value="Intelligence"
               delay={0}
             />
 
             <FloatingCard
               className="bottom-[14%] right-0"
-              title="Innovation engine"
-              value="Future ready"
+              title="Automation"
+              value="Connected"
               delay={0.7}
             />
 
@@ -616,11 +619,11 @@ export default function Hero() {
             >
               <p>
                 <span className="text-blue-300">
-                  const
+                  AI
                 </span>{" "}
-                future ={" "}
+                ↔{" "}
                 <span className="text-cyan-100">
-                  innovate()
+                  Software ↔ Automation ↔ Marketing
                 </span>
               </p>
 

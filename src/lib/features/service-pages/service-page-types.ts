@@ -2,6 +2,7 @@ import type { Pagination } from "@/src/lib/api/api-types";
 
 export type ServicePageStatus = "draft" | "published";
 export type ServicePageRenderMode = "html" | "static-bundle";
+export type ServicePageCategory = "buy" | "build" | "grow";
 
 export interface ServicePageDto {
   _id: string;
@@ -9,6 +10,7 @@ export interface ServicePageDto {
   title: string;
   slug: string;
   status: ServicePageStatus;
+  category: ServicePageCategory;
   renderMode: ServicePageRenderMode;
   fullHtml?: string;
   bundleId?: string;

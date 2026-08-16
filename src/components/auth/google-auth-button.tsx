@@ -44,7 +44,8 @@ export function GoogleAuthButton({
   mode: "signin" | "signup";
   onAuthenticated: () => void | Promise<void>;
 }) {
-const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID?.trim();
+const clientId = "686028600171-m4ftm175uked3apemj8rdluqjb7ddkqa.apps.googleusercontent.com";
+
   const buttonRef = useRef<HTMLDivElement>(null);
   const [scriptReady, setScriptReady] = useState(false);
   const [error, setError] = useState("");

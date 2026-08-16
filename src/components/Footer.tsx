@@ -31,10 +31,6 @@ const footerSections = [
         href: "/about",
       },
       {
-        label: "Case Studies",
-        href: "/case-studies",
-      },
-      {
         label: "Careers",
         href: "/job",
       },
@@ -54,10 +50,6 @@ const footerSections = [
       {
         label: "Insights",
         href: "/insights",
-      },
-      {
-        label: "AI Solutions",
-        href: "/ai-solutions",
       },
       {
         label: "Privacy Policy",

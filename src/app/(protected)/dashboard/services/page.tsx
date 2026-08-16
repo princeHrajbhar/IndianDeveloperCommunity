@@ -31,6 +31,7 @@ import {
   useUpdateServicePageMutation,
 } from "@/src/lib/features/service-pages/service-page-api";
 import type {
+  ServicePageCategory,
   ServicePageDto,
   ServicePageStatus,
 } from "@/src/lib/features/service-pages/service-page-types";
@@ -133,7 +134,7 @@ export default function ServicePagesAdminPage() {
       } else {
         const result = await createPage(body).unwrap();
         setEditing(result.data);
-        setNotice(result.data.status === "published" ? "Service page created, published and added to the Services menu." : "Service page created as a draft. Publish it to add it to the Services menu.");
+        setNotice(result.data.status === "published" ? "Service page created, published and added to the selected Buy/Build/Grow menu." : "Service page created as a draft. Publish it to add it to the selected Buy/Build/Grow menu.");
       }
     } catch (caught) {
       setError(getApiErrorMessage(caught));
@@ -234,6 +235,7 @@ export default function ServicePagesAdminPage() {
                     <Field label="Page title" required><input name="title" required defaultValue={editing?.title || ""} className={inputClass} /></Field>
                     <Field label="Meaningful URL slug"><input name="slug" defaultValue={editing?.slug || ""} placeholder="ai-consulting-services" className={inputClass} /></Field>
                     <Field label="Status"><select name="status" defaultValue={editing?.status || "published"} className={inputClass}><option value="draft">Draft</option><option value="published">Published</option></select></Field>
+                    <Field label="Category"><select name="category" defaultValue={(editing?.category || "build") as ServicePageCategory} className={inputClass}><option value="buy">Buy</option><option value="build">Build</option><option value="grow">Grow</option></select></Field>
                     <Field label="Source filename"><input value={sourceFilename} onChange={(event) => setSourceFilename(event.target.value)} readOnly className={`${inputClass} text-slate-500`} placeholder="No HTML file selected" /></Field>
                   </div>
                   <Field label="Internal description"><textarea name="description" defaultValue={editing?.description || ""} rows={3} className={inputClass} /></Field>
