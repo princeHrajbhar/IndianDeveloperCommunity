@@ -86,7 +86,7 @@ const EMPTY_TEMPLATE: TemplateFormState = {
   acknowledgement: EMPTY_ACK,
 };
 
-export function DocumentsPanel() {
+export function DocumentsPanel({ recipientUserIds, scopeLabel }: { recipientUserIds?: string[]; scopeLabel?: string } = {}) {
   const [tab, setTab] = useState<Tab>("templates");
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
@@ -108,7 +108,7 @@ export function DocumentsPanel() {
           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300">Document operations</p>
           <h1 className="mt-2 text-3xl font-black tracking-tight">Document generation</h1>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-            Design reusable certificates, offer letters, joining letters and custom documents; issue them individually or in bulk; and collect configurable acknowledgements.
+            Design reusable certificates, offer letters, joining letters and custom documents; issue them individually or in bulk; and collect configurable acknowledgements.{scopeLabel ? ` Current scope: ${scopeLabel}.` : ""}
           </p>
         </div>
         <div className="flex rounded-2xl border border-white/10 bg-white/[0.03] p-1">
@@ -129,8 +129,8 @@ export function DocumentsPanel() {
       {notice ? <div className="mb-5"><SuccessNotice message={notice} /></div> : null}
 
       {tab === "templates" ? <TemplateWorkspace onFeedback={feedback} /> : null}
-      {tab === "issue" ? <IssueWorkspace onFeedback={feedback} /> : null}
-      {tab === "issued" ? <IssuedWorkspace onFeedback={feedback} /> : null}
+      {tab === "issue" ? <IssueWorkspace onFeedback={feedback} recipientUserIds={recipientUserIds} scopeLabel={scopeLabel} /> : null}
+      {tab === "issued" ? <IssuedWorkspace onFeedback={feedback} recipientUserIds={recipientUserIds} scopeLabel={scopeLabel} /> : null}
     </section>
   );
 }
@@ -327,7 +327,7 @@ function AcknowledgementDesigner({ value, onChange }: { value: AcknowledgementCo
   );
 }
 
-function IssueWorkspace({ onFeedback }: { onFeedback: (message: string, failed?: boolean) => void }) {
+function IssueWorkspace({ onFeedback, recipientUserIds, scopeLabel }: { onFeedback: (message: string, failed?: boolean) => void; recipientUserIds?: string[]; scopeLabel?: string }) {
   const templatesQuery = useGetDocumentTemplatesQuery({ page: 1, limit: 100, status: "active" });
   const usersQuery = useGetUsersQuery({ page: 1, limit: 100 });
   const [templateId, setTemplateId] = useState("");
@@ -341,9 +341,11 @@ function IssueWorkspace({ onFeedback }: { onFeedback: (message: string, failed?:
   const templates = templatesQuery.data?.data ?? [];
   const users = usersQuery.data?.data ?? [];
   const visibleUsers = useMemo(() => {
+    const allowed = recipientUserIds !== undefined ? new Set(recipientUserIds) : null;
+    const scoped = allowed ? users.filter((user) => allowed.has(idOf(user))) : users;
     const search = userSearch.trim().toLowerCase();
-    return search ? users.filter((user) => String(user.email ?? "").toLowerCase().includes(search)) : users;
-  }, [userSearch, users]);
+    return search ? scoped.filter((user) => String(user.email ?? "").toLowerCase().includes(search)) : scoped;
+  }, [recipientUserIds, userSearch, users]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -375,7 +377,7 @@ function IssueWorkspace({ onFeedback }: { onFeedback: (message: string, failed?:
   return (
     <form onSubmit={submit} className="grid gap-6 xl:grid-cols-[420px_minmax(0,1fr)]">
       <Panel>
-        <PanelTitle eyebrow="Recipients" title="Individual or bulk issue" />
+        <PanelTitle eyebrow={scopeLabel ? "Department recipients" : "Recipients"} title={scopeLabel ? `Issue within ${scopeLabel}` : "Individual or bulk issue"} />
         <Field label="Active template"><select required value={templateId} onChange={(event) => setTemplateId(event.target.value)} className={inputClass}><option value="">Select template</option>{templates.map((template) => <option key={idOf(template)} value={idOf(template)}>{template.name}</option>)}</select></Field>
         <div className="mt-5"><Field label="Find users"><input value={userSearch} onChange={(event) => setUserSearch(event.target.value)} className={inputClass} placeholder="Search email" /></Field></div>
         <div className="mt-4 max-h-[480px] space-y-2 overflow-y-auto pr-1">
@@ -400,12 +402,14 @@ function IssueWorkspace({ onFeedback }: { onFeedback: (message: string, failed?:
   );
 }
 
-function IssuedWorkspace({ onFeedback }: { onFeedback: (message: string, failed?: boolean) => void }) {
+function IssuedWorkspace({ onFeedback, recipientUserIds, scopeLabel }: { onFeedback: (message: string, failed?: boolean) => void; recipientUserIds?: string[]; scopeLabel?: string }) {
   const issuesQuery = useGetIssuedDocumentsQuery({ page: 1, limit: 100 });
   const [selectedId, setSelectedId] = useState("");
   const detailQuery = useGetIssuedDocumentQuery(selectedId || "", { skip: !selectedId });
   const [revoke, revokeState] = useRevokeIssuedDocumentMutation();
-  const issues = issuesQuery.data?.data ?? [];
+  const allIssues = issuesQuery.data?.data ?? [];
+  const allowed = recipientUserIds !== undefined ? new Set(recipientUserIds) : null;
+  const issues = allowed ? allIssues.filter((issue) => allowed.has(issue.recipientUserId)) : allIssues;
   const detail = detailQuery.data?.data;
 
   async function revokeSelected() {
@@ -423,7 +427,7 @@ function IssuedWorkspace({ onFeedback }: { onFeedback: (message: string, failed?
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(500px,1.15fr)]">
       <Panel>
-        <PanelTitle eyebrow="Audit trail" title="Issued documents" />
+        <PanelTitle eyebrow="Audit trail" title={scopeLabel ? `${scopeLabel} issued documents` : "Issued documents"} />
         {issuesQuery.isLoading ? <LoadingRows /> : issues.length ? <div className="space-y-2">{issues.map((issue) => <button key={idOf(issue)} type="button" onClick={() => setSelectedId(idOf(issue))} className={`w-full rounded-2xl border p-4 text-left ${selectedId === idOf(issue) ? "border-cyan-300/30 bg-cyan-300/[0.06]" : "border-white/8"}`}><div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="truncate font-black">{issue.templateName}</p><p className="mt-1 truncate text-xs text-slate-400">{issue.recipientName} · {issue.recipientEmail}</p><p className="mt-2 text-[10px] text-slate-600">{issue.documentNumber} · {formatDate(issue.issuedAt)}</p></div><StatusBadge value={issue.status} /></div></button>)}</div> : <Empty title="No issued documents" description="Issued documents will appear here." />}
       </Panel>
       <div className="space-y-6">
@@ -435,7 +439,7 @@ function IssuedWorkspace({ onFeedback }: { onFeedback: (message: string, failed?
               {detail.acknowledgementSubmission ? <div className="mt-5 rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.05] p-4 text-sm"><p className="font-black text-emerald-200">Acknowledged {formatDate(detail.acknowledgementSubmission.submittedAt)}</p><pre className="mt-3 overflow-auto whitespace-pre-wrap text-xs text-slate-400">{JSON.stringify(detail.acknowledgementSubmission.values, null, 2)}</pre>{detail.acknowledgementSubmission.message ? <p className="mt-3 text-slate-300">{detail.acknowledgementSubmission.message}</p> : null}{detail.acknowledgementSubmission.signedDocument?.url ? <a href={detail.acknowledgementSubmission.signedDocument.url} target="_blank" rel="noreferrer" className="mt-3 inline-flex text-cyan-200 underline">Open returned signed document</a> : null}</div> : detail.acknowledgement.enabled ? <p className="mt-5 rounded-xl border border-amber-300/15 bg-amber-300/[0.05] p-3 text-xs text-amber-200">Awaiting user acknowledgement.</p> : null}
               {detail.status !== "revoked" ? <div className="mt-5 flex justify-end"><Button danger disabled={revokeState.isLoading} onClick={revokeSelected}>Revoke</Button></div> : detail.revokeReason ? <p className="mt-5 text-sm text-rose-200">Revoked: {detail.revokeReason}</p> : null}
             </Panel>
-            <DocumentPreview html={detail.renderedHtml ?? ""} css={detail.stylesCss ?? ""} />
+            <DocumentPreview html={detail.renderedHtml ?? ""} css={detail.stylesCss ?? ""} filename={`${detail.documentNumber}-${detail.templateName}`} />
           </>
         )}
       </div>
@@ -443,9 +447,51 @@ function IssuedWorkspace({ onFeedback }: { onFeedback: (message: string, failed?
   );
 }
 
-function DocumentPreview({ html, css }: { html: string; css: string }) {
+function DocumentPreview({ html, css, filename = "quantum-finix-document" }: { html: string; css: string; filename?: string }) {
   const source = `<!doctype html><html><head><meta charset="utf-8"><style>body{margin:0;background:white}${css}</style></head><body>${html}</body></html>`;
-  return <Panel><PanelTitle eyebrow="Safe preview" title="Rendered document" /><iframe title="Document preview" sandbox="" srcDoc={source} className="h-[720px] w-full rounded-2xl border border-white/10 bg-white" /></Panel>;
+  return (
+    <Panel>
+      <PanelTitle
+        eyebrow="Safe preview"
+        title="Rendered document"
+        action={(
+          <div className="flex flex-wrap gap-2">
+            <Button secondary onClick={() => printRenderedDocument(source)}>Print / PDF</Button>
+            <Button secondary onClick={() => downloadRenderedDocument(source, filename)}>Download</Button>
+          </div>
+        )}
+      />
+      <iframe title="Document preview" sandbox="" srcDoc={source} className="h-[720px] w-full rounded-2xl border border-white/10 bg-white" />
+    </Panel>
+  );
+}
+
+function printRenderedDocument(source: string) {
+  const iframe = document.createElement("iframe");
+  iframe.style.position = "fixed";
+  iframe.style.width = "1px";
+  iframe.style.height = "1px";
+  iframe.style.opacity = "0";
+  iframe.style.pointerEvents = "none";
+  iframe.srcdoc = source;
+  document.body.appendChild(iframe);
+  iframe.onload = () => {
+    iframe.contentWindow?.focus();
+    iframe.contentWindow?.print();
+    window.setTimeout(() => iframe.remove(), 1500);
+  };
+}
+
+function downloadRenderedDocument(source: string, filename: string) {
+  const blob = new Blob([source], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `${filename.replace(/[^a-z0-9._-]+/gi, "-") || "quantum-finix-document"}.html`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
 }
 
 function Info({ label, value }: { label: string; value: string }) {

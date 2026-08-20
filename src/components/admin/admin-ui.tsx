@@ -6,10 +6,10 @@ import type {
 } from "react";
 
 export const inputClass =
-  "h-11 w-full rounded-xl border border-white/10 bg-[#07101f] px-3 text-sm text-white outline-none transition focus:border-cyan-300/50";
+  "qf-input h-11 w-full rounded-xl px-3 text-sm transition";
 
 export const textareaClass =
-  "min-h-28 w-full rounded-xl border border-white/10 bg-[#07101f] px-3 py-3 text-sm text-white outline-none transition focus:border-cyan-300/50";
+  "qf-input min-h-28 w-full rounded-xl px-3 py-3 text-sm transition";
 
 type StatusTone =
   | "cyan"
@@ -34,7 +34,7 @@ export function Panel({
 }) {
   return (
     <section
-      className={`overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] p-5 sm:p-6 ${className}`}
+      className={`qf-surface qf-shadow overflow-hidden rounded-2xl border p-5 sm:p-6 ${className}`}
     >
       {children}
     </section>
@@ -62,23 +62,23 @@ export function PageHeading({
     >
       <div className="max-w-3xl">
         {eyebrow ? (
-          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300">
+          <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-600">
             {eyebrow}
           </p>
         ) : null}
 
-        <h1 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">
+        <h1 className="mt-2 qf-text text-3xl font-black tracking-tight sm:text-4xl">
           {title}
           {accent ? (
             <>
               {" "}
-              <span className="text-cyan-300">{accent}</span>
+              <span className="text-blue-600">{accent}</span>
             </>
           ) : null}
         </h1>
 
         {description ? (
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400">
+          <p className="qf-muted mt-3 max-w-2xl text-sm leading-6">
             {description}
           </p>
         ) : null}
@@ -108,21 +108,21 @@ export function PanelHeader({
 }) {
   return (
     <div
-      className={`mb-5 flex flex-wrap items-start justify-between gap-4 border-b border-white/[0.07] pb-5 ${className}`}
+      className={`qf-border mb-5 flex flex-wrap items-start justify-between gap-4 border-b pb-5 ${className}`}
     >
       <div className="min-w-0">
         {eyebrow ? (
-          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300">
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-600">
             {eyebrow}
           </p>
         ) : null}
 
-        <h2 className="mt-1 text-xl font-black text-white">
+        <h2 className="qf-text mt-1 text-xl font-black">
           {title}
         </h2>
 
         {description ? (
-          <p className="mt-1 text-sm leading-6 text-slate-500">
+          <p className="qf-muted mt-1 text-sm leading-6">
             {description}
           </p>
         ) : null}
@@ -171,14 +171,14 @@ export function Field({
 }) {
   return (
     <label className={`block ${className}`}>
-      <span className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+      <span className="qf-muted mb-2 block text-[11px] font-bold uppercase tracking-wider">
         {label}
       </span>
 
       {children}
 
       {hint ? (
-        <span className="mt-2 block text-xs leading-5 text-slate-600">
+        <span className="qf-muted mt-2 block text-xs leading-5">
           {hint}
         </span>
       ) : null}
@@ -202,17 +202,17 @@ export function Button({
   ...props
 }: AdminButtonProps) {
   const style = danger
-    ? "border border-rose-300/20 bg-rose-300/[0.08] text-rose-200 hover:bg-rose-300/[0.13]"
+    ? "qf-danger-button"
     : secondary
-      ? "border border-white/10 bg-white/[0.04] text-white hover:bg-white/[0.08]"
-      : "border border-cyan-300 bg-cyan-300 text-slate-950 hover:bg-cyan-200";
+      ? "qf-secondary-button"
+      : "qf-primary-button";
 
   return (
     <button
       {...props}
       type={type}
       disabled={disabled}
-      className={`inline-flex min-h-10 items-center justify-center rounded-xl px-4 py-2 text-sm font-black transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0 ${style} ${className}`}
+      className={`inline-flex min-h-10 items-center justify-center rounded-xl px-4 py-2 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-45 ${style} ${className}`}
     >
       {children}
     </button>
@@ -309,15 +309,11 @@ export function StatusBadge({
   const selectedTone = tone ?? inferredTone;
 
   const toneClasses: Record<StatusTone, string> = {
-    cyan: "border-cyan-300/20 bg-cyan-300/10 text-cyan-200",
-    emerald:
-      "border-emerald-300/20 bg-emerald-300/10 text-emerald-200",
-    amber:
-      "border-amber-300/20 bg-amber-300/10 text-amber-200",
-    rose:
-      "border-rose-300/20 bg-rose-300/10 text-rose-200",
-    slate:
-      "border-slate-300/20 bg-slate-300/10 text-slate-300",
+    cyan: "qf-status-info",
+    emerald: "qf-status-success",
+    amber: "qf-status-warning",
+    rose: "qf-status-danger",
+    slate: "qf-status-neutral",
   };
 
   return (
@@ -339,12 +335,12 @@ export function Metric({
   detail?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-black/20 p-5">
+    <div className="qf-surface-muted rounded-2xl border p-5">
       <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
         {label}
       </p>
 
-      <p className="mt-3 text-3xl font-black text-white">
+      <p className="mt-3 qf-text text-3xl font-black">
         {value}
       </p>
 
@@ -367,8 +363,8 @@ export function Empty({
   action?: ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-dashed border-white/15 p-10 text-center">
-      <p className="font-black text-white">{title}</p>
+    <div className="qf-border rounded-2xl border border-dashed p-10 text-center">
+      <p className="qf-text font-black">{title}</p>
 
       <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500">
         {description}
@@ -410,7 +406,7 @@ export function ErrorNotice({
   message: string;
 }) {
   return (
-    <div className="rounded-xl border border-rose-300/20 bg-rose-300/[0.07] px-4 py-3 text-sm text-rose-100">
+    <div className="qf-status-danger rounded-xl border px-4 py-3 text-sm">
       {message}
     </div>
   );
@@ -422,7 +418,7 @@ export function SuccessNotice({
   message: string;
 }) {
   return (
-    <div className="rounded-xl border border-emerald-300/20 bg-emerald-300/[0.07] px-4 py-3 text-sm text-emerald-100">
+    <div className="qf-status-success rounded-xl border px-4 py-3 text-sm">
       {message}
     </div>
   );
@@ -438,7 +434,7 @@ export function LoadingRows({
       {Array.from({ length: count }).map((_, index) => (
         <div
           key={index}
-          className="h-16 animate-pulse rounded-2xl bg-white/[0.04]"
+          className="h-16 animate-pulse rounded-2xl qf-surface-muted"
         />
       ))}
     </div>
@@ -495,8 +491,8 @@ export function Pagination({
           onClick={() => onPageChange(item)}
           className={`grid h-10 min-w-10 place-items-center rounded-xl border px-3 text-sm font-black transition ${
             item === page
-              ? "border-cyan-300 bg-cyan-300 text-slate-950"
-              : "border-white/10 bg-white/[0.04] text-slate-300 hover:bg-white/[0.08]"
+              ? "qf-primary-button"
+              : "qf-secondary-button"
           }`}
         >
           {item}

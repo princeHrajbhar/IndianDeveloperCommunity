@@ -30,8 +30,18 @@ export function ProfileDocumentsWorkspace() {
   const requestedId = searchParams.get("document") ?? "";
   const listQuery = useGetMyDocumentsQuery({ page: 1, limit: 100 });
   const [selectedId, setSelectedId] = useState(requestedId);
+  const [search, setSearch] = useState("");
   const detailQuery = useGetMyDocumentQuery(selectedId || "", { skip: !selectedId });
   const issues = listQuery.data?.data ?? [];
+  const filteredIssues = useMemo(() => {
+    const needle = search.trim().toLowerCase();
+    if (!needle) return issues;
+    return issues.filter((issue) =>
+      [issue.templateName, issue.documentNumber, issue.category, issue.recipientName, issue.recipientEmail]
+        .filter(Boolean)
+        .some((value) => String(value).toLowerCase().includes(needle)),
+    );
+  }, [issues, search]);
   const detail = detailQuery.data?.data;
 
   useEffect(() => {
@@ -54,9 +64,21 @@ export function ProfileDocumentsWorkspace() {
       <div className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
         <Panel>
           <PanelHeader title="Your documents" description={`${issues.length} document(s) available`} />
-          {listQuery.isLoading ? <Loading /> : listQuery.error ? <ErrorBox message={getApiErrorMessage(listQuery.error)} /> : issues.length ? (
+          <div className="border-b border-white/[0.07] p-4">
+            <label className="block">
+              <span className="sr-only">Search issued documents</span>
+              <input
+                type="search"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search name, number or category..."
+                className={inputClass}
+              />
+            </label>
+          </div>
+          {listQuery.isLoading ? <Loading /> : listQuery.error ? <ErrorBox message={getApiErrorMessage(listQuery.error)} /> : filteredIssues.length ? (
             <div className="divide-y divide-white/[0.07]">
-              {issues.map((issue) => {
+              {filteredIssues.map((issue) => {
                 const id = idOf(issue);
                 return (
                   <button
@@ -77,7 +99,7 @@ export function ProfileDocumentsWorkspace() {
                 );
               })}
             </div>
-          ) : <EmptyState title="No documents issued" description="Documents issued by an administrator will appear here." />}
+          ) : search.trim() ? <EmptyState title="No matching documents" description="Try another document name, number or category." /> : <EmptyState title="No documents issued" description="Documents issued by an administrator will appear here." />}
         </Panel>
 
         <div className="space-y-6">
@@ -120,9 +142,15 @@ function DocumentDetail({ issue }: { issue: DocumentIssue }) {
             srcDoc={source}
             className="h-[720px] w-full rounded-2xl border border-white/[0.1] bg-white"
           />
-          <div className="mt-4 flex justify-end">
+          <div className="mt-4 flex flex-wrap justify-end gap-3">
             <SecondaryButton type="button" onClick={() => printDocument(source)}>
               Print / save as PDF
+            </SecondaryButton>
+            <SecondaryButton type="button" onClick={() => downloadDocument(source, issue)}>
+              Download document
+            </SecondaryButton>
+            <SecondaryButton type="button" onClick={() => shareDocument(source, issue)}>
+              Share
             </SecondaryButton>
           </div>
         </div>
@@ -277,10 +305,59 @@ function formatDate(value: string) {
 }
 
 function printDocument(source: string) {
-  const windowRef = window.open("", "_blank", "noopener,noreferrer");
-  if (!windowRef) return;
-  windowRef.document.open();
-  windowRef.document.write(source);
-  windowRef.document.close();
-  windowRef.addEventListener("load", () => windowRef.print(), { once: true });
+  const iframe = document.createElement("iframe");
+  iframe.style.position = "fixed";
+  iframe.style.width = "1px";
+  iframe.style.height = "1px";
+  iframe.style.opacity = "0";
+  iframe.style.pointerEvents = "none";
+  iframe.srcdoc = source;
+  document.body.appendChild(iframe);
+  iframe.onload = () => {
+    iframe.contentWindow?.focus();
+    iframe.contentWindow?.print();
+    window.setTimeout(() => iframe.remove(), 1500);
+  };
+}
+
+function downloadDocument(source: string, issue: DocumentIssue) {
+  const blob = new Blob([source], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `${safeFilename(issue.documentNumber)}-${safeFilename(issue.templateName)}.html`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
+
+async function shareDocument(source: string, issue: DocumentIssue) {
+  const filename = `${safeFilename(issue.documentNumber)}-${safeFilename(issue.templateName)}.html`;
+  const file = new File([source], filename, { type: "text/html;charset=utf-8" });
+  const shareData: ShareData = {
+    title: `${issue.templateName} · ${issue.documentNumber}`,
+    text: `Quantum Finix issued document: ${issue.templateName} (${issue.documentNumber})`,
+    files: [file],
+  };
+
+  try {
+    if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
+      await navigator.share(shareData);
+      return;
+    }
+    if (navigator.share) {
+      await navigator.share({ title: shareData.title, text: shareData.text });
+      return;
+    }
+    downloadDocument(source, issue);
+    window.alert("Sharing is not supported in this browser, so the document was downloaded instead.");
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") return;
+    window.alert("The document could not be shared. You can still download or print it.");
+  }
+}
+
+function safeFilename(value: string) {
+  return value.replace(/[^a-z0-9._-]+/gi, "-").replace(/^-+|-+$/g, "") || "document";
 }

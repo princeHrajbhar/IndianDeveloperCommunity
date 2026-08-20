@@ -1,5 +1,2 @@
-import { DocumentsPanel } from "@/src/components/admin/documents-panel";
-
-export default function DocumentManagementPage() {
-  return <DocumentsPanel />;
-}
+import { redirect } from "next/navigation";
+export default function Page() { redirect("/hr-management/documents"); }

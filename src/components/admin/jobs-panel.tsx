@@ -264,7 +264,7 @@ const emptyForm = {
 
 type JobFormState = typeof emptyForm;
 
-export function JobsPanel() {
+export function JobsPanel({ basePath = "/dashboard/job" }: { basePath?: string } = {}) {
   const draft = useGetJobsByStatusQuery({
     status: "Draft",
     page: 1,
@@ -340,12 +340,12 @@ export function JobsPanel() {
   return (
     <section>
       <PageHeading
-        eyebrow="Recruitment inventory"
+        eyebrow="Talent inventory"
         title="Jobs"
         description="Create and manage every role through dedicated Next.js routes."
         action={
           <Link
-            href="/dashboard/job/add"
+            href={`${basePath}/add`}
             className="rounded-xl bg-cyan-300 px-5 py-3 text-sm font-black text-slate-950"
           >
             Create job
@@ -381,7 +381,7 @@ export function JobsPanel() {
                     <tr key={job.id}>
                       <td className="py-4">
                         <Link
-                          href={`/dashboard/job/${job.id}`}
+                          href={`${basePath}/${job.id}`}
                           className="font-bold hover:text-cyan-300"
                         >
                           {job.title}
@@ -410,14 +410,14 @@ export function JobsPanel() {
                       <td className="py-4">
                         <div className="flex justify-end gap-2">
                           <Link
-                            href={`/dashboard/job/${job.id}`}
+                            href={`${basePath}/${job.id}`}
                             className="rounded-xl border border-white/10 px-3 py-2 text-xs font-bold"
                           >
                             View
                           </Link>
 
                           <Link
-                            href={`/dashboard/job/${job.id}/edit`}
+                            href={`${basePath}/${job.id}/edit`}
                             className="rounded-xl border border-cyan-300/20 bg-cyan-300/[0.06] px-3 py-2 text-xs font-bold text-cyan-200"
                           >
                             Edit
@@ -465,7 +465,7 @@ export function JobsPanel() {
   );
 }
 
-export function JobEditor({ jobId }: { jobId?: string }) {
+export function JobEditor({ jobId, basePath = "/dashboard/job" }: { jobId?: string; basePath?: string }) {
   const router = useRouter();
   const detail = useGetManagedJobByIdQuery(jobId ?? "", {
     skip: !jobId,
@@ -514,11 +514,11 @@ export function JobEditor({ jobId }: { jobId?: string }) {
           body: payload as JobUpdatePayload,
         }).unwrap();
         setNotice("Job updated successfully.");
-        router.replace(`/dashboard/job/${jobId}`);
+        router.replace(`${basePath}/${jobId}`);
       } else {
         const response = await createJob(payload).unwrap();
         setNotice("Job created as a draft.");
-        router.replace(`/dashboard/job/${response.data.id}`);
+        router.replace(`${basePath}/${response.data.id}`);
       }
     } catch (caught) {
       setError(
@@ -757,7 +757,7 @@ export function JobEditor({ jobId }: { jobId?: string }) {
         description="Only the job title is mandatory. Add the remaining information when it is useful, or import a prepared JSON document."
         action={
           <Link
-            href={jobId ? `/dashboard/job/${jobId}` : "/dashboard/job"}
+            href={jobId ? `${basePath}/${jobId}` : basePath}
             className="rounded-xl border border-white/10 px-4 py-2.5 text-sm font-bold"
           >
             Cancel
@@ -1267,7 +1267,7 @@ export function JobEditor({ jobId }: { jobId?: string }) {
               {busy ? "Saving…" : jobId ? "Save changes" : "Create draft"}
             </Button>
             <Link
-              href={jobId ? `/dashboard/job/${jobId}` : "/dashboard/job"}
+              href={jobId ? `${basePath}/${jobId}` : basePath}
               className="rounded-xl border border-white/10 px-5 py-3 text-sm font-bold"
             >
               Cancel
@@ -1302,7 +1302,7 @@ function dateTimeInput(value: unknown): string {
   return new Date(date.getTime() - timezoneOffset).toISOString().slice(0, 16);
 }
 
-export function JobAdminDetail({ jobId }: { jobId: string }) {
+export function JobAdminDetail({ jobId, basePath = "/dashboard/job" }: { jobId: string; basePath?: string }) {
   const job = useGetManagedJobByIdQuery(jobId);
   const [updateStatus, statusState] = useUpdateJobStatusMutation();
   const [deleteJob, deleteState] = useDeleteJobMutation();
@@ -1342,7 +1342,7 @@ export function JobAdminDetail({ jobId }: { jobId: string }) {
 
     try {
       await deleteJob(jobId).unwrap();
-      router.replace("/dashboard/job");
+      router.replace(basePath);
     } catch (caught) {
       setError(getApiErrorMessage(caught));
     }
@@ -1357,13 +1357,13 @@ export function JobAdminDetail({ jobId }: { jobId: string }) {
         action={
           <div className="flex gap-2">
             <Link
-              href={`/dashboard/job/${jobId}/edit`}
+              href={`${basePath}/${jobId}/edit`}
               className="rounded-xl bg-cyan-300 px-4 py-2.5 text-sm font-black text-slate-950"
             >
               Edit job
             </Link>
             <Link
-              href="/dashboard/job"
+              href={basePath}
               className="rounded-xl border border-white/10 px-4 py-2.5 text-sm font-bold"
             >
               Back

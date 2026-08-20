@@ -40,36 +40,38 @@ const leadStatuses = ["New", "Contacted", "Qualified", "Proposal Sent", "Convert
 const leadSources = ["Website Form", "Contact Page", "Landing Page", "Referral", "Social Media", "Campaign", "Manual", "Other"];
 const leadPriorities = ["Low", "Medium", "High", "Urgent"];
 
-export function EmailManagementPanel() {
+export function EmailManagementPanel({ initialManualEmails = [], scopeLabel }: { initialManualEmails?: string[]; scopeLabel?: string } = {}) {
   return (
     <section>
       <header className="mb-8">
         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-300">Communication</p>
         <h1 className="mt-2 text-3xl font-black sm:text-4xl">Bulk email</h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
-          Queue filtered or selective email campaigns, manage reusable templates, and block addresses from every transactional and bulk message.
+          Queue filtered or selective email campaigns, manage reusable templates, and block addresses from every transactional and bulk message.{scopeLabel ? ` Current scope: ${scopeLabel}.` : ""}
         </p>
       </header>
       <div className="space-y-6">
-        <CampaignComposer />
-        <div className="grid gap-6 xl:grid-cols-2">
-          <TemplateManager />
-          <SuppressionManager />
-        </div>
-        <CampaignHistory />
+        <CampaignComposer initialManualEmails={initialManualEmails} scopeLabel={scopeLabel} lockRecipients={Boolean(scopeLabel)} />
+        {!scopeLabel ? <>
+          <div className="grid gap-6 xl:grid-cols-2">
+            <TemplateManager />
+            <SuppressionManager />
+          </div>
+          <CampaignHistory />
+        </> : null}
       </div>
     </section>
   );
 }
 
-function CampaignComposer() {
+function CampaignComposer({ initialManualEmails, scopeLabel, lockRecipients = false }: { initialManualEmails: string[]; scopeLabel?: string; lockRecipients?: boolean }) {
   const templatesQuery = useGetEmailTemplatesQuery();
   const templates = useMemo(
     () => [...(templatesQuery.data?.data.builtIn ?? []), ...(templatesQuery.data?.data.custom ?? [])],
     [templatesQuery.data],
   );
-  const [audience, setAudience] = useState<EmailAudience>("users");
-  const [campaignName, setCampaignName] = useState("");
+  const [audience, setAudience] = useState<EmailAudience>(initialManualEmails.length ? "manual" : "users");
+  const [campaignName, setCampaignName] = useState(scopeLabel ? `${scopeLabel} communication` : "");
   const [templateId, setTemplateId] = useState("");
   const [subject, setSubject] = useState("");
   const [html, setHtml] = useState("");
@@ -81,7 +83,7 @@ function CampaignComposer() {
   const [source, setSource] = useState("");
   const [priority, setPriority] = useState("");
   const [jobId, setJobId] = useState("");
-  const [manualEmails, setManualEmails] = useState("");
+  const [manualEmails, setManualEmails] = useState(initialManualEmails.join(", "));
   const [selectiveOnly, setSelectiveOnly] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [notice, setNotice] = useState("");
@@ -89,6 +91,12 @@ function CampaignComposer() {
   const [previewAudience, previewState] = usePreviewEmailAudienceMutation();
   const [createCampaign, createState] = useCreateEmailCampaignMutation();
   const preview = previewState.data?.data;
+
+  useEffect(() => {
+    if (!lockRecipients) return;
+    setAudience("manual");
+    setManualEmails(initialManualEmails.join(", "));
+  }, [initialManualEmails, lockRecipients]);
 
   useEffect(() => {
     const template = templates.find((item) => item.id === templateId);
@@ -161,7 +169,7 @@ function CampaignComposer() {
       <form onSubmit={submit} className="space-y-6">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <Field label="Campaign name"><input required value={campaignName} onChange={(event) => setCampaignName(event.target.value)} className={inputClass} placeholder="August hiring update" /></Field>
-          <Field label="Audience"><select value={audience} onChange={(event) => setAudience(event.target.value as EmailAudience)} className={inputClass}><option value="users">Users</option><option value="leads">Leads</option><option value="applications">Applications</option><option value="manual">Manual emails</option></select></Field>
+          <Field label="Audience">{lockRecipients ? <input value={scopeLabel ? `${scopeLabel} employees` : "Scoped recipients"} disabled className={inputClass} /> : <select value={audience} onChange={(event) => setAudience(event.target.value as EmailAudience)} className={inputClass}><option value="users">Users</option><option value="leads">Leads</option><option value="applications">Applications</option><option value="manual">Manual emails</option></select>}</Field>
           <Field label="Template"><select value={templateId} onChange={(event) => setTemplateId(event.target.value)} className={inputClass}><option value="">Custom message</option>{templates.map((template) => <option key={template.id} value={template.id}>{template.name}{template.builtIn ? " · built in" : ""}</option>)}</select></Field>
           <Field label="Reply-to (optional)"><input type="email" value={replyTo} onChange={(event) => setReplyTo(event.target.value)} className={inputClass} /></Field>
         </div>
@@ -176,6 +184,7 @@ function CampaignComposer() {
           priority={priority} setPriority={setPriority}
           jobId={jobId} setJobId={setJobId}
           manualEmails={manualEmails} setManualEmails={setManualEmails}
+          lockManualEmails={lockRecipients}
         />
 
         <div className="grid gap-4 lg:grid-cols-2">
@@ -217,8 +226,9 @@ function AudienceFilters(props: {
   priority: string; setPriority: (value: string) => void;
   jobId: string; setJobId: (value: string) => void;
   manualEmails: string; setManualEmails: (value: string) => void;
+  lockManualEmails?: boolean;
 }) {
-  if (props.audience === "manual") return <Field label="Recipient emails" hint="Separate email addresses with commas, spaces, or new lines."><textarea required value={props.manualEmails} onChange={(event) => props.setManualEmails(event.target.value)} className={textareaClass} /></Field>;
+  if (props.audience === "manual") return <Field label="Recipient emails" hint={props.lockManualEmails ? "Recipients are locked to employees assigned to this department." : "Separate email addresses with commas, spaces, or new lines."}><textarea required readOnly={props.lockManualEmails} value={props.manualEmails} onChange={(event) => props.setManualEmails(event.target.value)} className={`${textareaClass} ${props.lockManualEmails ? "opacity-80" : ""}`} /></Field>;
   return <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
     <Field label="Search"><input value={props.search} onChange={(event) => props.setSearch(event.target.value)} className={inputClass} placeholder="Name or email" /></Field>
     {props.audience === "users" ? <><Field label="Role"><input value={props.role} onChange={(event) => props.setRole(event.target.value)} className={inputClass} placeholder="user, admin…" /></Field><Field label="Verification"><select value={props.verified} onChange={(event) => props.setVerified(event.target.value)} className={inputClass}><option value="">Any</option><option value="true">Verified</option><option value="false">Unverified</option></select></Field></> : null}

@@ -1,2 +1,2 @@
-import { JobEditor } from "@/src/components/admin/jobs-panel";
-export default function Page() { return <JobEditor />; }
+import { redirect } from "next/navigation";
+export default function Page() { redirect("/hr-management/jobs/add"); }

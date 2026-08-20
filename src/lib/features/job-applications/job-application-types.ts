@@ -50,6 +50,7 @@ export interface ApplicationSocialLinks {
 
 export interface PresentedAsset {
   url: string;
+  downloadUrl?: string;
   originalName: string;
   mimeType: string;
   size: number;
@@ -111,6 +112,9 @@ export interface AdminApplicationsQuery {
   jobId?: string;
   status?: ApplicationStatus;
   email?: string;
+  search?: string;
+  fromDate?: string;
+  toDate?: string;
   sortBy?: "appliedAt" | "createdAt" | "updatedAt" | "status";
   sortOrder?: "asc" | "desc";
 }

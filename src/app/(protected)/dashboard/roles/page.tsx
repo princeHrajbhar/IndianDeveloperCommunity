@@ -11,7 +11,7 @@ import {
 } from "@/src/lib/features/access/role-api";
 import type { AccessRole } from "@/src/lib/features/access/role-types";
 
-const inputClass = "w-full rounded-xl border border-white/10 bg-black/25 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-300/40";
+const inputClass = "qf-input w-full rounded-xl px-4 py-3 text-sm transition";
 
 export default function RolesPage() {
   const query = useGetRolesQuery();
@@ -37,7 +37,7 @@ export default function RolesPage() {
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-300">Access control</p>
           <h1 className="mt-2 text-3xl font-black sm:text-4xl">Roles and permissions</h1>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-500">Only User and Super Admin are built in. Create narrowly scoped custom roles for every other team.</p>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-500">Review built-in access roles and create narrowly scoped custom roles using least-privilege permissions for each team.</p>
         </div>
         <button type="button" onClick={() => { setCreating(true); setSelectedId(""); }} className="inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-300 px-5 py-3 text-sm font-black text-slate-950"><Plus size={17} /> New role</button>
       </div>

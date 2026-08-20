@@ -1,2 +1,2 @@
-import { QueuePanel } from "@/src/components/admin/queue-panel";
-export default function Page() { return <QueuePanel />; }
+import { redirect } from "next/navigation";
+export default function Page() { redirect("/hr-management/communication?tab=queue"); }

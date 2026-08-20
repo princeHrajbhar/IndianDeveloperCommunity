@@ -1,2 +1,2 @@
-import { ApplicationsPanel } from "@/src/components/admin/applications-panel";
-export default function Page() { return <ApplicationsPanel />; }
+import { redirect } from "next/navigation";
+export default function Page() { redirect("/hr-management/applications"); }

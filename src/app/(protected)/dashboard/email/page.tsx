@@ -1,5 +1,2 @@
-import { EmailManagementPanel } from "@/src/components/admin/email-management-panel";
-
-export default function EmailManagementPage() {
-  return <EmailManagementPanel />;
-}
+import { redirect } from "next/navigation";
+export default function Page() { redirect("/hr-management/communication?tab=bulk-email"); }

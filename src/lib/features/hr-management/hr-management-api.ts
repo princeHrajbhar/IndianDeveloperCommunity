@@ -1,0 +1,36 @@
+import {baseApi} from '@/src/lib/api/base-api';
+import type {HRAnnouncement,HRAsset,HRAttendance,HREmployee,HREnvelope,HRLeave,HRList,HRMySummary,HROnboarding,HROverview,HRPayroll,HRPerformance,HRReport,HRShift} from './hr-management-types';
+type Query={page?:number;limit?:number;search?:string;status?:string;employeeId?:string;department?:string;period?:string;from?:string;to?:string};
+export const hrManagementApi=baseApi.injectEndpoints({endpoints:b=>({
+ getHROverview:b.query<HREnvelope<HROverview>,void>({query:()=>'/hr-management/overview',providesTags:['HROverview']}),
+ getHRReports:b.query<HREnvelope<HRReport>,Query|void>({query:q=>({url:'/hr-management/reports',params:q||{}}),providesTags:['HRReport']}),
+ getHREmployees:b.query<HRList<HREmployee>,Query|void>({query:q=>({url:'/hr-management/employees',params:q||{}}),providesTags:[{type:'HREmployee',id:'LIST'}]}),
+ getHREmployee:b.query<HREnvelope<HREmployee>,string>({query:id=>`/hr-management/employees/${id}`,providesTags:(_r,_e,id)=>[{type:'HREmployee',id}]}),
+ createHREmployee:b.mutation<HREnvelope<HREmployee>,Record<string,unknown>>({query:body=>({url:'/hr-management/employees',method:'POST',body}),invalidatesTags:[{type:'HREmployee',id:'LIST'},'HROverview','HROnboarding']}),
+ updateHREmployee:b.mutation<HREnvelope<HREmployee>,{id:string;body:Record<string,unknown>}>({query:({id,body})=>({url:`/hr-management/employees/${id}`,method:'PATCH',body}),invalidatesTags:(_r,_e,a)=>[{type:'HREmployee',id:a.id},{type:'HREmployee',id:'LIST'},'HROverview']}),
+ deleteHREmployee:b.mutation<HREnvelope<{deactivated:boolean;id:string}>,string>({query:id=>({url:`/hr-management/employees/${id}`,method:'DELETE'}),invalidatesTags:[{type:'HREmployee',id:'LIST'},'HROverview']}),
+ getHRShifts:b.query<HREnvelope<HRShift[]>,void>({query:()=>'/hr-management/shifts',providesTags:['HRShift']}),
+ createHRShift:b.mutation<HREnvelope<HRShift>,Record<string,unknown>>({query:body=>({url:'/hr-management/shifts',method:'POST',body}),invalidatesTags:['HRShift']}),
+ updateHRShift:b.mutation<HREnvelope<HRShift>,{id:string;body:Record<string,unknown>}>({query:({id,body})=>({url:`/hr-management/shifts/${id}`,method:'PATCH',body}),invalidatesTags:['HRShift']}),
+ getHRAttendance:b.query<HRList<HRAttendance>,Query|void>({query:q=>({url:'/hr-management/attendance',params:q||{}}),providesTags:[{type:'HRAttendance',id:'LIST'}]}),
+ markHRAttendance:b.mutation<HREnvelope<HRAttendance>,Record<string,unknown>>({query:body=>({url:'/hr-management/attendance',method:'POST',body}),invalidatesTags:[{type:'HRAttendance',id:'LIST'},'HROverview']}),
+ getHRLeaves:b.query<HRList<HRLeave>,Query|void>({query:q=>({url:'/hr-management/leaves',params:q||{}}),providesTags:[{type:'HRLeave',id:'LIST'}]}),
+ createHRLeave:b.mutation<HREnvelope<HRLeave>,Record<string,unknown>>({query:body=>({url:'/hr-management/leaves',method:'POST',body}),invalidatesTags:[{type:'HRLeave',id:'LIST'},'HROverview']}),
+ decideHRLeave:b.mutation<HREnvelope<HRLeave>,{id:string;status:'approved'|'rejected'|'cancelled';note?:string}>({query:({id,...body})=>({url:`/hr-management/leaves/${id}/decision`,method:'PATCH',body}),invalidatesTags:[{type:'HRLeave',id:'LIST'},'HROverview']}),
+ getHRPayroll:b.query<HRList<HRPayroll>,Query|void>({query:q=>({url:'/hr-management/payroll',params:q||{}}),providesTags:[{type:'HRPayroll',id:'LIST'}]}),
+ saveHRPayroll:b.mutation<HREnvelope<HRPayroll>,Record<string,unknown>>({query:body=>({url:'/hr-management/payroll',method:'POST',body}),invalidatesTags:[{type:'HRPayroll',id:'LIST'},'HROverview','HRReport']}),
+ getHRPerformance:b.query<HRList<HRPerformance>,Query|void>({query:q=>({url:'/hr-management/performance',params:q||{}}),providesTags:[{type:'HRPerformance',id:'LIST'}]}),
+ saveHRPerformance:b.mutation<HREnvelope<HRPerformance>,Record<string,unknown>>({query:body=>({url:'/hr-management/performance',method:'POST',body}),invalidatesTags:[{type:'HRPerformance',id:'LIST'}]}),
+ getHROnboarding:b.query<HRList<HROnboarding>,Query|void>({query:q=>({url:'/hr-management/onboarding',params:q||{}}),providesTags:[{type:'HROnboarding',id:'LIST'}]}),
+ saveHROnboarding:b.mutation<HREnvelope<HROnboarding>,Record<string,unknown>>({query:body=>({url:'/hr-management/onboarding',method:'POST',body}),invalidatesTags:[{type:'HROnboarding',id:'LIST'},'HROverview']}),
+ getHRAssets:b.query<HRList<HRAsset>,Query|void>({query:q=>({url:'/hr-management/assets',params:q||{}}),providesTags:[{type:'HRAsset',id:'LIST'}]}),
+ saveHRAsset:b.mutation<HREnvelope<HRAsset>,Record<string,unknown>>({query:body=>({url:'/hr-management/assets',method:'POST',body}),invalidatesTags:[{type:'HRAsset',id:'LIST'}]}),
+ updateHRAsset:b.mutation<HREnvelope<HRAsset>,{id:string;body:Record<string,unknown>}>({query:({id,body})=>({url:`/hr-management/assets/${id}`,method:'PATCH',body}),invalidatesTags:[{type:'HRAsset',id:'LIST'}]}),
+ getHRAnnouncements:b.query<HRList<HRAnnouncement>,Query|void>({query:q=>({url:'/hr-management/announcements',params:q||{}}),providesTags:[{type:'HRAnnouncement',id:'LIST'}]}),
+ createHRAnnouncement:b.mutation<HREnvelope<HRAnnouncement>,Record<string,unknown>>({query:body=>({url:'/hr-management/announcements',method:'POST',body}),invalidatesTags:[{type:'HRAnnouncement',id:'LIST'},'HROverview']}),
+ getMyHRSummary:b.query<HREnvelope<HRMySummary>,void>({query:()=>'/hr-management/me',providesTags:['HRAttendance','HRLeave','HROnboarding','HRAnnouncement']}),
+ hrCheckIn:b.mutation<HREnvelope<HRAttendance>,void>({query:()=>({url:'/hr-management/me/check-in',method:'POST'}),invalidatesTags:['HRAttendance','HROverview']}),
+ hrCheckOut:b.mutation<HREnvelope<HRAttendance>,void>({query:()=>({url:'/hr-management/me/check-out',method:'POST'}),invalidatesTags:['HRAttendance','HROverview']}),
+ createMyHRLeave:b.mutation<HREnvelope<HRLeave>,Record<string,unknown>>({query:body=>({url:'/hr-management/me/leaves',method:'POST',body}),invalidatesTags:['HRLeave','HROverview']}),
+})});
+export const {useGetHROverviewQuery,useGetHRReportsQuery,useGetHREmployeesQuery,useGetHREmployeeQuery,useCreateHREmployeeMutation,useUpdateHREmployeeMutation,useDeleteHREmployeeMutation,useGetHRShiftsQuery,useCreateHRShiftMutation,useUpdateHRShiftMutation,useGetHRAttendanceQuery,useMarkHRAttendanceMutation,useGetHRLeavesQuery,useCreateHRLeaveMutation,useDecideHRLeaveMutation,useGetHRPayrollQuery,useSaveHRPayrollMutation,useGetHRPerformanceQuery,useSaveHRPerformanceMutation,useGetHROnboardingQuery,useSaveHROnboardingMutation,useGetHRAssetsQuery,useSaveHRAssetMutation,useUpdateHRAssetMutation,useGetHRAnnouncementsQuery,useCreateHRAnnouncementMutation,useGetMyHRSummaryQuery,useHrCheckInMutation,useHrCheckOutMutation,useCreateMyHRLeaveMutation}=hrManagementApi;

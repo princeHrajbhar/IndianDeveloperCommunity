@@ -1,5 +1,2 @@
-import { ApplicationAdminDetail } from "@/src/components/admin/applications-panel";
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  return <ApplicationAdminDetail applicationId={id} />;
-}
+import { redirect } from "next/navigation";
+export default async function Page({ params }: { params: Promise<{ id: string }> }) { const { id } = await params; redirect(`/hr-management/applications/${id}`); }

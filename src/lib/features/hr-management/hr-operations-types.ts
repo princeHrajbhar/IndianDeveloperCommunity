@@ -1,0 +1,10 @@
+import type { HRId, HRPersonRef } from './hr-management-types';
+export type HRHoliday=HRId&{name:string;date:string;category:string;location?:string;description?:string;isOptional:boolean};
+export type HRTimesheet=HRId&{employeeId:HRPersonRef|string;date:string;project?:string;task?:string;hours:number;billable:boolean;notes?:string;status:string;decisionNote?:string;createdAt?:string};
+export type HRExpense=HRId&{employeeId:HRPersonRef|string;expenseDate:string;category:string;amount:number;currency:string;description:string;receiptUrl?:string;status:string;decisionNote?:string;paymentReference?:string;paidAt?:string;createdAt?:string};
+export type HRCase=HRId&{employeeId:HRPersonRef|string;category:string;subject:string;description:string;priority:string;status:string;confidential:boolean;assigneeId?:{email?:string}|string;resolution?:string;resolvedAt?:string;createdAt?:string};
+export type HRPolicy=HRId&{title:string;category:string;version:string;summary?:string;content:string;status:string;effectiveDate:string;requiresAcknowledgement:boolean;createdAt?:string};
+export type HRPolicyAck=HRId&{policyId:string;employeeId:string;acknowledgedAt:string};
+export type HROperationsSelf={holidays:HRHoliday[];timesheets:HRTimesheet[];expenses:HRExpense[];cases:HRCase[];policies:HRPolicy[];acknowledgements:HRPolicyAck[]};
+export type HROpsList<T>={success:boolean;data:T[];pagination:{page:number;limit:number;total:number;totalPages:number}};
+export type HROpsEnvelope<T>={success:boolean;data:T};

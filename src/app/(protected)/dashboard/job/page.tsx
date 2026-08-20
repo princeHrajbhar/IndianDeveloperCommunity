@@ -1,2 +1,2 @@
-import { JobsPanel } from "@/src/components/admin/jobs-panel";
-export default function Page() { return <JobsPanel />; }
+import { redirect } from "next/navigation";
+export default function Page() { redirect("/hr-management/jobs"); }

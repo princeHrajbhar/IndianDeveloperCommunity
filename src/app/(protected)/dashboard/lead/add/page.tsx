@@ -1,2 +1,2 @@
-import { LeadCreatePage } from "@/src/components/admin/leads-panel";
-export default function Page() { return <LeadCreatePage />; }
+import { redirect } from "next/navigation";
+export default function Page(){redirect("/lead-management/leads/new")}

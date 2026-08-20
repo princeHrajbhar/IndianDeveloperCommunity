@@ -1,0 +1,23 @@
+"use client";
+import type {ReactNode} from "react";
+
+export const input="qf-input h-11 w-full rounded-xl px-3 text-sm transition";
+export const textarea=`${input} min-h-28 py-3`;
+
+export function HRPageTitle({eyebrow,title,accent,description,actions}:{eyebrow:string;title:string;accent?:string;description:string;actions?:ReactNode}){
+  return <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between"><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-[var(--qf-primary-text)]">{eyebrow}</p><h1 className="qf-text mt-2 text-3xl font-black tracking-tight md:text-4xl">{title} {accent&&<span className="text-[var(--qf-primary-text)]">{accent}</span>}</h1><p className="qf-muted mt-3 max-w-3xl text-sm leading-6">{description}</p></div>{actions&&<div className="flex flex-wrap gap-2">{actions}</div>}</div>
+}
+export function Card({children,className=""}:{children:ReactNode;className?:string}){return <div className={`qf-surface qf-shadow rounded-2xl border ${className}`}>{children}</div>}
+export function CardHeader({title,description,action}:{title:string;description?:string;action?:ReactNode}){return <div className="qf-border flex items-start justify-between gap-3 border-b px-5 py-4"><div><h2 className="qf-text font-black">{title}</h2>{description&&<p className="qf-muted mt-1 text-xs leading-5">{description}</p>}</div>{action}</div>}
+export function Metric({label,value,helper,icon,gradient="from-blue-500 to-cyan-500"}:{label:string;value:ReactNode;helper?:string;icon:ReactNode;gradient?:string}){return <Card className="p-5"><div className="flex items-start justify-between gap-4"><div><p className="qf-muted text-[10px] font-black uppercase tracking-[.14em]">{label}</p><p className="qf-text mt-2 text-3xl font-black">{value}</p>{helper&&<p className="qf-muted mt-1 text-xs">{helper}</p>}</div><span className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br ${gradient} text-white shadow-sm`}>{icon}</span></div></Card>}
+export function Badge({children,tone="slate"}:{children:ReactNode;tone?:"slate"|"blue"|"green"|"amber"|"rose"|"violet"}){const map={slate:"qf-status-neutral",blue:"qf-status-info",green:"qf-status-success",amber:"qf-status-warning",rose:"qf-status-danger",violet:"qf-status-info"};return <span className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${map[tone]}`}>{children}</span>}
+export function PrimaryButton({children,...props}:React.ButtonHTMLAttributes<HTMLButtonElement>){return <button {...props} className={`qf-primary-button inline-flex h-11 items-center justify-center gap-2 rounded-xl px-4 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-50 ${props.className??""}`}>{children}</button>}
+export function ColorButton({children,...props}:React.ButtonHTMLAttributes<HTMLButtonElement>){return <PrimaryButton {...props}>{children}</PrimaryButton>}
+export function SecondaryButton({children,...props}:React.ButtonHTMLAttributes<HTMLButtonElement>){return <button {...props} className={`qf-secondary-button inline-flex h-10 items-center justify-center gap-2 rounded-xl px-3 text-xs font-black transition disabled:opacity-50 ${props.className??""}`}>{children}</button>}
+export function Empty({title,description}:{title:string;description:string}){return <div className="p-10 text-center"><p className="qf-text font-black">{title}</p><p className="qf-muted mt-2 text-sm">{description}</p></div>}
+export function ErrorBox({message}:{message:string}){return <div className="qf-status-danger rounded-xl border px-4 py-3 text-sm font-semibold">{message}</div>}
+export function Field({label,children,hint}:{label:string;children:ReactNode;hint?:string}){return <label className="block"><span className="qf-text-secondary mb-1.5 block text-xs font-black">{label}</span>{children}{hint&&<span className="qf-muted mt-1 block text-[10px] leading-4">{hint}</span>}</label>}
+export function personName(value:unknown){if(value&&typeof value==="object"){const p=value as {firstName?:string;lastName?:string;employeeCode?:string};return `${p.firstName??""} ${p.lastName??""}`.trim()||p.employeeCode||"Employee"}return "Employee"}
+export function idOf(value:{id?:string;_id?:string}|undefined|null){return value?.id??value?._id??""}
+export function fmtDate(value?:string){if(!value)return "—";const d=new Date(value);return Number.isNaN(d.getTime())?"—":d.toLocaleDateString()}
+export function money(value:number,currency="INR"){try{return new Intl.NumberFormat("en-IN",{style:"currency",currency,maximumFractionDigits:0}).format(value)}catch{return `${currency} ${value.toLocaleString()}`}}

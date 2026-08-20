@@ -1,4 +1,5 @@
-import { UnavailableFeature } from "@/src/components/profile/unavailable-feature";
+import { ProfileNotificationsWorkspace } from "@/src/components/profile/profile-notifications-workspace";
+
 export default function NotificationsPage() {
-  return <UnavailableFeature eyebrow="Account activity" title="Your" accent="notifications." description="Review important account, course and application updates." />;
+  return <ProfileNotificationsWorkspace />;
 }

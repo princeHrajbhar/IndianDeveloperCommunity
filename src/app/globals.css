@@ -255,59 +255,336 @@ input:-webkit-autofill:focus {
   color: #67e8f9;
 }
 
-/* QuantumFinix dashboard compatibility layer for imported content editors. */
+/* QuantumFinix light dashboard compatibility layer for imported content editors. */
 .qf-admin-surface {
-  color: #f8fafc;
+  color: #0f172a;
 }
 .qf-admin-surface .bg-gray-50,
 .qf-admin-surface .bg-gray-100,
 .qf-admin-surface .bg-white {
-  background-color: rgba(7, 16, 31, 0.92) !important;
+  background-color: #ffffff !important;
 }
 .qf-admin-surface .text-gray-900,
 .qf-admin-surface .text-gray-800,
 .qf-admin-surface .text-gray-700 {
-  color: #f1f5f9 !important;
+  color: #0f172a !important;
 }
 .qf-admin-surface .text-gray-600,
 .qf-admin-surface .text-gray-500,
 .qf-admin-surface .text-gray-400 {
-  color: #94a3b8 !important;
+  color: #64748b !important;
 }
 .qf-admin-surface .border-gray-100,
 .qf-admin-surface .border-gray-200,
 .qf-admin-surface .border-gray-300 {
-  border-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: #e2e8f0 !important;
 }
 .qf-admin-surface input:not([type="checkbox"]):not([type="radio"]),
 .qf-admin-surface select,
 .qf-admin-surface textarea {
-  border-color: rgba(255, 255, 255, 0.11) !important;
-  background: #07101f !important;
-  color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
 }
 .qf-admin-surface input::placeholder,
 .qf-admin-surface textarea::placeholder {
-  color: #64748b !important;
+  color: #94a3b8 !important;
 }
 .qf-admin-surface .shadow-sm,
 .qf-admin-surface .shadow-md,
 .qf-admin-surface .shadow-lg,
 .qf-admin-surface .shadow-xl {
-  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 14px 45px rgba(15, 23, 42, 0.07) !important;
 }
-.qf-admin-surface .bg-blue-50,
+.qf-admin-surface .bg-blue-50 { background-color: #eff6ff !important; }
 .qf-admin-surface .bg-teal-50,
 .qf-admin-surface .bg-emerald-50,
-.qf-admin-surface .bg-green-50 {
-  background-color: rgba(34, 211, 238, 0.07) !important;
-}
-.qf-admin-surface .bg-red-50 {
-  background-color: rgba(251, 113, 133, 0.08) !important;
-}
-.qf-admin-surface .sticky {
-  scroll-margin-top: 1rem;
-}
+.qf-admin-surface .bg-green-50 { background-color: #ecfdf5 !important; }
+.qf-admin-surface .bg-red-50 { background-color: #fff1f2 !important; }
+.qf-admin-surface .sticky { scroll-margin-top: 1rem; }
 .qf-sidebar-scroll {
   scrollbar-gutter: stable;
 }
+
+
+/* QuantumFinix light employee/profile workspace compatibility layer. */
+.qf-profile-surface {
+  color: #0f172a;
+}
+.qf-profile-surface [class*="bg-white/"] {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+}
+.qf-profile-surface [class*="border-white/"] {
+  border-color: #e2e8f0 !important;
+}
+.qf-profile-surface .text-white,
+.qf-profile-surface .text-slate-200,
+.qf-profile-surface .text-slate-300 {
+  color: #0f172a !important;
+}
+.qf-profile-surface .text-slate-400,
+.qf-profile-surface .text-slate-500,
+.qf-profile-surface .text-slate-600,
+.qf-profile-surface .text-slate-700 {
+  color: #64748b !important;
+}
+.qf-profile-surface input:not([type="checkbox"]):not([type="radio"]),
+.qf-profile-surface select,
+.qf-profile-surface textarea {
+  border-color: #dbe3ef !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+.qf-profile-surface input::placeholder,
+.qf-profile-surface textarea::placeholder {
+  color: #94a3b8 !important;
+}
+.qf-profile-surface [class*="hover:bg-white/"]:hover {
+  background-color: #f8fafc !important;
+}
+.qf-profile-surface [class*="shadow-black/"] {
+  --tw-shadow-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Authenticated dashboard design system
+   Scoped to app/(protected) through DashboardThemeProvider. Public pages are
+   intentionally unaffected by these rules.
+   -------------------------------------------------------------------------- */
+.qf-dashboard-theme {
+  --qf-bg: #f6f7f9;
+  --qf-surface: #ffffff;
+  --qf-surface-muted: #f8fafc;
+  --qf-surface-raised: #ffffff;
+  --qf-border: #e2e8f0;
+  --qf-border-strong: #cbd5e1;
+  --qf-text: #0f172a;
+  --qf-text-secondary: #475569;
+  --qf-text-muted: #64748b;
+  --qf-primary: #2563eb;
+  --qf-primary-hover: #1d4ed8;
+  --qf-primary-soft: #eff6ff;
+  --qf-primary-text: #1d4ed8;
+  --qf-success-soft: #ecfdf5;
+  --qf-success-text: #047857;
+  --qf-warning-soft: #fffbeb;
+  --qf-warning-text: #b45309;
+  --qf-danger-soft: #fff1f2;
+  --qf-danger-text: #be123c;
+  --qf-overlay: rgba(15, 23, 42, 0.46);
+  --qf-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05), 0 8px 24px rgba(15, 23, 42, 0.04);
+  --qf-shadow-md: 0 18px 48px rgba(15, 23, 42, 0.09);
+  min-height: 100vh;
+  color-scheme: light;
+  background: var(--qf-bg);
+  color: var(--qf-text);
+}
+
+.qf-dashboard-theme[data-dashboard-theme="dark"] {
+  --qf-bg: #0b1120;
+  --qf-surface: #111827;
+  --qf-surface-muted: #172033;
+  --qf-surface-raised: #182235;
+  --qf-border: #283548;
+  --qf-border-strong: #3a4960;
+  --qf-text: #f8fafc;
+  --qf-text-secondary: #cbd5e1;
+  --qf-text-muted: #9aa7ba;
+  --qf-primary: #2563eb;
+  --qf-primary-hover: #1d4ed8;
+  --qf-primary-soft: rgba(59, 130, 246, 0.14);
+  --qf-primary-text: #93c5fd;
+  --qf-success-soft: rgba(16, 185, 129, 0.13);
+  --qf-success-text: #6ee7b7;
+  --qf-warning-soft: rgba(245, 158, 11, 0.13);
+  --qf-warning-text: #fcd34d;
+  --qf-danger-soft: rgba(244, 63, 94, 0.13);
+  --qf-danger-text: #fda4af;
+  --qf-overlay: rgba(2, 6, 23, 0.72);
+  --qf-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25), 0 12px 30px rgba(0, 0, 0, 0.18);
+  --qf-shadow-md: 0 20px 56px rgba(0, 0, 0, 0.32);
+  color-scheme: dark;
+}
+
+.qf-dashboard-theme,
+.qf-dashboard-theme * {
+  scrollbar-color: var(--qf-border-strong) transparent;
+}
+
+.qf-dashboard-theme ::-webkit-scrollbar-track { background: transparent; }
+.qf-dashboard-theme ::-webkit-scrollbar-thumb { background: var(--qf-border-strong); }
+
+.qf-app-shell { background: var(--qf-bg) !important; color: var(--qf-text) !important; }
+.qf-surface { background: var(--qf-surface) !important; color: var(--qf-text) !important; border-color: var(--qf-border) !important; }
+.qf-surface-muted { background: var(--qf-surface-muted) !important; color: var(--qf-text) !important; border-color: var(--qf-border) !important; }
+.qf-text { color: var(--qf-text) !important; }
+.qf-text-secondary { color: var(--qf-text-secondary) !important; }
+.qf-muted { color: var(--qf-text-muted) !important; }
+.qf-border { border-color: var(--qf-border) !important; }
+.qf-shadow { box-shadow: var(--qf-shadow-sm) !important; }
+
+.qf-input {
+  border: 1px solid var(--qf-border) !important;
+  background: var(--qf-surface) !important;
+  color: var(--qf-text) !important;
+  outline: none;
+}
+.qf-input::placeholder { color: var(--qf-text-muted) !important; }
+.qf-input:focus {
+  border-color: var(--qf-primary) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--qf-primary) 16%, transparent) !important;
+}
+
+.qf-primary-button {
+  border: 1px solid transparent;
+  background: var(--qf-primary) !important;
+  color: #ffffff !important;
+}
+.qf-primary-button:hover { background: var(--qf-primary-hover) !important; }
+.qf-secondary-button {
+  border: 1px solid var(--qf-border) !important;
+  background: var(--qf-surface) !important;
+  color: var(--qf-text-secondary) !important;
+}
+.qf-secondary-button:hover { background: var(--qf-surface-muted) !important; color: var(--qf-text) !important; }
+.qf-danger-button { border-color: color-mix(in srgb, var(--qf-danger-text) 28%, var(--qf-border)) !important; background: var(--qf-danger-soft) !important; color: var(--qf-danger-text) !important; }
+
+.qf-icon-button {
+  display: inline-grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border-radius: 0.75rem;
+  border: 1px solid var(--qf-border);
+  background: var(--qf-surface);
+  color: var(--qf-text-secondary);
+  transition: background-color .18s ease, border-color .18s ease, color .18s ease;
+}
+.qf-icon-button:hover { background: var(--qf-surface-muted); color: var(--qf-text); border-color: var(--qf-border-strong); }
+.qf-icon-button:focus-visible,
+.qf-theme-switch button:focus-visible { outline: 3px solid color-mix(in srgb, var(--qf-primary) 30%, transparent); outline-offset: 2px; }
+
+.qf-theme-switch {
+  display: inline-flex;
+  height: 2.75rem;
+  align-items: center;
+  gap: .2rem;
+  padding: .2rem;
+  border: 1px solid var(--qf-border);
+  border-radius: .8rem;
+  background: var(--qf-surface-muted);
+}
+.qf-theme-switch button {
+  display: inline-flex;
+  height: 2.2rem;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  border-radius: .6rem;
+  padding: 0 .65rem;
+  color: var(--qf-text-muted);
+  font-size: .72rem;
+  font-weight: 800;
+  transition: background-color .18s ease, color .18s ease, box-shadow .18s ease;
+}
+.qf-theme-switch button.is-active {
+  background: var(--qf-surface);
+  color: var(--qf-text);
+  box-shadow: var(--qf-shadow-sm);
+}
+
+/* Compatibility for existing dashboard components while they progressively
+   move to semantic qf-* classes. Only neutral utilities are remapped; chart,
+   status and metric colors remain available for data visualization. */
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.bg-white, .bg-white\/95, .bg-white\/98, .bg-white\/90, .bg-white\/70) { background-color: var(--qf-surface) !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.bg-slate-50, .bg-slate-50\/60, .bg-slate-50\/70, .bg-slate-100, .bg-\[\#f7f9fc\], .bg-\[\#f6f8fb\], .bg-\[\#f8fafc\]) { background-color: var(--qf-surface-muted) !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.bg-\[\#07101f\], .bg-\[\#030712\], .bg-black\/15, .bg-black\/20) { background-color: var(--qf-surface-muted) !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.bg-white\/5, .bg-white\/\[0\.018\], .bg-white\/\[0\.02\], .bg-white\/\[0\.025\], .bg-white\/\[0\.03\], .bg-white\/\[0\.04\], .bg-white\/\[0\.05\], .bg-white\/\[0\.07\], .bg-white\/\[0\.08\]) { background-color: var(--qf-surface-raised) !important; }
+
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.text-slate-950, .text-slate-900, .text-slate-800, .text-white, .text-slate-200) { color: var(--qf-text) !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.text-slate-700, .text-slate-600, .text-slate-500, .text-slate-400, .text-slate-300) { color: var(--qf-text-secondary) !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.border-slate-100, .border-slate-200, .border-slate-300, .border-white\/8, .border-white\/10, .border-white\/15, .border-white\/\[0\.06\], .border-white\/\[0\.07\], .border-white\/\[0\.08\], .border-white\/\[0\.09\], .border-white\/\[0\.1\]) { border-color: var(--qf-border) !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.divide-slate-100, .divide-white\/8, .divide-white\/\[0\.07\]) > :not([hidden]) ~ :not([hidden]) { border-color: var(--qf-border) !important; }
+
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(input, textarea, select):not([type="checkbox"]):not([type="radio"]) {
+  border-color: var(--qf-border) !important;
+  background-color: var(--qf-surface) !important;
+  color: var(--qf-text) !important;
+}
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(input, textarea)::placeholder { color: var(--qf-text-muted) !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] option { background: var(--qf-surface); color: var(--qf-text); }
+
+/* Light mode also normalizes legacy dark-only dashboard primitives. */
+.qf-dashboard-theme[data-dashboard-theme="light"] .qf-admin-content-module,
+.qf-dashboard-theme[data-dashboard-theme="light"] .qf-content-module { color: var(--qf-text); }
+.qf-dashboard-theme[data-dashboard-theme="light"] :is(.bg-\[\#07101f\], .bg-\[\#030712\], .bg-black\/15, .bg-black\/20) { background-color: var(--qf-surface-muted) !important; }
+.qf-dashboard-theme[data-dashboard-theme="light"] :is(.bg-white\/5, .bg-white\/\[0\.018\], .bg-white\/\[0\.02\], .bg-white\/\[0\.025\], .bg-white\/\[0\.03\], .bg-white\/\[0\.04\], .bg-white\/\[0\.05\], .bg-white\/\[0\.07\], .bg-white\/\[0\.08\]) { background-color: var(--qf-surface) !important; }
+.qf-dashboard-theme[data-dashboard-theme="light"] :is(.text-white, .text-slate-200, .text-slate-300) { color: var(--qf-text) !important; }
+.qf-dashboard-theme[data-dashboard-theme="light"] :is(.border-white\/8, .border-white\/10, .border-white\/15, .border-white\/\[0\.06\], .border-white\/\[0\.07\], .border-white\/\[0\.08\], .border-white\/\[0\.09\], .border-white\/\[0\.1\]) { border-color: var(--qf-border) !important; }
+.qf-dashboard-theme[data-dashboard-theme="light"] :is(.divide-white\/8, .divide-white\/\[0\.07\]) > :not([hidden]) ~ :not([hidden]) { border-color: var(--qf-border) !important; }
+.qf-dashboard-theme[data-dashboard-theme="light"] :is(input, textarea, select):not([type="checkbox"]):not([type="radio"]) {
+  border-color: var(--qf-border) !important;
+  background-color: var(--qf-surface) !important;
+  color: var(--qf-text) !important;
+}
+
+/* Existing profile compatibility rules were light-only. The following scoped
+   rules make them correctly follow the authenticated theme switch. */
+.qf-dashboard-theme .qf-profile-surface { background: var(--qf-bg) !important; color: var(--qf-text) !important; }
+.qf-dashboard-theme .qf-profile-surface [class*="bg-white/"] { background-color: var(--qf-surface) !important; }
+.qf-dashboard-theme .qf-profile-surface [class*="border-white/"] { border-color: var(--qf-border) !important; }
+.qf-dashboard-theme .qf-profile-surface :is(.text-white, .text-slate-200, .text-slate-300) { color: var(--qf-text) !important; }
+.qf-dashboard-theme .qf-profile-surface :is(.text-slate-400, .text-slate-500, .text-slate-600, .text-slate-700) { color: var(--qf-text-muted) !important; }
+.qf-dashboard-theme .qf-profile-surface :is(input, textarea, select):not([type="checkbox"]):not([type="radio"]) { background: var(--qf-surface) !important; color: var(--qf-text) !important; border-color: var(--qf-border) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .qf-dashboard-theme *,
+  .qf-dashboard-theme *::before,
+  .qf-dashboard-theme *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+.qf-status-info { border-color: color-mix(in srgb, var(--qf-primary) 28%, var(--qf-border)) !important; background: var(--qf-primary-soft) !important; color: var(--qf-primary-text) !important; }
+.qf-status-success { border-color: color-mix(in srgb, var(--qf-success-text) 26%, var(--qf-border)) !important; background: var(--qf-success-soft) !important; color: var(--qf-success-text) !important; }
+.qf-status-warning { border-color: color-mix(in srgb, var(--qf-warning-text) 26%, var(--qf-border)) !important; background: var(--qf-warning-soft) !important; color: var(--qf-warning-text) !important; }
+.qf-status-danger { border-color: color-mix(in srgb, var(--qf-danger-text) 26%, var(--qf-border)) !important; background: var(--qf-danger-soft) !important; color: var(--qf-danger-text) !important; }
+.qf-status-neutral { border-color: var(--qf-border) !important; background: var(--qf-surface-muted) !important; color: var(--qf-text-secondary) !important; }
+
+/* Normalize the legacy cyan dashboard accent to the single authenticated
+   primary color. Status/analytics colors are intentionally not remapped. */
+.qf-dashboard-theme :is(.text-cyan-100,.text-cyan-200,.text-cyan-300,.text-cyan-400,.text-cyan-500,.text-cyan-600,.text-cyan-700) {
+  color: var(--qf-primary-text) !important;
+}
+.qf-dashboard-theme :is(.border-cyan-200,.border-cyan-300,.border-cyan-400),
+.qf-dashboard-theme [class*="border-cyan-300/"] {
+  border-color: color-mix(in srgb, var(--qf-primary) 30%, var(--qf-border)) !important;
+}
+.qf-dashboard-theme :is(.bg-cyan-300,.bg-cyan-400,.bg-cyan-500,.bg-cyan-600) {
+  background: var(--qf-primary) !important;
+}
+.qf-dashboard-theme :is(.bg-cyan-300,.bg-cyan-400,.bg-cyan-500,.bg-cyan-600).text-slate-950 {
+  color: #fff !important;
+}
+.qf-dashboard-theme [class*="bg-cyan-300/"] {
+  background: var(--qf-primary-soft) !important;
+}
+.qf-dashboard-theme .accent-cyan-300 { accent-color: var(--qf-primary) !important; }
+
+/* Accessible dark-mode equivalents for legacy status utilities used inside
+   protected modules. These keep semantic status color without bright cards. */
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.text-gray-900,.text-gray-800,.text-gray-700) { color: var(--qf-text) !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.text-gray-600,.text-gray-500,.text-gray-400) { color: var(--qf-text-secondary) !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.border-gray-100,.border-gray-200,.border-gray-300) { border-color: var(--qf-border) !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] .bg-blue-50 { background-color: rgba(59,130,246,.13) !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.text-blue-600,.text-blue-700,.text-blue-800,.text-blue-900) { color: #93c5fd !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.bg-emerald-50,.bg-green-50,.bg-teal-50) { background-color: rgba(16,185,129,.12) !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.text-emerald-600,.text-emerald-700,.text-green-600,.text-green-700,.text-teal-600,.text-teal-700) { color: #6ee7b7 !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] .bg-amber-50 { background-color: rgba(245,158,11,.12) !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.text-amber-600,.text-amber-700,.text-amber-800) { color: #fcd34d !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.bg-rose-50,.bg-red-50) { background-color: rgba(244,63,94,.12) !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.text-rose-600,.text-rose-700,.text-red-600,.text-red-700) { color: #fda4af !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.bg-violet-50,.bg-purple-50,.bg-indigo-50) { background-color: rgba(139,92,246,.12) !important; }
+.qf-dashboard-theme[data-dashboard-theme="dark"] :is(.text-violet-600,.text-violet-700,.text-purple-600,.text-purple-700,.text-indigo-600,.text-indigo-700,.text-indigo-900) { color: #c4b5fd !important; }

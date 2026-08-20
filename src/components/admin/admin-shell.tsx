@@ -4,19 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BookOpen,
-  BriefcaseBusiness,
+  Code2,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
-  FileText,
-  FileUser,
   Folder,
   FolderCog,
   Home,
   LogOut,
-  Mail,
-  MailCheck,
   Menu,
   Newspaper,
   PanelsTopLeft,
@@ -31,6 +27,8 @@ import {
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useGetMeQuery, useLogoutMutation } from "@/src/lib/features/auth/auth-api";
 import { useGetProfileQuery } from "@/src/lib/features/profiles/profile-api";
+import { DashboardThemeToggle } from "@/src/components/dashboard-theme/theme-toggle";
+import { DashboardBrandLogo } from "@/src/components/dashboard-theme/dashboard-brand-logo";
 
 type NavigationItem = {
   href: string;
@@ -68,18 +66,17 @@ const navigationGroups: NavigationGroup[] = [
     ],
   },
   {
-    label: "Recruitment",
-    icon: BriefcaseBusiness,
+    label: "Human Resources",
+    icon: Users,
     items: [
-      { href: "/dashboard/job", label: "Jobs", icon: BriefcaseBusiness, permission: "jobs.manage" },
-      { href: "/dashboard/application", label: "Applications", icon: FileUser, permission: "applications.manage" },
+      { href: "/hr-management", label: "HR Management", icon: Users, permission: "hr-management.use" },
     ],
   },
   {
     label: "Lead Management",
     icon: UserRoundSearch,
     items: [
-      { href: "/dashboard/lead", label: "Leads", icon: UserRoundSearch, permission: "leads.manage" },
+      { href: "/lead-management", label: "Lead Management", icon: UserRoundSearch, permission: "lead-management.use" },
     ],
   },
   {
@@ -94,16 +91,14 @@ const navigationGroups: NavigationGroup[] = [
     label: "File Management",
     icon: FolderCog,
     items: [
-      { href: "/dashboard/document", label: "Documents", icon: FileText, permission: "documents.manage" },
       { href: "/dashboard/file", label: "Files", icon: FolderCog, permission: "files.manage" },
     ],
   },
   {
-    label: "Communications",
-    icon: Mail,
+    label: "Product Management",
+    icon: Code2,
     items: [
-      { href: "/dashboard/email", label: "Bulk Email", icon: Mail, permission: "email.manage" },
-      { href: "/dashboard/queue", label: "Queues", icon: MailCheck, permission: "queues.manage" },
+      { href: "/product-management", label: "Product Management", icon: Code2, permission: "product-management.use" },
     ],
   },
   {
@@ -151,12 +146,12 @@ function SidebarLink({
         nested ? "h-10" : "h-12"
       } ${collapsed ? "justify-center px-2" : nested ? "gap-3 px-3" : "gap-3 px-4"} ${
         selected
-          ? "bg-cyan-300 text-slate-950 shadow-[0_0_28px_rgba(34,211,238,.18)]"
-          : "text-slate-400 hover:bg-white/[0.05] hover:text-white"
+          ? "bg-blue-600 text-white shadow-sm"
+          : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
       }`}
     >
       <Icon size={nested ? 17 : 19} className="shrink-0" />
-      <span className={collapsed ? "lg:hidden" : ""}>{item.label}</span>
+      <span className={collapsed ? "md:hidden" : ""}>{item.label}</span>
     </Link>
   );
 }
@@ -204,7 +199,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
   const user = me.data?.data;
   const can = (permission: string) =>
-    user?.role === "super-admin" || Boolean(user?.permissions?.includes(permission));
+    user?.role === "super-admin" || Boolean(user?.permissions?.includes(permission)) ||
+    (permission === "lead-management.use" && Boolean(user?.permissions?.includes("leads.manage")));
   const allowedGroups = useMemo(
     () => navigationGroups
       .map((group) => ({ ...group, items: group.items.filter((item) => can(item.permission)) }))
@@ -221,34 +217,32 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const initials = (profile.data?.data.fullName || email).split(/\s+|@/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "U";
 
   return (
-    <div className="relative flex h-screen overflow-hidden bg-[#030712] text-white">
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_8%_4%,rgba(34,211,238,.10),transparent_26%),radial-gradient(circle_at_92%_12%,rgba(59,130,246,.10),transparent_28%)]" />
+    <div className="qf-app-shell relative flex h-screen overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 opacity-40 bg-[radial-gradient(circle_at_8%_4%,rgba(37,99,235,.08),transparent_26%)]" />
 
       {mobileOpen ? (
         <button
           aria-label="Close dashboard navigation"
-          className="fixed inset-0 z-40 bg-black/70 lg:hidden"
+          className="fixed inset-0 z-40 bg-slate-950/35 md:hidden"
           onClick={() => setMobileOpen(false)}
         />
       ) : null}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-screen min-h-0 flex-col border-r border-white/10 bg-[#050a14]/98 p-3 shadow-2xl transition-[width,transform] duration-300 lg:relative lg:inset-auto lg:translate-x-0 ${
-          collapsed ? "lg:w-20" : "lg:w-72"
+        className={`qf-surface fixed inset-y-0 left-0 z-50 flex h-screen min-h-0 flex-col border-r p-3 transition-[width,transform] duration-300 md:relative md:inset-auto md:translate-x-0 ${
+          collapsed ? "md:w-20" : "md:w-72"
         } ${mobileOpen ? "w-72 translate-x-0" : "w-72 -translate-x-full"}`}
       >
         <div className="flex h-16 shrink-0 items-center justify-between gap-2 px-1">
-          <Link href="/" className="flex min-w-0 items-center gap-3 overflow-hidden">
-            <img
-              src="/logo.png"
-              alt="QuantumFinix"
-              className={`object-contain transition-all ${collapsed ? "h-9 w-12 object-left lg:w-12" : "h-10 w-[150px] object-left"}`}
-            />
-          </Link>
+          <DashboardBrandLogo
+            href="/"
+            label="QuantumFinix dashboard home"
+            className={`object-contain object-left transition-all ${collapsed ? "h-9 w-12 md:w-12" : "h-10 w-[150px]"}`}
+          />
           <button
             type="button"
             onClick={() => setMobileOpen(false)}
-            className="rounded-xl border border-white/10 p-2 lg:hidden"
+            className="rounded-xl border border-slate-200 p-2 text-slate-600 md:hidden"
             aria-label="Close navigation"
           >
             <X size={18} />
@@ -274,7 +268,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
             const expanded = expandedGroups[group.label] ?? groupActive;
 
             return (
-              <div key={group.label} className="rounded-2xl border border-white/[0.06] bg-white/[0.015] p-1.5">
+              <div key={group.label} className="qf-surface-muted rounded-2xl border p-1.5">
                 <button
                   type="button"
                   onClick={() =>
@@ -289,12 +283,12 @@ export function AdminShell({ children }: { children: ReactNode }) {
                     collapsed ? "justify-center px-2" : "gap-3 px-3"
                   } ${
                     groupActive
-                      ? "text-cyan-200"
-                      : "text-slate-500 hover:bg-white/[0.04] hover:text-slate-300"
+                      ? "text-blue-600"
+                      : "qf-muted hover:bg-[var(--qf-surface)] hover:text-[var(--qf-text)]"
                   }`}
                 >
                   <GroupIcon size={17} className="shrink-0" />
-                  <span className={`min-w-0 flex-1 truncate text-left ${collapsed ? "lg:hidden" : ""}`}>
+                  <span className={`min-w-0 flex-1 truncate text-left ${collapsed ? "md:hidden" : ""}`}>
                     {group.label}
                   </span>
                   <ChevronDown
@@ -321,33 +315,33 @@ export function AdminShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className="shrink-0 space-y-2 border-t border-white/10 pt-3">
+        <div className="qf-border shrink-0 space-y-2 border-t pt-3">
           <Link
             href="/profile/personal"
             title={collapsed ? "My profile" : undefined}
-            className={`flex h-11 items-center rounded-xl border border-white/10 text-sm font-bold text-slate-300 transition hover:border-cyan-300/30 ${
+            className={`qf-secondary-button flex h-11 items-center rounded-xl text-sm font-bold transition ${
               collapsed ? "justify-center px-2" : "justify-center px-4"
             }`}
           >
             <Users size={17} className={collapsed ? "" : "mr-2"} />
-            <span className={collapsed ? "lg:hidden" : ""}>My profile</span>
+            <span className={collapsed ? "md:hidden" : ""}>My profile</span>
           </Link>
           <button
             type="button"
             disabled={logoutState.isLoading}
             onClick={() => void logout()}
             title={collapsed ? "Sign out" : undefined}
-            className={`flex h-11 w-full items-center rounded-xl border border-rose-300/15 bg-rose-300/[0.06] text-sm font-bold text-rose-200 transition hover:bg-rose-300/[0.1] ${
+            className={`flex h-11 w-full items-center rounded-xl border border-rose-200 bg-rose-50 text-sm font-bold text-rose-700 transition hover:bg-rose-100 ${
               collapsed ? "justify-center px-2" : "justify-center gap-2 px-4"
             }`}
           >
             <LogOut size={17} />
-            <span className={collapsed ? "lg:hidden" : ""}>Sign out</span>
+            <span className={collapsed ? "md:hidden" : ""}>Sign out</span>
           </button>
           <button
             type="button"
             onClick={toggleCollapsed}
-            className="hidden h-10 w-full items-center justify-center rounded-xl border border-white/10 text-slate-400 transition hover:text-white lg:flex"
+            className="qf-secondary-button hidden h-10 w-full items-center justify-center rounded-xl transition md:flex"
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
@@ -356,51 +350,52 @@ export function AdminShell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="relative z-10 flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="z-30 flex h-20 shrink-0 items-center justify-between border-b border-white/10 bg-[#030712]/92 px-5 backdrop-blur-xl lg:px-8">
+        <header className="qf-surface z-30 flex h-20 shrink-0 items-center justify-between border-b px-5 backdrop-blur-xl md:px-8">
           <div className="flex min-w-0 items-center gap-3">
             <button
               type="button"
               onClick={() => setMobileOpen(true)}
-              className="rounded-xl border border-white/10 p-2.5 lg:hidden"
+              className="qf-icon-button md:hidden"
               aria-label="Open dashboard navigation"
             >
               <Menu size={20} />
             </button>
             <div className="min-w-0">
-              <p className="truncate text-[10px] font-black uppercase tracking-[0.2em] text-cyan-300">Admin workspace</p>
+              <p className="truncate text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Admin workspace</p>
               <div className="mt-1 flex min-w-0 items-center gap-2 text-sm">
-                <Link href="/dashboard" className="font-semibold text-slate-500 transition hover:text-white">Dashboard</Link>
-                <ChevronRight size={14} className="shrink-0 text-slate-700" />
-                <span className="truncate font-bold text-slate-200">{currentLabel}</span>
+                <Link href="/dashboard" className="font-semibold text-slate-400 transition hover:text-blue-700">Dashboard</Link>
+                <ChevronRight size={14} className="shrink-0 text-slate-300" />
+                <span className="truncate font-bold text-slate-800">{currentLabel}</span>
               </div>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
+            <DashboardThemeToggle />
             <Link
               href="/"
               target="_blank"
-              className="hidden items-center gap-2 rounded-xl border border-white/10 px-4 py-2 text-sm font-bold transition hover:border-cyan-300/30 md:inline-flex"
+              className="qf-secondary-button hidden items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition md:inline-flex"
             >
               Public site <ExternalLink size={15} />
             </Link>
             <div className="hidden max-w-52 text-right sm:block">
-              <p className="truncate text-xs font-bold text-slate-200">{email}</p>
-              <p className="mt-0.5 text-[10px] font-black uppercase tracking-widest text-cyan-300">{user?.role?.replace(/-/g, " ") || "Administrator"}</p>
+              <p className="truncate text-xs font-bold text-slate-700">{email}</p>
+              <p className="mt-0.5 text-[10px] font-black uppercase tracking-widest text-blue-600">{user?.role?.replace(/-/g, " ") || "Administrator"}</p>
             </div>
-            <Link href="/profile/personal" className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full border border-white/15 bg-white/[0.06] text-xs font-black text-slate-200" aria-label="Open my profile">
+            <Link href="/profile/personal" className="qf-surface-muted grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full border text-xs font-black" aria-label="Open my profile">
               {profilePicture ? <img src={profilePicture} alt={profile.data?.data.fullName || "Profile"} className="h-full w-full object-cover" /> : initials}
             </Link>
           </div>
         </header>
 
-        <main className="qf-admin-surface min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-7 lg:px-8">
+        <main className="qf-admin-surface qf-app-shell min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-7 md:px-8">
           <div className="mx-auto w-full max-w-[1600px]">
             {hasPageAccess ? children : (
               <div className="grid min-h-[60vh] place-items-center">
-                <div className="max-w-lg rounded-3xl border border-amber-300/20 bg-amber-300/[0.06] p-8 text-center">
-                  <ShieldAlert className="mx-auto text-amber-200" size={34} />
+                <div className="max-w-lg rounded-3xl border border-amber-200 bg-amber-50 p-8 text-center">
+                  <ShieldAlert className="mx-auto text-amber-600" size={34} />
                   <h1 className="mt-5 text-2xl font-black">Module access required</h1>
-                  <p className="mt-3 leading-7 text-slate-400">Your role does not include access to this dashboard module. Ask a Super Admin to update the role permissions.</p>
+                  <p className="mt-3 leading-7 text-slate-500">Your role does not include access to this dashboard module. Ask a Super Admin to update the role permissions.</p>
                 </div>
               </div>
             )}

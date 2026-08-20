@@ -128,6 +128,22 @@ export const jobApplicationApi = baseApi.injectEndpoints({
       ],
     }),
 
+    adminBulkUpdateJobApplicationStatus: builder.mutation<
+      ApiEnvelope<{ matched?: number; updated?: number; results?: unknown[] }>,
+      { ids: string[]; status: ApplicationStatus; recruiterNotes?: string }
+    >({
+      query: (body) => ({ url: "/job-applications/admin/bulk/status", method: "PATCH", body }),
+      invalidatesTags: [{ type: "JobApplication", id: "ADMIN_LIST" }],
+    }),
+
+    adminReleaseApplicationDocuments: builder.mutation<
+      ApiEnvelope<unknown>,
+      { applicationIds: string[]; templateId: string; sendEmail?: boolean; acknowledgementEnabled?: boolean }
+    >({
+      query: (body) => ({ url: "/job-applications/admin/release-documents", method: "POST", body }),
+      invalidatesTags: [{ type: "DocumentIssue", id: "LIST" }],
+    }),
+
     adminDeleteJobApplication: builder.mutation<MessageEnvelope, string>({
       query: (id) => ({ url: `/job-applications/admin/${id}`, method: "DELETE" }),
       invalidatesTags: [
@@ -150,5 +166,7 @@ export const {
   useAdminListJobApplicationsQuery,
   useAdminGetJobApplicationQuery,
   useAdminUpdateJobApplicationStatusMutation,
+  useAdminBulkUpdateJobApplicationStatusMutation,
+  useAdminReleaseApplicationDocumentsMutation,
   useAdminDeleteJobApplicationMutation,
 } = jobApplicationApi;

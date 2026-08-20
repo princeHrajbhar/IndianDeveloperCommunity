@@ -1,2 +1,2 @@
-import { LeadsPanel } from "@/src/components/admin/leads-panel";
-export default function Page() { return <LeadsPanel />; }
+import { redirect } from "next/navigation";
+export default function Page(){redirect("/lead-management/leads")}

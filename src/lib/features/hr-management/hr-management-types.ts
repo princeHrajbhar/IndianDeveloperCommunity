@@ -1,0 +1,24 @@
+export type HRId={id?:string;_id?:string};
+export type HRPersonRef=HRId&{employeeCode?:string;firstName?:string;lastName?:string;email?:string;department?:string;designation?:string};
+export type HREmployee=HRId&{employeeCode:string;userId?:string;firstName:string;lastName:string;email:string;phone?:string;department:string;designation:string;employmentType:string;status:string;joiningDate:string;exitDate?:string;managerEmployeeId?:HRPersonRef|string;workLocation?:string;shiftId?:HRShift|string;skills?:string[];tags?:string[];notes?:string;createdAt?:string;updatedAt?:string};
+export type HRShift=HRId&{name:string;code:string;startTime:string;endTime:string;graceMinutes:number;workingDays:number[];weeklyHours:number;isActive:boolean};
+export type HRAttendance=HRId&{employeeId:HRPersonRef|string;date:string;status:string;checkIn?:string;checkOut?:string;workMinutes:number;overtimeMinutes:number;notes?:string;source:string};
+export type HRLeave=HRId&{employeeId:HRPersonRef|string;leaveType:string;startDate:string;endDate:string;days:number;reason:string;status:string;decisionNote?:string;createdAt?:string};
+export type HRPayroll=HRId&{employeeId:HRPersonRef|string;period:string;currency:string;baseSalary:number;allowances:number;bonus:number;reimbursements:number;deductions:number;tax:number;netPay:number;status:string;paymentReference?:string;paidAt?:string;notes?:string};
+export type HRPerformance=HRId&{employeeId:HRPersonRef|string;reviewerId?:{email?:string}|string;period:string;goals:Array<{title:string;weight:number;score?:number;comment?:string}>;competencyScore?:number;overallRating?:number;strengths?:string;improvements?:string;summary?:string;status:string};
+export type HROnboarding=HRId&{employeeId:HRPersonRef|string;status:string;buddyEmployeeId?:HRPersonRef|string;tasks:Array<{_id?:string;title:string;owner?:string;dueDate?:string;status:string;note?:string}>;startedAt?:string;completedAt?:string};
+export type HRAsset=HRId&{assetTag:string;type:string;name:string;serialNumber?:string;employeeId?:HRPersonRef|string;status:string;assignedAt?:string;returnedAt?:string;purchaseDate?:string;notes?:string};
+export type HRAnnouncement=HRId&{title:string;message:string;audience:string;department?:string;priority:string;channels:string[];publishedAt:string;expiresAt?:string;emailResult?:{sent:number;skipped:number;failed:number}};
+export type HROverview={metrics:{employees:number;activeEmployees:number;onboarding:number;presentToday:number;attendanceRate:number;pendingLeaves:number;payrollDraft:number;openJobs:number;applications:number;issuedDocuments:number;announcements:number};recentActivity:Array<HRId&{action:string;entityType:string;createdAt:string;actorId?:{email?:string}}>};
+export type HRReport={period:{from:string;to:string};departments:Array<{_id:string;count:number}>;attendance:Array<{_id:string;count:number}>;leaves:Array<{_id:string;count:number;days:number}>;payroll:Array<{_id:string;count:number;gross:number;net:number}>;headcountTrend:Array<{_id:string;joined:number}>};
+export type HRList<T>={success:boolean;data:T[];pagination:{page:number;limit:number;total:number;totalPages:number}};
+export type HREnvelope<T>={success:boolean;data:T};
+export type HRMySummary={
+  employee:HREmployee;
+  today:HRAttendance|null;
+  pendingLeaves:HRLeave[];
+  documents:Array<HRId&{documentNumber:string;templateName:string;category?:string;status:string;issuedAt:string}>;
+  onboarding:HROnboarding|null;
+  announcements:HRAnnouncement[];
+  month:{present:number;absent:number;leave:number;workMinutes:number};
+};

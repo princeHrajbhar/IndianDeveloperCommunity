@@ -6,7 +6,7 @@ import { getApiErrorMessage } from "@/src/lib/api/error";
 import { useGetStorageProvidersQuery } from "@/src/lib/features/files/file-api";
 import { useGetProfileQuery } from "@/src/lib/features/profiles/profile-api";
 import { useCreateVideoMutation, useDeleteVideoMutation, useGetAdminVideosQuery, useUpdateVideoMutation } from "@/src/lib/features/videos/video-api";
-import type { VideoFormat, VideoOrientation, VideoStatus } from "@/src/lib/features/videos/video-types";
+import type { VideoDto, VideoFormat, VideoOrientation, VideoStatus } from "@/src/lib/features/videos/video-types";
 
 export default function VideosAdminPage() {
   const videos = useGetAdminVideosQuery({ page: 1, limit: 100 });
@@ -22,6 +22,10 @@ export default function VideosAdminPage() {
   const [orientation, setOrientation] = useState<VideoOrientation>("landscape");
   const [durationSeconds, setDurationSeconds] = useState<number | undefined>();
   const [publisher, setPublisher] = useState("");
+  const [editing, setEditing] = useState<VideoDto | null>(null);
+  const [edit, setEdit] = useState({ title: "", description: "", caption: "", altText: "", category: "", tags: "", publishedBy: "", seoTitle: "", seoDescription: "" });
+  const [editVideoFile, setEditVideoFile] = useState<File | null>(null);
+  const [editThumbnailFile, setEditThumbnailFile] = useState<File | null>(null);
   const [readingMedia, setReadingMedia] = useState(false);
   const busy = createState.isLoading || updateState.isLoading || deleteState.isLoading;
   const items = useMemo(() => videos.data?.data ?? [], [videos.data]);
@@ -111,6 +115,26 @@ export default function VideosAdminPage() {
     catch (caught) { setError(getApiErrorMessage(caught)); }
   }
 
+  function beginEdit(item: VideoDto) {
+    setEditing(item);
+    setEditVideoFile(null);
+    setEditThumbnailFile(null);
+    setEdit({ title:item.title, description:item.description||"", caption:item.caption||"", altText:item.altText||"", category:item.category||"", tags:(item.tags||[]).join(", "), publishedBy:item.publishedBy||"", seoTitle:item.seoTitle||"", seoDescription:item.seoDescription||"" });
+  }
+
+  async function saveEdit() {
+    if (!editing) return; setError(""); setNotice("");
+    try {
+      const body = new FormData();
+      Object.entries(edit).forEach(([key, value]) => body.set(key, String(value)));
+      body.set("tags", JSON.stringify(edit.tags.split(",").map((x) => x.trim()).filter(Boolean)));
+      if (editVideoFile) body.set("video", editVideoFile);
+      if (editThumbnailFile) body.set("thumbnail", editThumbnailFile);
+      await updateVideo({ id: editing.id ?? editing._id, body }).unwrap();
+      setEditing(null); setEditVideoFile(null); setEditThumbnailFile(null); setNotice("Video details and media updated successfully.");
+    } catch (caught) { setError(getApiErrorMessage(caught)); }
+  }
+
   async function remove(id: string) {
     if (!window.confirm("Delete this video and its stored media permanently?")) return;
     try { await deleteVideo(id).unwrap(); setNotice("Video deleted."); }
@@ -163,9 +187,11 @@ export default function VideosAdminPage() {
       </aside>
     </form> : null}
 
+    {editing ? <div className="rounded-3xl border border-cyan-300/20 bg-[#07101f]/90 p-6"><div className="mb-5 flex items-center justify-between"><div><p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-300">Edit video</p><h2 className="mt-2 text-xl font-black">{editing.title}</h2></div><button type="button" onClick={()=>setEditing(null)} className="rounded-xl border border-white/10 px-4 py-2 text-sm font-bold">Cancel</button></div><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3"><Field label="Title"><input value={edit.title} onChange={e=>setEdit({...edit,title:e.target.value})} className={inputClass}/></Field><Field label="Publisher"><input value={edit.publishedBy} onChange={e=>setEdit({...edit,publishedBy:e.target.value})} className={inputClass}/></Field><Field label="Category"><input value={edit.category} onChange={e=>setEdit({...edit,category:e.target.value})} className={inputClass}/></Field><Field label="Tags"><input value={edit.tags} onChange={e=>setEdit({...edit,tags:e.target.value})} className={inputClass}/></Field><Field label="SEO title"><input value={edit.seoTitle} onChange={e=>setEdit({...edit,seoTitle:e.target.value})} className={inputClass}/></Field><Field label="Alt text"><input value={edit.altText} onChange={e=>setEdit({...edit,altText:e.target.value})} className={inputClass}/></Field><div className="md:col-span-2 xl:col-span-3"><Field label="Description"><textarea rows={4} value={edit.description} onChange={e=>setEdit({...edit,description:e.target.value})} className={inputClass}/></Field></div><div className="md:col-span-2 xl:col-span-3"><Field label="SEO description"><textarea rows={3} value={edit.seoDescription} onChange={e=>setEdit({...edit,seoDescription:e.target.value})} className={inputClass}/></Field></div><Field label="Replace video file (optional)"><input type="file" accept="video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska" onChange={e=>setEditVideoFile(e.target.files?.[0]??null)} className={inputClass}/></Field><Field label="Replace thumbnail (optional)"><input type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" onChange={e=>setEditThumbnailFile(e.target.files?.[0]??null)} className={inputClass}/></Field><div className="flex items-end text-xs text-slate-500">Replacement media is optional. Existing media stays unchanged unless a new file is selected.</div><div className="md:col-span-2 xl:col-span-3"><button type="button" disabled={busy} onClick={()=>void saveEdit()} className="rounded-xl bg-cyan-300 px-5 py-3 text-sm font-black text-slate-950">{updateState.isLoading?"Saving…":"Save video changes"}</button></div></div></div> : null}
+
     <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#07101f]/85">
       <div className="flex items-center justify-between border-b border-white/10 px-6 py-5"><div><h2 className="text-xl font-black">All videos</h2><p className="mt-1 text-sm text-slate-500">{items.length} managed records</p></div><BarChart3 className="text-cyan-300" /></div>
-      {videos.isLoading ? <div className="p-8 text-slate-500">Loading videos…</div> : items.length ? <div className="max-h-[calc(100vh-320px)] overflow-auto"><table className="w-full min-w-[1180px] text-left text-sm"><thead className="sticky top-0 z-10 bg-[#07101f] text-[10px] uppercase tracking-wider text-slate-500"><tr><th className="p-4">Video</th><th>Type</th><th>Publisher</th><th>Status</th><th>Views</th><th>Likes</th><th>Comments</th><th>Shares</th><th>Created</th><th className="pr-4 text-right">Actions</th></tr></thead><tbody className="divide-y divide-white/8">{items.map((item) => <tr key={item.id ?? item._id} className="hover:bg-white/[0.02]"><td className="p-4"><div className="flex items-center gap-3">{item.thumbnail?.url ? <img src={item.thumbnail.url} alt={item.altText || item.title} className="h-14 w-24 rounded-xl object-cover" /> : <span className="grid h-14 w-24 place-items-center rounded-xl bg-white/[0.04]"><Film size={22} /></span>}<div><p className="font-bold">{item.title}</p><p className="mt-1 text-xs text-slate-500">/videos/{item.slug} · {formatDuration(item.durationSeconds)}</p></div></div></td><td className="capitalize text-slate-300">{item.format} · {item.orientation}</td><td className="text-slate-300">{item.publishedBy || "QuantumFinix"}</td><td><select disabled={busy} value={item.status} onChange={(event) => void changeStatus(item.id ?? item._id, event.target.value as VideoStatus)} className="rounded-xl border border-white/10 bg-[#030712] px-3 py-2 text-xs"><option value="draft">Draft</option><option value="published">Published</option></select></td><td>{compact(item.analytics?.views)}</td><td>{compact(item.analytics?.likes)}</td><td>{compact(item.analytics?.comments)}</td><td>{compact(item.analytics?.shares)}</td><td className="text-xs text-slate-500">{new Date(item.createdAt).toLocaleDateString()}</td><td className="pr-4 text-right"><button type="button" disabled={busy} onClick={() => void remove(item.id ?? item._id)} className="inline-flex items-center gap-2 rounded-xl border border-rose-300/20 px-3 py-2 text-xs font-bold text-rose-200"><Trash2 size={14} /> Delete</button></td></tr>)}</tbody></table></div> : <div className="p-10 text-center text-slate-500"><VideoIcon className="mx-auto mb-3" />No videos uploaded.</div>}
+      {videos.isLoading ? <div className="p-8 text-slate-500">Loading videos…</div> : items.length ? <div className="max-h-[calc(100vh-320px)] overflow-auto"><table className="w-full min-w-[1420px] text-left text-sm"><thead className="sticky top-0 z-10 bg-[#07101f] text-[10px] uppercase tracking-wider text-slate-500"><tr><th className="p-4">Video</th><th>Type</th><th>Video URL</th><th>Publisher</th><th>Status</th><th>Views</th><th>Likes</th><th>Comments</th><th>Shares</th><th>Created</th><th className="pr-4 text-right">Actions</th></tr></thead><tbody className="divide-y divide-white/8">{items.map((item) => <tr key={item.id ?? item._id} className="hover:bg-white/[0.02]"><td className="p-4"><div className="flex items-center gap-3">{item.thumbnail?.url ? <img src={item.thumbnail.url} alt={item.altText || item.title} className="h-14 w-24 rounded-xl object-cover" /> : <span className="grid h-14 w-24 place-items-center rounded-xl bg-white/[0.04]"><Film size={22} /></span>}<div><p className="font-bold">{item.title}</p><p className="mt-1 text-xs text-slate-500">/videos/{item.slug} · {formatDuration(item.durationSeconds)}</p></div></div></td><td className="capitalize text-slate-300">{item.format} · {item.orientation}</td><td><div className="max-w-[220px]"><p className="truncate text-xs text-slate-500">{item.video?.url || "—"}</p>{item.video?.url ? <button type="button" onClick={()=>{void navigator.clipboard.writeText(item.video.url!);setNotice("Video URL copied.")}} className="mt-2 rounded-lg border border-white/10 px-2 py-1 text-[11px] font-bold text-cyan-200">Copy URL</button>:null}</div></td><td className="text-slate-300">{item.publishedBy || "QuantumFinix"}</td><td><select disabled={busy} value={item.status} onChange={(event) => void changeStatus(item.id ?? item._id, event.target.value as VideoStatus)} className="rounded-xl border border-white/10 bg-[#030712] px-3 py-2 text-xs"><option value="draft">Draft</option><option value="published">Published</option></select></td><td>{compact(item.analytics?.views)}</td><td>{compact(item.analytics?.likes)}</td><td>{compact(item.analytics?.comments)}</td><td>{compact(item.analytics?.shares)}</td><td className="text-xs text-slate-500">{new Date(item.createdAt).toLocaleDateString()}</td><td className="pr-4"><div className="flex justify-end gap-2"><button type="button" disabled={busy} onClick={()=>beginEdit(item)} className="rounded-xl border border-cyan-300/20 px-3 py-2 text-xs font-bold text-cyan-200">Edit</button><button type="button" disabled={busy} onClick={() => void remove(item.id ?? item._id)} className="inline-flex items-center gap-2 rounded-xl border border-rose-300/20 px-3 py-2 text-xs font-bold text-rose-200"><Trash2 size={14} /> Delete</button></div></td></tr>)}</tbody></table></div> : <div className="p-10 text-center text-slate-500"><VideoIcon className="mx-auto mb-3" />No videos uploaded.</div>}
     </div>
   </section>;
 }
