@@ -40,8 +40,8 @@ export function AuthShell({
           >
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/50 to-transparent" />
             <Link href="/" className="inline-flex items-center gap-4" aria-label="QuantumFinix home">
-              <span className="relative h-16 w-16 overflow-hidden rounded-2xl border border-cyan-300/20 bg-[#020611]">
-                <Image src="/logo.png" alt="QuantumFinix logo" fill priority sizes="64px" className="object-cover object-top" />
+              <span className="relative h-16 w-16 overflow-hidden">
+                <Image src="/logo.png" alt="QuantumFinix logo" fill priority sizes="64px" className="object-contain" />
               </span>
               <span>
                 <span className="block text-xl font-black tracking-[-0.04em]">Quantum<span className="text-cyan-300">Finix</span></span>
@@ -84,8 +84,8 @@ export function AuthShell({
           >
             <div className="mx-auto w-full max-w-lg">
               <Link href="/" className="mb-10 inline-flex items-center gap-3 lg:hidden" aria-label="QuantumFinix home">
-                <span className="relative h-12 w-12 overflow-hidden rounded-xl border border-cyan-300/20 bg-[#020611]">
-                  <Image src="/logo.png" alt="QuantumFinix logo" fill priority sizes="48px" className="object-cover object-top" />
+                <span className="relative h-12 w-12 overflow-hidden">
+                  <Image src="/logo.png" alt="QuantumFinix logo" fill priority sizes="48px" className="object-contain" />
                 </span>
                 <span className="text-lg font-black">Quantum<span className="text-cyan-300">Finix</span></span>
               </Link>

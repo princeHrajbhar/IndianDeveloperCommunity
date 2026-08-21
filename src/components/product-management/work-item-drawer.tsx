@@ -1,35 +1,1165 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { Archive, ArrowRightLeft, CheckCircle2, Copy, Link2, MessageSquareText, Paperclip, Play, Plus, RotateCcw, Save, Send, Trash2, Upload, XCircle } from "lucide-react";
+import {
+  Archive,
+  ArrowRightLeft,
+  CheckCircle2,
+  Copy,
+  Link2,
+  MessageSquareText,
+  Paperclip,
+  Play,
+  Plus,
+  RotateCcw,
+  Save,
+  Send,
+  Trash2,
+  Upload,
+  XCircle,
+} from "lucide-react";
 import toast from "react-hot-toast";
 import { getApiErrorMessage } from "@/src/lib/api/error";
 import { useGetMeQuery } from "@/src/lib/features/auth/auth-api";
-import { useAcceptPMTaskMutation, useAddPMDependencyMutation, useAddPMTaskAttachmentsMutation, useArchivePMTaskMutation, useCreatePMCommentMutation, useCreatePMTaskMutation, useCreatePMWorklogMutation, useDeletePMTaskMutation, useDuplicatePMTaskMutation, useGetPMCommentsQuery, useGetPMProjectQuery, useGetPMProjectsQuery, useGetPMReleasesQuery, useGetPMSprintsQuery, useGetPMTaskQuery, useGetPMWorklogsQuery, useMovePMTaskMutation, useRejectPMTaskMutation, useRemovePMTaskAttachmentMutation, useReopenPMTaskMutation, useSubmitPMTaskMutation, useTransitionPMTaskMutation, useUpdatePMTaskMutation } from "@/src/lib/features/product-management/product-management-api";
-import type { PMPriority, PMTask, PMUser, PMWorkType } from "@/src/lib/features/product-management/product-management-types";
-import { AsyncUserPicker, AsyncWorkItemPicker, Card, Drawer, Field, MultiValueInput, PriorityBadge, StatusBadge, dateInput, inputClass, primaryButton, secondaryButton, shortDate, textareaClass, userLabel } from "./pm-ui";
-const types:PMWorkType[]=['Epic','Story','Task','Bug','Subtask'],priorities:PMPriority[]=['Low','Medium','High','Urgent','Critical'];
-type FormState={type:PMWorkType;title:string;description:string;status:string;priority:PMPriority;assignee:string;reviewer:string;parentId:string;sprintId:string;releaseId:string;storyPoints:number;originalEstimate:string;remainingEstimate:string;startDate:string;dueDate:string;labels:string[];blockedReason:string;percentComplete:number;customFields:Record<string,unknown>};
-const blank=(status='Backlog'):FormState=>({type:'Task',title:'',description:'',status,priority:'Medium',assignee:'',reviewer:'',parentId:'',sprintId:'',releaseId:'',storyPoints:0,originalEstimate:'',remainingEstimate:'',startDate:'',dueDate:'',labels:[],blockedReason:'',percentComplete:0,customFields:{}});
-export function WorkItemDrawer({projectId,taskId,newItem,onClose,onCreated}:{projectId:string;taskId?:string;newItem?:boolean;onClose:()=>void;onCreated?:(task:PMTask)=>void}){
- const me=useGetMeQuery().data?.data,projectQ=useGetPMProjectQuery(projectId),taskQ=useGetPMTaskQuery(taskId||'',{skip:!taskId}),sprintsQ=useGetPMSprintsQuery(projectId),releasesQ=useGetPMReleasesQuery(projectId);const project=projectQ.data?.data,task=taskQ.data?.data;
- const canManage=!!me&&(me.role==='super-admin'||me.role==='product-admin'||(me.permissions??[]).includes('product-management.work.manage'));const canReview=canManage||!!(task&&me&&((typeof task.reviewer==='string'?task.reviewer:task.reviewer?._id)===me.userId));const projectsQ=useGetPMProjectsQuery({limit:100},{skip:!canManage});
- const [create,{isLoading:creating}]=useCreatePMTaskMutation(),[update,{isLoading:saving}]=useUpdatePMTaskMutation(),[transition]=useTransitionPMTaskMutation(),[duplicate]=useDuplicatePMTaskMutation(),[move]=useMovePMTaskMutation(),[archive]=useArchivePMTaskMutation(),[reopen]=useReopenPMTaskMutation(),[submit]=useSubmitPMTaskMutation(),[accept]=useAcceptPMTaskMutation(),[reject]=useRejectPMTaskMutation(),[remove]=useDeletePMTaskMutation(),[dep]=useAddPMDependencyMutation(),[upload]=useAddPMTaskAttachmentsMutation(),[removeAttachment]=useRemovePMTaskAttachmentMutation();
- const [form,setForm]=useState<FormState>(blank()),[tab,setTab]=useState<'details'|'discussion'|'time'|'activity'>('details'),[comment,setComment]=useState(''),[minutes,setMinutes]=useState(''),[workNote,setWorkNote]=useState(''),[dependencyType,setDependencyType]=useState<'depends-on'|'blocks'|'relates-to'>('depends-on'),[dependencyTarget,setDependencyTarget]=useState(''),[rejectReason,setRejectReason]=useState(''),[moveProject,setMoveProject]=useState('');
- const commentsQ=useGetPMCommentsQuery({taskId:taskId||'',page:1,limit:100},{skip:!taskId}),worklogsQ=useGetPMWorklogsQuery({taskId:taskId||'',page:1,limit:100},{skip:!taskId});const [addComment]=useCreatePMCommentMutation(),[addWorklog]=useCreatePMWorklogMutation();
- useEffect(()=>{if(task)setForm({type:task.type,title:task.title,description:task.description??'',status:task.status,priority:task.priority,assignee:typeof task.assignee==='string'?task.assignee:task.assignee?._id??'',reviewer:typeof task.reviewer==='string'?task.reviewer:task.reviewer?._id??'',parentId:typeof task.parentId==='string'?task.parentId:(task.parentId as PMTask|undefined)?._id??'',sprintId:task.sprintId??'',releaseId:task.releaseId??'',storyPoints:task.storyPoints??0,originalEstimate:task.originalEstimate==null?'':String(task.originalEstimate),remainingEstimate:task.remainingEstimate==null?'':String(task.remainingEstimate),startDate:dateInput(task.startDate),dueDate:dateInput(task.dueDate),labels:task.labels??[],blockedReason:task.blockedReason??'',percentComplete:task.percentComplete??0,customFields:task.customFields??{}});else if(newItem&&project)setForm(blank(project.workflow?.statuses?.[0]??'Backlog'))},[task,newItem,project]);
- const statuses=project?.workflow?.statuses??['Backlog','To Do','In Progress','In Review','QA','Blocked','Ready for Release','Done'];const nextTransitions=useMemo(()=>project?.workflow?.transitions?.filter(t=>t.from===form.status).map(t=>t.to)??statuses.filter(s=>s!==form.status),[project,form.status,statuses]);
- const payload=()=>({type:form.type,title:form.title,description:form.description||undefined,status:form.status,priority:form.priority,assignee:form.assignee||null,reviewer:form.reviewer||null,parentId:form.parentId||null,sprintId:form.sprintId||null,releaseId:form.releaseId||null,storyPoints:Number(form.storyPoints||0),originalEstimate:form.originalEstimate===''?null:Number(form.originalEstimate),remainingEstimate:form.remainingEstimate===''?null:Number(form.remainingEstimate),startDate:form.startDate||null,dueDate:form.dueDate||null,labels:form.labels,blockedReason:form.blockedReason||null,percentComplete:Number(form.percentComplete||0),customFields:form.customFields});
- async function save(){try{if(newItem){const r=await create({projectId,...payload()}).unwrap();toast.success('Work item created');onCreated?.(r.data);onClose()}else if(taskId){await update({id:taskId,body:payload()}).unwrap();toast.success('Work item saved')}}catch(e){toast.error(getApiErrorMessage(e))}}
- async function act(fn:()=>Promise<unknown>,msg:string){try{await fn();toast.success(msg)}catch(e){toast.error(getApiErrorMessage(e))}}
- async function moveWork(){if(!task||!moveProject)return;try{await move({id:task._id,projectId:moveProject}).unwrap();toast.success('Work item moved with its descendants');onClose();window.location.assign(`/product-management/projects/${moveProject}/tasks`)}catch(e){toast.error(getApiErrorMessage(e))}}
- const title=newItem?'Create work item':task?`${task.key} · ${task.title}`:'Work item';
- return <Drawer open={!!newItem||!!taskId} onClose={onClose} title={title} description={newItem?'Create an Epic, Story, Task, Bug or Subtask with planning, assignment and estimation data.':task?`${task.type} · created ${shortDate(task.createdAt)} · updated ${shortDate(task.updatedAt)}`:undefined} width="max-w-5xl"><div className="mb-4 flex flex-wrap gap-2">{(['details','discussion','time','activity'] as const).map(t=><button key={t} onClick={()=>setTab(t)} className={`rounded-xl px-3 py-2 text-xs font-black capitalize ${tab===t?'bg-slate-900 text-white':'border border-slate-200 bg-white text-slate-600'}`}>{t}</button>)}</div>
- {tab==='details'&&<div className="grid gap-5 xl:grid-cols-[1fr_310px]"><Card className="p-5"><div className="grid gap-4 md:grid-cols-2"><Field label="Type" required><select className={inputClass} value={form.type} onChange={e=>setForm(v=>({...v,type:e.target.value as PMWorkType}))}>{types.map(v=><option key={v}>{v}</option>)}</select></Field><Field label="Priority"><select className={inputClass} value={form.priority} onChange={e=>setForm(v=>({...v,priority:e.target.value as PMPriority}))}>{priorities.map(v=><option key={v}>{v}</option>)}</select></Field><div className="md:col-span-2"><Field label="Title" required><input className={inputClass} required value={form.title} onChange={e=>setForm(v=>({...v,title:e.target.value}))} placeholder="Outcome-oriented work item title"/></Field></div><div className="md:col-span-2"><Field label="Description"><textarea className={textareaClass} value={form.description} onChange={e=>setForm(v=>({...v,description:e.target.value}))} placeholder="Requirements, acceptance criteria and implementation context…"/></Field></div><Field label="Status"><select className={inputClass} value={form.status} onChange={e=>setForm(v=>({...v,status:e.target.value}))}>{statuses.map(v=><option key={v}>{v}</option>)}</select></Field><Field label="Parent / Epic"><div className="flex gap-2"><div className="min-w-0 flex-1"><AsyncWorkItemPicker projectId={projectId} value={form.parentId} excludeId={taskId} types={["Epic","Story","Task"]} onChange={id=>setForm(v=>({...v,parentId:id}))} label="No parent / search Epics, Stories or Tasks"/></div>{form.parentId&&<button type="button" className="grid h-11 w-11 place-items-center rounded-xl border border-slate-200 text-slate-400 hover:bg-rose-50 hover:text-rose-600" onClick={()=>setForm(v=>({...v,parentId:""}))}>×</button>}</div></Field><Field label="Assignee"><AsyncUserPicker projectId={projectId} value={form.assignee} onChange={id=>setForm(v=>({...v,assignee:id}))}/></Field><Field label="Reviewer"><AsyncUserPicker projectId={projectId} value={form.reviewer} onChange={id=>setForm(v=>({...v,reviewer:id}))} label="Select reviewer"/></Field><Field label="Sprint"><select className={inputClass} value={form.sprintId} onChange={e=>setForm(v=>({...v,sprintId:e.target.value}))}><option value="">Backlog / no sprint</option>{(sprintsQ.data?.data??[]).filter(s=>s.status!=='completed').map(s=><option key={s._id} value={s._id}>{s.name} · {s.status}</option>)}</select></Field><Field label="Release"><select className={inputClass} value={form.releaseId} onChange={e=>setForm(v=>({...v,releaseId:e.target.value}))}><option value="">No release</option>{(releasesQ.data?.data??[]).map(r=><option key={r._id} value={r._id}>{r.name} · {r.status}</option>)}</select></Field><Field label="Story points"><input className={inputClass} type="number" min="0" max="100" value={form.storyPoints} onChange={e=>setForm(v=>({...v,storyPoints:+e.target.value}))}/></Field><Field label="Progress %"><input className={inputClass} type="number" min="0" max="100" value={form.percentComplete} onChange={e=>setForm(v=>({...v,percentComplete:+e.target.value}))}/></Field><Field label="Original estimate (minutes)"><input className={inputClass} type="number" min="0" value={form.originalEstimate} onChange={e=>setForm(v=>({...v,originalEstimate:e.target.value}))}/></Field><Field label="Remaining estimate (minutes)"><input className={inputClass} type="number" min="0" value={form.remainingEstimate} onChange={e=>setForm(v=>({...v,remainingEstimate:e.target.value}))}/></Field><Field label="Start date"><input type="date" className={inputClass} value={form.startDate} onChange={e=>setForm(v=>({...v,startDate:e.target.value}))}/></Field><Field label="Due date"><input type="date" className={inputClass} value={form.dueDate} onChange={e=>setForm(v=>({...v,dueDate:e.target.value}))}/></Field><div className="md:col-span-2"><Field label="Labels"><MultiValueInput values={form.labels} onChange={labels=>setForm(v=>({...v,labels}))}/></Field></div><div className="md:col-span-2"><Field label="Blocked reason"><textarea className={textareaClass} value={form.blockedReason} onChange={e=>setForm(v=>({...v,blockedReason:e.target.value}))} placeholder="Why is this work blocked? Leave blank when not blocked."/></Field></div>{(project?.customFields??[]).map(def=><div key={def.key} className={def.type==='multi-select'?'md:col-span-2':''}><CustomField def={def} value={form.customFields[def.key]} onChange={value=>setForm(v=>({...v,customFields:{...v.customFields,[def.key]:value}}))}/></div>)}</div><div className="mt-5 flex justify-end"><button className={primaryButton} disabled={saving||creating||!form.title.trim()} onClick={()=>void save()}><Save className="h-4 w-4"/>{newItem?'Create work item':'Save changes'}</button></div></Card>
- <div className="space-y-4">{task&&<><Card className="p-4"><div className="flex items-center justify-between"><StatusBadge value={task.status}/><PriorityBadge value={task.priority}/></div><div className="mt-4 grid grid-cols-2 gap-2 text-center"><Mini label="Story points" value={task.storyPoints}/><Mini label="Reward" value={task.rewardPoints}/><Mini label="Earned" value={task.earnedPoints}/><Mini label="Progress" value={`${task.percentComplete}%`}/></div></Card><Card className="p-4"><h3 className="text-xs font-black uppercase tracking-wide text-slate-500">Workflow actions</h3><div className="mt-3 grid gap-2">{nextTransitions.slice(0,8).map(s=><button key={s} className={secondaryButton} onClick={()=>void act(async()=>{await transition({id:task._id,status:s}).unwrap();setForm(v=>({...v,status:s}))},`Moved to ${s}`)}><Play className="h-4 w-4"/>{s}</button>)}<button className={secondaryButton} onClick={()=>void act(()=>submit(task._id).unwrap(),'Submitted for review')}><Send className="h-4 w-4"/>Submit for review</button>{canReview&&<><button className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 text-xs font-black text-emerald-700" onClick={()=>void act(()=>accept(task._id).unwrap(),'Work accepted')}><CheckCircle2 className="h-4 w-4"/>Accept</button><div className="flex gap-2"><input className={`${inputClass} h-10`} value={rejectReason} onChange={e=>setRejectReason(e.target.value)} placeholder="Rejection reason"/><button disabled={!rejectReason.trim()} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-rose-200 bg-rose-50 text-rose-600" onClick={()=>void act(()=>reject({id:task._id,reason:rejectReason}).unwrap(),'Work rejected')}><XCircle className="h-4 w-4"/></button></div></>}</div></Card><Card className="p-4"><h3 className="text-xs font-black uppercase tracking-wide text-slate-500">More actions</h3><div className="mt-3 grid gap-2">{canManage&&<><button className={secondaryButton} onClick={()=>void act(()=>duplicate({id:task._id,body:{includeSubtasks:true,includeDependencies:true}}).unwrap(),'Work item duplicated')}><Copy className="h-4 w-4"/>Duplicate with relations</button>{task.archivedAt?<button className={secondaryButton} onClick={()=>void act(()=>archive({id:task._id,archive:false}).unwrap(),'Work restored')}><RotateCcw className="h-4 w-4"/>Restore</button>:<button className={secondaryButton} onClick={()=>void act(()=>archive({id:task._id,archive:true}).unwrap(),'Work archived')}><Archive className="h-4 w-4"/>Archive</button>}<div className="rounded-xl border border-slate-200 bg-slate-50 p-2"><select className={inputClass} value={moveProject} onChange={e=>setMoveProject(e.target.value)}><option value="">Move to another project…</option>{(projectsQ.data?.data??[]).filter(p=>p._id!==projectId).map(p=><option key={p._id} value={p._id}>{p.key} · {p.name}</option>)}</select><button className={`${secondaryButton} mt-2 w-full`} disabled={!moveProject} onClick={()=>void moveWork()}><ArrowRightLeft className="h-4 w-4"/>Move work + descendants</button></div></>}<button className={secondaryButton} onClick={()=>void act(()=>reopen(task._id).unwrap(),'Work reopened')}><RotateCcw className="h-4 w-4"/>Reopen</button>{canManage&&<button className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 text-xs font-black text-rose-700" onClick={()=>{if(confirm('Permanently delete this work item?'))void act(()=>remove(task._id).unwrap(),'Work item deleted').then(onClose)}}><Trash2 className="h-4 w-4"/>Delete</button>}</div></Card></>}</div></div>}
- {tab==='discussion'&&task&&<div className="grid gap-5 xl:grid-cols-[1fr_330px]"><Card><div className="border-b border-slate-100 p-4"><Field label="Add comment" hint="Mention an eligible user by email using @name@example.com."><textarea className={textareaClass} value={comment} onChange={e=>setComment(e.target.value)} placeholder="Add context, review feedback or an update…"/></Field><button className={`${primaryButton} mt-2`} disabled={!comment.trim()} onClick={()=>void act(async()=>{await addComment({taskId:task._id,text:comment}).unwrap();setComment('')},'Comment added')}><MessageSquareText className="h-4 w-4"/>Comment</button></div><div className="divide-y divide-slate-100">{(commentsQ.data?.data??[]).map(c=><div key={c._id} className="p-4"><div className="flex items-center justify-between"><b className="text-xs">{userLabel(c.authorId as PMUser|string)}</b><span className="text-[10px] text-slate-400">{new Date(c.createdAt).toLocaleString()}</span></div><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-600">{c.deletedAt?'Comment deleted':c.text}</p></div>)}</div></Card><Card className="p-4"><h3 className="text-xs font-black uppercase tracking-wide text-slate-500">Dependencies</h3><div className="mt-3 space-y-2"><select className={inputClass} value={dependencyType} onChange={e=>setDependencyType(e.target.value as typeof dependencyType)}><option value="depends-on">Depends on</option><option value="blocks">Blocks</option><option value="relates-to">Relates to</option></select><AsyncWorkItemPicker projectId={projectId} value={dependencyTarget} excludeId={task._id} onChange={id=>setDependencyTarget(id)} label="Search related work item"/><button className={secondaryButton} disabled={!dependencyTarget} onClick={()=>void act(()=>dep({id:task._id,type:dependencyType,targetTaskId:dependencyTarget}).unwrap(),'Dependency added')}><Link2 className="h-4 w-4"/>Add relation</button></div><div className="mt-5 text-xs leading-6 text-slate-500"><b className="text-slate-700">Blocked by:</b> {(task.blockedBy??[]).map(rel=>typeof rel==='string'?rel:(rel as PMTask).key).join(', ')||'None'}<br/><b className="text-slate-700">Blocks:</b> {(task.blocks??[]).map(rel=>typeof rel==='string'?rel:(rel as PMTask).key).join(', ')||'None'}</div></Card></div>}
- {tab==='time'&&task&&<div className="grid gap-5 xl:grid-cols-[1fr_330px]"><Card><div className="divide-y divide-slate-100">{(worklogsQ.data?.data??[]).map(w=><div key={w._id} className="flex items-start justify-between gap-4 p-4"><div><b className="text-sm">{Math.round(w.minutes/60*10)/10}h</b><p className="mt-1 text-xs text-slate-500">{w.note||'No note'} · {userLabel(w.userId)}</p></div><span className="text-[10px] text-slate-400">{shortDate(w.workDate)}</span></div>)}</div></Card><Card className="p-4"><h3 className="text-xs font-black uppercase tracking-wide text-slate-500">Log work</h3><div className="mt-3 space-y-3"><Field label="Minutes"><input type="number" min="1" className={inputClass} value={minutes} onChange={e=>setMinutes(e.target.value)}/></Field><Field label="Work note"><textarea className={textareaClass} value={workNote} onChange={e=>setWorkNote(e.target.value)}/></Field><button className={primaryButton} disabled={!+minutes} onClick={()=>void act(async()=>{await addWorklog({taskId:task._id,minutes:+minutes,note:workNote||undefined}).unwrap();setMinutes('');setWorkNote('')},'Work logged')}>Log time</button></div></Card><Card className="p-4 xl:col-span-2"><h3 className="text-xs font-black uppercase tracking-wide text-slate-500">Attachments</h3><p className="mt-1 text-xs text-slate-400">Work-item attachments are preserved; Product Management chat remains text-only.</p><div className="mt-3 flex flex-wrap gap-2">{(task.attachments??[]).map(a=><div key={a.storageKey} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs"><Paperclip className="h-4 w-4 text-violet-500"/><a target="_blank" rel="noreferrer" href={a.url} className="max-w-56 truncate font-bold text-blue-600">{a.fileName||a.storageKey}</a><button className="text-rose-500" onClick={()=>void act(()=>removeAttachment({id:task._id,storageKey:a.storageKey}).unwrap(),'Attachment removed')}><Trash2 className="h-3.5 w-3.5"/></button></div>)}</div><label className={`${secondaryButton} mt-3 cursor-pointer`}><Upload className="h-4 w-4"/>Upload attachments<input className="hidden" type="file" multiple onChange={e=>{const files=[...(e.target.files??[])];if(files.length)void act(()=>upload({id:task._id,files}).unwrap(),'Attachments uploaded')}}/></label></Card></div>}
- {tab==='activity'&&task&&<Card><div className="divide-y divide-slate-100">{(task.activity??[]).map(a=><div key={a._id} className="p-4"><div className="flex flex-wrap items-center justify-between gap-2"><b className="text-xs text-slate-800">{a.action.replaceAll('.',' · ')}</b><span className="text-[10px] text-slate-400">{new Date(a.createdAt).toLocaleString()}</span></div><p className="mt-2 text-[10px] text-slate-400">{a.entityType} · {a.entityId}</p></div>)}{!(task.activity??[]).length&&<div className="p-8 text-center text-sm text-slate-400">No audit events yet.</div>}</div></Card>}
- </Drawer>
+import {
+  useAcceptPMTaskMutation,
+  useAddPMDependencyMutation,
+  useAddPMTaskAttachmentsMutation,
+  useArchivePMTaskMutation,
+  useCreatePMCommentMutation,
+  useCreatePMTaskMutation,
+  useCreatePMWorklogMutation,
+  useDeletePMTaskMutation,
+  useDuplicatePMTaskMutation,
+  useGetPMCommentsQuery,
+  useGetPMProjectQuery,
+  useGetPMProjectsQuery,
+  useGetPMReleasesQuery,
+  useGetPMSprintsQuery,
+  useGetPMTaskQuery,
+  useGetPMWorklogsQuery,
+  useMovePMTaskMutation,
+  useRejectPMTaskMutation,
+  useRemovePMTaskAttachmentMutation,
+  useReopenPMTaskMutation,
+  useSubmitPMTaskMutation,
+  useTransitionPMTaskMutation,
+  useUpdatePMTaskMutation,
+} from "@/src/lib/features/product-management/product-management-api";
+import type {
+  PMPriority,
+  PMTask,
+  PMUser,
+  PMWorkType,
+} from "@/src/lib/features/product-management/product-management-types";
+import {
+  AsyncUserPicker,
+  AsyncWorkItemPicker,
+  Card,
+  Drawer,
+  Field,
+  MultiValueInput,
+  PriorityBadge,
+  StatusBadge,
+  dateInput,
+  inputClass,
+  primaryButton,
+  secondaryButton,
+  shortDate,
+  textareaClass,
+  userLabel,
+} from "./pm-ui";
+const types: PMWorkType[] = ["Epic", "Story", "Task", "Bug", "Subtask"],
+  priorities: PMPriority[] = ["Low", "Medium", "High", "Urgent", "Critical"];
+type FormState = {
+  type: PMWorkType;
+  title: string;
+  description: string;
+  status: string;
+  priority: PMPriority;
+  assignee: string;
+  reviewer: string;
+  parentId: string;
+  sprintId: string;
+  releaseId: string;
+  storyPoints: number;
+  originalEstimate: string;
+  remainingEstimate: string;
+  startDate: string;
+  dueDate: string;
+  labels: string[];
+  blockedReason: string;
+  percentComplete: number;
+  customFields: Record<string, unknown>;
+};
+const blank = (status = "Backlog"): FormState => ({
+  type: "Task",
+  title: "",
+  description: "",
+  status,
+  priority: "Medium",
+  assignee: "",
+  reviewer: "",
+  parentId: "",
+  sprintId: "",
+  releaseId: "",
+  storyPoints: 0,
+  originalEstimate: "",
+  remainingEstimate: "",
+  startDate: "",
+  dueDate: "",
+  labels: [],
+  blockedReason: "",
+  percentComplete: 0,
+  customFields: {},
+});
+export function WorkItemDrawer({
+  projectId,
+  taskId,
+  newItem,
+  onClose,
+  onCreated,
+}: {
+  projectId: string;
+  taskId?: string;
+  newItem?: boolean;
+  onClose: () => void;
+  onCreated?: (task: PMTask) => void;
+}) {
+  const me = useGetMeQuery().data?.data,
+    projectQ = useGetPMProjectQuery(projectId),
+    taskQ = useGetPMTaskQuery(taskId || "", { skip: !taskId }),
+    sprintsQ = useGetPMSprintsQuery(projectId),
+    releasesQ = useGetPMReleasesQuery(projectId);
+  const project = projectQ.data?.data,
+    task = taskQ.data?.data;
+  const canManage =
+    !!me &&
+    (me.role === "super-admin" ||
+      me.role === "product-admin" ||
+      (me.permissions ?? []).includes("product-management.work.manage"));
+  const canReview =
+    canManage ||
+    !!(
+      task &&
+      me &&
+      (typeof task.reviewer === "string"
+        ? task.reviewer
+        : task.reviewer?._id) === me.userId
+    );
+  const projectsQ = useGetPMProjectsQuery({ limit: 100 }, { skip: !canManage });
+  const [create, { isLoading: creating }] = useCreatePMTaskMutation(),
+    [update, { isLoading: saving }] = useUpdatePMTaskMutation(),
+    [transition] = useTransitionPMTaskMutation(),
+    [duplicate] = useDuplicatePMTaskMutation(),
+    [move] = useMovePMTaskMutation(),
+    [archive] = useArchivePMTaskMutation(),
+    [reopen] = useReopenPMTaskMutation(),
+    [submit] = useSubmitPMTaskMutation(),
+    [accept] = useAcceptPMTaskMutation(),
+    [reject] = useRejectPMTaskMutation(),
+    [remove] = useDeletePMTaskMutation(),
+    [dep] = useAddPMDependencyMutation(),
+    [upload] = useAddPMTaskAttachmentsMutation(),
+    [removeAttachment] = useRemovePMTaskAttachmentMutation();
+  const [form, setForm] = useState<FormState>(blank()),
+    [tab, setTab] = useState<"details" | "discussion" | "time" | "activity">(
+      "details",
+    ),
+    [comment, setComment] = useState(""),
+    [minutes, setMinutes] = useState(""),
+    [workNote, setWorkNote] = useState(""),
+    [dependencyType, setDependencyType] = useState<
+      "depends-on" | "blocks" | "relates-to"
+    >("depends-on"),
+    [dependencyTarget, setDependencyTarget] = useState(""),
+    [rejectReason, setRejectReason] = useState(""),
+    [moveProject, setMoveProject] = useState("");
+  const commentsQ = useGetPMCommentsQuery(
+      { taskId: taskId || "", page: 1, limit: 100 },
+      { skip: !taskId },
+    ),
+    worklogsQ = useGetPMWorklogsQuery(
+      { taskId: taskId || "", page: 1, limit: 100 },
+      { skip: !taskId },
+    );
+  const [addComment] = useCreatePMCommentMutation(),
+    [addWorklog] = useCreatePMWorklogMutation();
+  useEffect(() => {
+    if (task)
+      setForm({
+        type: task.type,
+        title: task.title,
+        description: task.description ?? "",
+        status: task.status,
+        priority: task.priority,
+        assignee:
+          typeof task.assignee === "string"
+            ? task.assignee
+            : (task.assignee?._id ?? ""),
+        reviewer:
+          typeof task.reviewer === "string"
+            ? task.reviewer
+            : (task.reviewer?._id ?? ""),
+        parentId:
+          typeof task.parentId === "string"
+            ? task.parentId
+            : ((task.parentId as PMTask | undefined)?._id ?? ""),
+        sprintId: task.sprintId ?? "",
+        releaseId: task.releaseId ?? "",
+        storyPoints: task.storyPoints ?? 0,
+        originalEstimate:
+          task.originalEstimate == null ? "" : String(task.originalEstimate),
+        remainingEstimate:
+          task.remainingEstimate == null ? "" : String(task.remainingEstimate),
+        startDate: dateInput(task.startDate),
+        dueDate: dateInput(task.dueDate),
+        labels: task.labels ?? [],
+        blockedReason: task.blockedReason ?? "",
+        percentComplete: task.percentComplete ?? 0,
+        customFields: task.customFields ?? {},
+      });
+    else if (newItem && project)
+      setForm(blank(project.workflow?.statuses?.[0] ?? "Backlog"));
+  }, [task, newItem, project]);
+  const statuses = project?.workflow?.statuses ?? [
+    "Backlog",
+    "To Do",
+    "In Progress",
+    "In Review",
+    "QA",
+    "Blocked",
+    "Ready for Release",
+    "Done",
+  ];
+  const nextTransitions = useMemo(
+    () =>
+      project?.workflow?.transitions
+        ?.filter((t) => t.from === form.status)
+        .map((t) => t.to) ?? statuses.filter((s) => s !== form.status),
+    [project, form.status, statuses],
+  );
+  const payload = () => ({
+    type: form.type,
+    title: form.title,
+    description: form.description || undefined,
+    status: form.status,
+    priority: form.priority,
+    assignee: form.assignee || null,
+    reviewer: form.reviewer || null,
+    parentId: form.parentId || null,
+    sprintId: form.sprintId || null,
+    releaseId: form.releaseId || null,
+    storyPoints: Number(form.storyPoints || 0),
+    originalEstimate:
+      form.originalEstimate === "" ? null : Number(form.originalEstimate),
+    remainingEstimate:
+      form.remainingEstimate === "" ? null : Number(form.remainingEstimate),
+    startDate: form.startDate || null,
+    dueDate: form.dueDate || null,
+    labels: form.labels,
+    blockedReason: form.blockedReason || null,
+    percentComplete: Number(form.percentComplete || 0),
+    customFields: form.customFields,
+  });
+  async function save() {
+    try {
+      if (newItem) {
+        const r = await create({ projectId, ...payload() }).unwrap();
+        toast.success("Work item created");
+        onCreated?.(r.data);
+        onClose();
+      } else if (taskId) {
+        await update({ id: taskId, body: payload() }).unwrap();
+        toast.success("Work item saved");
+      }
+    } catch (e) {
+      toast.error(getApiErrorMessage(e));
+    }
+  }
+  async function act(fn: () => Promise<unknown>, msg: string) {
+    try {
+      await fn();
+      toast.success(msg);
+    } catch (e) {
+      toast.error(getApiErrorMessage(e));
+    }
+  }
+  async function moveWork() {
+    if (!task || !moveProject) return;
+    try {
+      await move({ id: task._id, projectId: moveProject }).unwrap();
+      toast.success("Work item moved with its descendants");
+      onClose();
+      window.location.assign(
+        `/product-management/projects/${moveProject}/tasks`,
+      );
+    } catch (e) {
+      toast.error(getApiErrorMessage(e));
+    }
+  }
+  const title = newItem
+    ? "Create work item"
+    : task
+      ? `${task.key} · ${task.title}`
+      : "Work item";
+  return (
+    <Drawer
+      open={!!newItem || !!taskId}
+      onClose={onClose}
+      title={title}
+      description={
+        newItem
+          ? "Create an Epic, Story, Task, Bug or Subtask with planning, assignment and estimation data."
+          : task
+            ? `${task.type} · created ${shortDate(task.createdAt)} · updated ${shortDate(task.updatedAt)}`
+            : undefined
+      }
+      width="max-w-5xl"
+    >
+      <div className="mb-4 flex flex-wrap gap-2">
+        {(["details", "discussion", "time", "activity"] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className={`rounded-xl px-3 py-2 text-xs font-black capitalize ${tab === t ? "bg-slate-900 text-white" : "border border-slate-200 bg-white text-slate-600"}`}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+      {tab === "details" && (
+        <div className="grid gap-5 xl:grid-cols-[1fr_310px]">
+          <Card className="p-5">
+            <div className="grid gap-4 md:grid-cols-2">
+              <Field label="Type" required>
+                <select
+                  className={inputClass}
+                  value={form.type}
+                  onChange={(e) =>
+                    setForm((v) => ({
+                      ...v,
+                      type: e.target.value as PMWorkType,
+                    }))
+                  }
+                >
+                  {types.map((v) => (
+                    <option key={v}>{v}</option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Priority">
+                <select
+                  className={inputClass}
+                  value={form.priority}
+                  onChange={(e) =>
+                    setForm((v) => ({
+                      ...v,
+                      priority: e.target.value as PMPriority,
+                    }))
+                  }
+                >
+                  {priorities.map((v) => (
+                    <option key={v}>{v}</option>
+                  ))}
+                </select>
+              </Field>
+              <div className="md:col-span-2">
+                <Field label="Title" required>
+                  <input
+                    className={inputClass}
+                    required
+                    value={form.title}
+                    onChange={(e) =>
+                      setForm((v) => ({ ...v, title: e.target.value }))
+                    }
+                    placeholder="Outcome-oriented work item title"
+                  />
+                </Field>
+              </div>
+              <div className="md:col-span-2">
+                <Field label="Description">
+                  <textarea
+                    className={textareaClass}
+                    value={form.description}
+                    onChange={(e) =>
+                      setForm((v) => ({ ...v, description: e.target.value }))
+                    }
+                    placeholder="Requirements, acceptance criteria and implementation context…"
+                  />
+                </Field>
+              </div>
+              <Field label="Status">
+                <select
+                  className={inputClass}
+                  value={form.status}
+                  onChange={(e) =>
+                    setForm((v) => ({ ...v, status: e.target.value }))
+                  }
+                >
+                  {statuses.map((v) => (
+                    <option key={v}>{v}</option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Parent / Epic">
+                <div className="flex gap-2">
+                  <div className="min-w-0 flex-1">
+                    <AsyncWorkItemPicker
+                      projectId={projectId}
+                      value={form.parentId}
+                      excludeId={taskId}
+                      types={["Epic", "Story", "Task"]}
+                      onChange={(id) =>
+                        setForm((v) => ({ ...v, parentId: id }))
+                      }
+                      label="No parent / search Epics, Stories or Tasks"
+                    />
+                  </div>
+                  {form.parentId && (
+                    <button
+                      type="button"
+                      className="grid h-11 w-11 place-items-center rounded-xl border border-slate-200 text-slate-400 hover:bg-rose-50 hover:text-rose-600"
+                      onClick={() => setForm((v) => ({ ...v, parentId: "" }))}
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              </Field>
+              <Field label="Assignee">
+                <AsyncUserPicker
+                  projectId={projectId}
+                  value={form.assignee}
+                  onChange={(id) => setForm((v) => ({ ...v, assignee: id }))}
+                />
+              </Field>
+              <Field label="Reviewer">
+                <AsyncUserPicker
+                  projectId={projectId}
+                  value={form.reviewer}
+                  onChange={(id) => setForm((v) => ({ ...v, reviewer: id }))}
+                  label="Select reviewer"
+                />
+              </Field>
+              <Field label="Sprint">
+                <select
+                  className={inputClass}
+                  value={form.sprintId}
+                  onChange={(e) =>
+                    setForm((v) => ({ ...v, sprintId: e.target.value }))
+                  }
+                >
+                  <option value="">Backlog / no sprint</option>
+                  {(sprintsQ.data?.data ?? [])
+                    .filter((s) => s.status !== "completed")
+                    .map((s) => (
+                      <option key={s._id} value={s._id}>
+                        {s.name} · {s.status}
+                      </option>
+                    ))}
+                </select>
+              </Field>
+              <Field label="Release">
+                <select
+                  className={inputClass}
+                  value={form.releaseId}
+                  onChange={(e) =>
+                    setForm((v) => ({ ...v, releaseId: e.target.value }))
+                  }
+                >
+                  <option value="">No release</option>
+                  {(releasesQ.data?.data ?? []).map((r) => (
+                    <option key={r._id} value={r._id}>
+                      {r.name} · {r.status}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Story points">
+                <input
+                  className={inputClass}
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={form.storyPoints}
+                  onChange={(e) =>
+                    setForm((v) => ({ ...v, storyPoints: +e.target.value }))
+                  }
+                />
+              </Field>
+              <Field label="Progress %">
+                <input
+                  className={inputClass}
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={form.percentComplete}
+                  onChange={(e) =>
+                    setForm((v) => ({ ...v, percentComplete: +e.target.value }))
+                  }
+                />
+              </Field>
+              <Field label="Original estimate (minutes)">
+                <input
+                  className={inputClass}
+                  type="number"
+                  min="0"
+                  value={form.originalEstimate}
+                  onChange={(e) =>
+                    setForm((v) => ({ ...v, originalEstimate: e.target.value }))
+                  }
+                />
+              </Field>
+              <Field label="Remaining estimate (minutes)">
+                <input
+                  className={inputClass}
+                  type="number"
+                  min="0"
+                  value={form.remainingEstimate}
+                  onChange={(e) =>
+                    setForm((v) => ({
+                      ...v,
+                      remainingEstimate: e.target.value,
+                    }))
+                  }
+                />
+              </Field>
+              <Field label="Start date">
+                <input
+                  type="date"
+                  className={inputClass}
+                  value={form.startDate}
+                  onChange={(e) =>
+                    setForm((v) => ({ ...v, startDate: e.target.value }))
+                  }
+                />
+              </Field>
+              <Field label="Due date">
+                <input
+                  type="date"
+                  className={inputClass}
+                  value={form.dueDate}
+                  onChange={(e) =>
+                    setForm((v) => ({ ...v, dueDate: e.target.value }))
+                  }
+                />
+              </Field>
+              <div className="md:col-span-2">
+                <Field label="Labels">
+                  <MultiValueInput
+                    values={form.labels}
+                    onChange={(labels) => setForm((v) => ({ ...v, labels }))}
+                  />
+                </Field>
+              </div>
+              <div className="md:col-span-2">
+                <Field label="Blocked reason">
+                  <textarea
+                    className={textareaClass}
+                    value={form.blockedReason}
+                    onChange={(e) =>
+                      setForm((v) => ({ ...v, blockedReason: e.target.value }))
+                    }
+                    placeholder="Why is this work blocked? Leave blank when not blocked."
+                  />
+                </Field>
+              </div>
+              {(project?.customFields ?? []).map((def) => (
+                <div
+                  key={def.key}
+                  className={def.type === "multi-select" ? "md:col-span-2" : ""}
+                >
+                  <CustomField
+                    def={def}
+                    value={form.customFields[def.key]}
+                    onChange={(value) =>
+                      setForm((v) => ({
+                        ...v,
+                        customFields: { ...v.customFields, [def.key]: value },
+                      }))
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="mt-5 flex justify-end">
+              <button
+                className={primaryButton}
+                disabled={saving || creating || !form.title.trim()}
+                onClick={() => void save()}
+              >
+                <Save className="h-4 w-4" />
+                {newItem ? "Create work item" : "Save changes"}
+              </button>
+            </div>
+          </Card>
+          <div className="space-y-4">
+            {task && (
+              <>
+                <Card className="p-4">
+                  <div className="flex items-center justify-between">
+                    <StatusBadge value={task.status} />
+                    <PriorityBadge value={task.priority} />
+                  </div>
+                  <div className="mt-4 grid grid-cols-2 gap-2 text-center">
+                    <Mini label="Story points" value={task.storyPoints} />
+                    <Mini label="Reward" value={task.rewardPoints} />
+                    <Mini label="Earned" value={task.earnedPoints} />
+                    <Mini label="Progress" value={`${task.percentComplete}%`} />
+                  </div>
+                </Card>
+                <Card className="p-4">
+                  <h3 className="text-xs font-black uppercase tracking-wide text-slate-500">
+                    Workflow actions
+                  </h3>
+                  <div className="mt-3 grid gap-2">
+                    {nextTransitions.slice(0, 8).map((s) => (
+                      <button
+                        key={s}
+                        className={secondaryButton}
+                        onClick={() =>
+                          void act(async () => {
+                            await transition({
+                              id: task._id,
+                              status: s,
+                            }).unwrap();
+                            setForm((v) => ({ ...v, status: s }));
+                          }, `Moved to ${s}`)
+                        }
+                      >
+                        <Play className="h-4 w-4" />
+                        {s}
+                      </button>
+                    ))}
+                    <button
+                      className={secondaryButton}
+                      onClick={() =>
+                        void act(
+                          () => submit(task._id).unwrap(),
+                          "Submitted for review",
+                        )
+                      }
+                    >
+                      <Send className="h-4 w-4" />
+                      Submit for review
+                    </button>
+                    {canReview && (
+                      <>
+                        <button
+                          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 text-xs font-black text-emerald-700"
+                          onClick={() =>
+                            void act(
+                              () => accept(task._id).unwrap(),
+                              "Work accepted",
+                            )
+                          }
+                        >
+                          <CheckCircle2 className="h-4 w-4" />
+                          Accept
+                        </button>
+                        <div className="flex gap-2">
+                          <input
+                            className={`${inputClass} h-10`}
+                            value={rejectReason}
+                            onChange={(e) => setRejectReason(e.target.value)}
+                            placeholder="Rejection reason"
+                          />
+                          <button
+                            disabled={!rejectReason.trim()}
+                            className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-rose-200 bg-rose-50 text-rose-600"
+                            onClick={() =>
+                              void act(
+                                () =>
+                                  reject({
+                                    id: task._id,
+                                    reason: rejectReason,
+                                  }).unwrap(),
+                                "Work rejected",
+                              )
+                            }
+                          >
+                            <XCircle className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </Card>
+                <Card className="p-4">
+                  <h3 className="text-xs font-black uppercase tracking-wide text-slate-500">
+                    More actions
+                  </h3>
+                  <div className="mt-3 grid gap-2">
+                    {canManage && (
+                      <>
+                        <button
+                          className={secondaryButton}
+                          onClick={() =>
+                            void act(
+                              () =>
+                                duplicate({
+                                  id: task._id,
+                                  body: {
+                                    includeSubtasks: true,
+                                    includeDependencies: true,
+                                  },
+                                }).unwrap(),
+                              "Work item duplicated",
+                            )
+                          }
+                        >
+                          <Copy className="h-4 w-4" />
+                          Duplicate with relations
+                        </button>
+                        {task.archivedAt ? (
+                          <button
+                            className={secondaryButton}
+                            onClick={() =>
+                              void act(
+                                () =>
+                                  archive({
+                                    id: task._id,
+                                    archive: false,
+                                  }).unwrap(),
+                                "Work restored",
+                              )
+                            }
+                          >
+                            <RotateCcw className="h-4 w-4" />
+                            Restore
+                          </button>
+                        ) : (
+                          <button
+                            className={secondaryButton}
+                            onClick={() =>
+                              void act(
+                                () =>
+                                  archive({
+                                    id: task._id,
+                                    archive: true,
+                                  }).unwrap(),
+                                "Work archived",
+                              )
+                            }
+                          >
+                            <Archive className="h-4 w-4" />
+                            Archive
+                          </button>
+                        )}
+                        <div className="rounded-xl border border-slate-200 bg-slate-50 p-2">
+                          <select
+                            className={inputClass}
+                            value={moveProject}
+                            onChange={(e) => setMoveProject(e.target.value)}
+                          >
+                            <option value="">Move to another project…</option>
+                            {(projectsQ.data?.data ?? [])
+                              .filter((p) => p._id !== projectId)
+                              .map((p) => (
+                                <option key={p._id} value={p._id}>
+                                  {p.key} · {p.name}
+                                </option>
+                              ))}
+                          </select>
+                          <button
+                            className={`${secondaryButton} mt-2 w-full`}
+                            disabled={!moveProject}
+                            onClick={() => void moveWork()}
+                          >
+                            <ArrowRightLeft className="h-4 w-4" />
+                            Move work + descendants
+                          </button>
+                        </div>
+                      </>
+                    )}
+                    <button
+                      className={secondaryButton}
+                      onClick={() =>
+                        void act(
+                          () => reopen(task._id).unwrap(),
+                          "Work reopened",
+                        )
+                      }
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                      Reopen
+                    </button>
+                    {canManage && (
+                      <button
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 text-xs font-black text-rose-700"
+                        onClick={() => {
+                          if (confirm("Permanently delete this work item?"))
+                            void act(
+                              () => remove(task._id).unwrap(),
+                              "Work item deleted",
+                            ).then(onClose);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Delete
+                      </button>
+                    )}
+                  </div>
+                </Card>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+      {tab === "discussion" && task && (
+        <div className="grid gap-5 xl:grid-cols-[1fr_330px]">
+          <Card>
+            <div className="border-b border-slate-100 p-4">
+              <Field
+                label="Add comment"
+                hint="Mention an eligible user by email using @name@example.com."
+              >
+                <textarea
+                  className={textareaClass}
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Add context, review feedback or an update…"
+                />
+              </Field>
+              <button
+                className={`${primaryButton} mt-2`}
+                disabled={!comment.trim()}
+                onClick={() =>
+                  void act(async () => {
+                    await addComment({
+                      taskId: task._id,
+                      text: comment,
+                    }).unwrap();
+                    setComment("");
+                  }, "Comment added")
+                }
+              >
+                <MessageSquareText className="h-4 w-4" />
+                Comment
+              </button>
+            </div>
+            <div className="divide-y divide-slate-100">
+              {(commentsQ.data?.data ?? []).map((c) => (
+                <div key={c._id} className="p-4">
+                  <div className="flex items-center justify-between">
+                    <b className="text-xs">
+                      {userLabel(c.authorId as PMUser | string)}
+                    </b>
+                    <span className="text-[10px] text-slate-400">
+                      {new Date(c.createdAt).toLocaleString()}
+                    </span>
+                  </div>
+                  <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-600">
+                    {c.deletedAt ? "Comment deleted" : c.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </Card>
+          <Card className="p-4">
+            <h3 className="text-xs font-black uppercase tracking-wide text-slate-500">
+              Dependencies
+            </h3>
+            <div className="mt-3 space-y-2">
+              <select
+                className={inputClass}
+                value={dependencyType}
+                onChange={(e) =>
+                  setDependencyType(e.target.value as typeof dependencyType)
+                }
+              >
+                <option value="depends-on">Depends on</option>
+                <option value="blocks">Blocks</option>
+                <option value="relates-to">Relates to</option>
+              </select>
+              <AsyncWorkItemPicker
+                projectId={projectId}
+                value={dependencyTarget}
+                excludeId={task._id}
+                onChange={(id) => setDependencyTarget(id)}
+                label="Search related work item"
+              />
+              <button
+                className={secondaryButton}
+                disabled={!dependencyTarget}
+                onClick={() =>
+                  void act(
+                    () =>
+                      dep({
+                        id: task._id,
+                        type: dependencyType,
+                        targetTaskId: dependencyTarget,
+                      }).unwrap(),
+                    "Dependency added",
+                  )
+                }
+              >
+                <Link2 className="h-4 w-4" />
+                Add relation
+              </button>
+            </div>
+            <div className="mt-5 text-xs leading-6 text-slate-500">
+              <b className="text-slate-700">Blocked by:</b>{" "}
+              {(task.blockedBy ?? [])
+                .map((rel) =>
+                  typeof rel === "string" ? rel : (rel as PMTask).key,
+                )
+                .join(", ") || "None"}
+              <br />
+              <b className="text-slate-700">Blocks:</b>{" "}
+              {(task.blocks ?? [])
+                .map((rel) =>
+                  typeof rel === "string" ? rel : (rel as PMTask).key,
+                )
+                .join(", ") || "None"}
+            </div>
+          </Card>
+        </div>
+      )}
+      {tab === "time" && task && (
+        <div className="grid gap-5 xl:grid-cols-[1fr_330px]">
+          <Card>
+            <div className="divide-y divide-slate-100">
+              {(worklogsQ.data?.data ?? []).map((w) => (
+                <div
+                  key={w._id}
+                  className="flex items-start justify-between gap-4 p-4"
+                >
+                  <div>
+                    <b className="text-sm">
+                      {Math.round((w.minutes / 60) * 10) / 10}h
+                    </b>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {w.note || "No note"} · {userLabel(w.userId)}
+                    </p>
+                  </div>
+                  <span className="text-[10px] text-slate-400">
+                    {shortDate(w.workDate)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Card>
+          <Card className="p-4">
+            <h3 className="text-xs font-black uppercase tracking-wide text-slate-500">
+              Log work
+            </h3>
+            <div className="mt-3 space-y-3">
+              <Field label="Minutes">
+                <input
+                  type="number"
+                  min="1"
+                  className={inputClass}
+                  value={minutes}
+                  onChange={(e) => setMinutes(e.target.value)}
+                />
+              </Field>
+              <Field label="Work note">
+                <textarea
+                  className={textareaClass}
+                  value={workNote}
+                  onChange={(e) => setWorkNote(e.target.value)}
+                />
+              </Field>
+              <button
+                className={primaryButton}
+                disabled={!+minutes}
+                onClick={() =>
+                  void act(async () => {
+                    await addWorklog({
+                      taskId: task._id,
+                      minutes: +minutes,
+                      note: workNote || undefined,
+                    }).unwrap();
+                    setMinutes("");
+                    setWorkNote("");
+                  }, "Work logged")
+                }
+              >
+                Log time
+              </button>
+            </div>
+          </Card>
+          <Card className="p-4 xl:col-span-2">
+            <h3 className="text-xs font-black uppercase tracking-wide text-slate-500">
+              Attachments
+            </h3>
+            <p className="mt-1 text-xs text-slate-400">
+              Work-item attachments are preserved; Product Management chat
+              remains text-only.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(task.attachments ?? []).map((a) => (
+                <div
+                  key={a.storageKey}
+                  className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs"
+                >
+                  <Paperclip className="h-4 w-4 text-violet-500" />
+                  <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href={a.url}
+                    className="max-w-56 truncate font-bold text-blue-600"
+                  >
+                    {a.fileName || a.storageKey}
+                  </a>
+                  <button
+                    className="text-rose-500"
+                    onClick={() =>
+                      void act(
+                        () =>
+                          removeAttachment({
+                            id: task._id,
+                            storageKey: a.storageKey,
+                          }).unwrap(),
+                        "Attachment removed",
+                      )
+                    }
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <label className={`${secondaryButton} mt-3 cursor-pointer`}>
+              <Upload className="h-4 w-4" />
+              Upload attachments
+              <input
+                className="hidden"
+                type="file"
+                multiple
+                onChange={(e) => {
+                  const files = [...(e.target.files ?? [])];
+                  if (files.length)
+                    void act(
+                      () => upload({ id: task._id, files }).unwrap(),
+                      "Attachments uploaded",
+                    );
+                }}
+              />
+            </label>
+          </Card>
+        </div>
+      )}
+      {tab === "activity" && task && (
+        <Card>
+          <div className="divide-y divide-slate-100">
+            {(task.activity ?? []).map((a) => (
+              <div key={a._id} className="p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <b className="text-xs text-slate-800">
+                    {a.action.replaceAll(".", " · ")}
+                  </b>
+                  <span className="text-[10px] text-slate-400">
+                    {new Date(a.createdAt).toLocaleString()}
+                  </span>
+                </div>
+                <p className="mt-2 text-[10px] text-slate-400">
+                  {a.entityType} · {a.entityId}
+                </p>
+              </div>
+            ))}
+            {!(task.activity ?? []).length && (
+              <div className="p-8 text-center text-sm text-slate-400">
+                No audit events yet.
+              </div>
+            )}
+          </div>
+        </Card>
+      )}
+    </Drawer>
+  );
 }
-function Mini({label,value}:{label:string;value:string|number}){return <div className="rounded-xl bg-slate-50 p-2"><b className="block text-base">{value}</b><span className="text-[9px] font-black uppercase text-slate-400">{label}</span></div>}
-function CustomField({def,value,onChange}:{def:{key:string;name:string;type:string;required?:boolean;options?:string[]};value:unknown;onChange:(v:unknown)=>void}){if(def.type==='boolean')return <Field label={def.name} required={def.required}><label className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 px-3 text-sm"><input type="checkbox" checked={Boolean(value)} onChange={e=>onChange(e.target.checked)}/>Enabled</label></Field>;if(def.type==='select')return <Field label={def.name} required={def.required}><select className={inputClass} value={String(value??'')} onChange={e=>onChange(e.target.value)}><option value="">Select</option>{(def.options??[]).map(o=><option key={o}>{o}</option>)}</select></Field>;if(def.type==='multi-select')return <Field label={def.name} required={def.required}><select multiple className={`${inputClass} h-28 py-2`} value={Array.isArray(value)?value.map(String):[]} onChange={e=>onChange([...e.currentTarget.selectedOptions].map(o=>o.value))}>{(def.options??[]).map(o=><option key={o}>{o}</option>)}</select></Field>;return <Field label={def.name} required={def.required}><input type={def.type==='number'?'number':def.type==='date'?'date':def.type==='url'?'url':'text'} className={inputClass} value={String(value??'')} onChange={e=>onChange(def.type==='number'?Number(e.target.value):e.target.value)}/></Field>}
+function Mini({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="rounded-xl bg-slate-50 p-2">
+      <b className="block text-base">{value}</b>
+      <span className="text-[9px] font-black uppercase text-slate-400">
+        {label}
+      </span>
+    </div>
+  );
+}
+function CustomField({
+  def,
+  value,
+  onChange,
+}: {
+  def: {
+    key: string;
+    name: string;
+    type: string;
+    required?: boolean;
+    options?: string[];
+  };
+  value: unknown;
+  onChange: (v: unknown) => void;
+}) {
+  if (def.type === "boolean")
+    return (
+      <Field label={def.name} required={def.required}>
+        <label className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 px-3 text-sm">
+          <input
+            type="checkbox"
+            checked={Boolean(value)}
+            onChange={(e) => onChange(e.target.checked)}
+          />
+          Enabled
+        </label>
+      </Field>
+    );
+  if (def.type === "select")
+    return (
+      <Field label={def.name} required={def.required}>
+        <select
+          className={inputClass}
+          value={String(value ?? "")}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          <option value="">Select</option>
+          {(def.options ?? []).map((o) => (
+            <option key={o}>{o}</option>
+          ))}
+        </select>
+      </Field>
+    );
+  if (def.type === "multi-select")
+    return (
+      <Field label={def.name} required={def.required}>
+        <select
+          multiple
+          className={`${inputClass} h-28 py-2`}
+          value={Array.isArray(value) ? value.map(String) : []}
+          onChange={(e) =>
+            onChange([...e.currentTarget.selectedOptions].map((o) => o.value))
+          }
+        >
+          {(def.options ?? []).map((o) => (
+            <option key={o}>{o}</option>
+          ))}
+        </select>
+      </Field>
+    );
+  return (
+    <Field label={def.name} required={def.required}>
+      <input
+        type={
+          def.type === "number"
+            ? "number"
+            : def.type === "date"
+              ? "date"
+              : def.type === "url"
+                ? "url"
+                : "text"
+        }
+        className={inputClass}
+        value={String(value ?? "")}
+        onChange={(e) =>
+          onChange(
+            def.type === "number" ? Number(e.target.value) : e.target.value,
+          )
+        }
+      />
+    </Field>
+  );
+}

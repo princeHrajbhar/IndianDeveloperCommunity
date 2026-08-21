@@ -13,7 +13,6 @@ import {
   FolderCog,
   Home,
   LogOut,
-  Menu,
   Newspaper,
   PanelsTopLeft,
   ShieldAlert,
@@ -352,14 +351,6 @@ export function AdminShell({ children }: { children: ReactNode }) {
       <div className="relative z-10 flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
         <header className="qf-surface z-30 flex h-20 shrink-0 items-center justify-between border-b px-5 backdrop-blur-xl md:px-8">
           <div className="flex min-w-0 items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setMobileOpen(true)}
-              className="qf-icon-button md:hidden"
-              aria-label="Open dashboard navigation"
-            >
-              <Menu size={20} />
-            </button>
             <div className="min-w-0">
               <p className="truncate text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Admin workspace</p>
               <div className="mt-1 flex min-w-0 items-center gap-2 text-sm">

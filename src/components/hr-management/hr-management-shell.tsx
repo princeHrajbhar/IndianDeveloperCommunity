@@ -16,7 +16,6 @@ import {
   FileText,
   LayoutDashboard,
   Mail,
-  Menu,
   PackageCheck,
   PanelLeftClose,
   Search,
@@ -202,7 +201,7 @@ export function HRManagementShell({ children }: { children: ReactNode }) {
 
       <div className={`${compact ? "lg:pl-[88px]" : "lg:pl-[292px]"} transition-[padding] duration-200`}>
         <header className="qf-surface sticky top-0 z-30 flex h-20 items-center gap-3 border-b px-4 backdrop-blur md:px-6">
-          <button onClick={() => setMobile(true)} className="qf-icon-button lg:hidden"><Menu className="h-5 w-5" /></button>
+          <button onClick={() => setMobile(true)} className="qf-secondary-button h-10 rounded-xl px-3 text-xs font-black lg:hidden">Navigation</button>
           <div className="hidden min-w-0 md:block">
             <p className="text-[10px] font-black uppercase tracking-[.18em] text-blue-600">Quantum Finix · Human Resources</p>
             <p className="qf-text mt-1 truncate text-sm font-black">{current?.label ?? "HR Management"}</p>

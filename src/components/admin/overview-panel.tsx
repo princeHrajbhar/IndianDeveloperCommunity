@@ -1,38 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, FolderKanban, HeartHandshake, Users } from "lucide-react";
+import { ArrowUpRight, FolderKanban, HeartHandshake, Target, UserRoundSearch, Users } from "lucide-react";
 import { useGetLeadStatisticsQuery } from "@/src/lib/features/leads/lead-api";
-import { useGetQueuesQuery } from "@/src/lib/features/system/system-api";
 import { useGetUsersQuery } from "@/src/lib/features/users/user-api";
 import { Metric, Panel, PanelTitle, StatusBadge } from "./admin-ui";
 
 export function OverviewPanel() {
   const leads = useGetLeadStatisticsQuery();
   const users = useGetUsersQuery({ page: 1, limit: 1 });
-  const queues = useGetQueuesQuery();
   const leadStats = leads.data?.data;
-  const queueList = queues.data?.data ?? [];
-  const pendingJobs = queueList.reduce((total, queue) => total + (queue.counts.waiting ?? 0) + (queue.counts.delayed ?? 0) + (queue.counts.active ?? 0), 0);
-  const failedJobs = queueList.reduce((total, queue) => total + (queue.counts.failed ?? 0), 0);
-  const pausedQueues = queueList.filter((queue) => queue.paused).length;
 
   return <div className="space-y-6">
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="grid gap-4 lg:grid-cols-3">
       <WorkspaceLink href="/hr-management" title="HR Management" description="Hiring, employee lifecycle, departments, attendance, leave, payroll, documents and HR communication." icon={<HeartHandshake className="h-6 w-6"/>}/>
+      <WorkspaceLink href="/lead-management" title="Lead Dashboard" description="Lead pipeline, ownership, qualification, follow-ups, communication, opportunity scoring and conversion analytics." icon={<UserRoundSearch className="h-6 w-6"/>}/>
       <WorkspaceLink href="/product-management" title="Product Management" description="Planning, backlog, sprints, board, releases, client delivery, reports and team workflows." icon={<FolderKanban className="h-6 w-6"/>}/>
     </div>
 
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <Metric label="Leads" value={leadStats?.total ?? "—"} detail={`${leadStats?.newToday ?? 0} new today`} />
+      <Metric label="Total leads" value={leadStats?.total ?? "—"} detail={`${leadStats?.newToday ?? 0} new today`} />
+      <Metric label="Unassigned leads" value={leadStats?.unassigned ?? "—"} detail="Needs ownership" />
+      <Metric label="Overdue follow-ups" value={leadStats?.overdueFollowUps ?? "—"} detail="Sales actions due" />
       <Metric label="Users" value={users.data?.pagination.total ?? "—"} detail="Registered accounts" />
-      <Metric label="Active queue work" value={pendingJobs} detail={`${queueList.length} worker queue(s)`} />
-      <Metric label="Failed queue work" value={failedJobs} detail={failedJobs ? "Needs review" : "Healthy"} />
     </div>
 
     <div className="grid gap-6 xl:grid-cols-2">
-      <Panel><PanelTitle eyebrow="Platform operations" title="Lead and worker signals" /><div className="space-y-3"><Signal label="Unassigned leads" value={leadStats?.unassigned ?? 0} status={(leadStats?.unassigned ?? 0) > 0 ? "Needs review" : "Clear"} /><Signal label="Overdue follow-ups" value={leadStats?.overdueFollowUps ?? 0} status={(leadStats?.overdueFollowUps ?? 0) > 0 ? "Overdue" : "Clear"} /><Signal label="Pending queue work" value={pendingJobs} status={pausedQueues > 0 ? `${pausedQueues} paused` : "Running"} /><Signal label="Failed queue work" value={failedJobs} status={failedJobs > 0 ? "Action required" : "Healthy"} /></div></Panel>
-      <Panel><PanelTitle eyebrow="Administration" title="Workspace separation" /><div className="space-y-4"><div className="qf-surface-muted rounded-2xl border p-4"><div className="flex items-center gap-3"><span className="qf-status-info grid h-10 w-10 place-items-center rounded-xl border"><HeartHandshake className="h-5 w-5"/></span><div><p className="qf-text font-black">HR work belongs in HRMS</p><p className="qf-muted mt-1 text-xs leading-5">Jobs, applications, interviews, employees, HR documents and HR mail are intentionally managed from HR Management—not this general dashboard.</p></div></div></div><div className="qf-surface-muted rounded-2xl border p-4"><div className="flex items-center gap-3"><span className="qf-status-info grid h-10 w-10 place-items-center rounded-xl border"><Users className="h-5 w-5"/></span><div><p className="qf-text font-black">General administration stays focused</p><p className="qf-muted mt-1 text-xs leading-5">Use this dashboard for platform users, access, content, leads, files and system operations.</p></div></div></div></div></Panel>
+      <Panel><PanelTitle eyebrow="Lead dashboard" title="Sales pipeline signals" /><div className="space-y-3"><Signal label="New leads today" value={leadStats?.newToday ?? 0} status={(leadStats?.newToday ?? 0) > 0 ? "Active" : "Quiet"} /><Signal label="Unassigned leads" value={leadStats?.unassigned ?? 0} status={(leadStats?.unassigned ?? 0) > 0 ? "Needs review" : "Clear"} /><Signal label="Overdue follow-ups" value={leadStats?.overdueFollowUps ?? 0} status={(leadStats?.overdueFollowUps ?? 0) > 0 ? "Overdue" : "Clear"} /><div className="pt-2"><Link href="/lead-management" className="qf-primary-button inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black"><Target className="h-4 w-4"/>Open full Lead Dashboard</Link></div></div></Panel>
+      <Panel><PanelTitle eyebrow="Administration" title="Workspace separation" /><div className="space-y-4"><div className="qf-surface-muted rounded-2xl border p-4"><div className="flex items-center gap-3"><span className="qf-status-info grid h-10 w-10 place-items-center rounded-xl border"><HeartHandshake className="h-5 w-5"/></span><div><p className="qf-text font-black">HR work belongs in HRMS</p><p className="qf-muted mt-1 text-xs leading-5">Jobs, applications, interviews, employees, HR documents and HR mail are managed from HR Management.</p></div></div></div><div className="qf-surface-muted rounded-2xl border p-4"><div className="flex items-center gap-3"><span className="qf-status-info grid h-10 w-10 place-items-center rounded-xl border"><Users className="h-5 w-5"/></span><div><p className="qf-text font-black">General administration stays focused</p><p className="qf-muted mt-1 text-xs leading-5">Use this dashboard for platform users, access, content, files, Lead Dashboard entry points and system administration.</p></div></div></div></div></Panel>
     </div>
   </div>;
 }

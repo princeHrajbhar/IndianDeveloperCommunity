@@ -7,7 +7,6 @@ import "@/src/lib/features/profiles/profile-api";
 import "@/src/lib/features/leads/lead-api";
 import "@/src/lib/features/users/user-api";
 
-import "@/src/lib/features/system/system-api";
 
 import "@/src/lib/features/files/file-api";
 

@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { Activity, Bell, Blocks, CalendarDays, ChartNoAxesCombined, ChevronDown, CircleGauge, FolderKanban, LayoutDashboard, Menu, MessageSquareText, PanelLeftClose, Plus, Search, Settings, ShieldCheck, Sparkles, Target, Users, X, Zap } from "lucide-react";
+import { Activity, Bell, Blocks, CalendarDays, ChartNoAxesCombined, ChevronDown, CircleGauge, FolderKanban, LayoutDashboard, MessageSquareText, PanelLeftClose, Plus, Search, Settings, ShieldCheck, Sparkles, Target, Users, X, Zap } from "lucide-react";
 import { useGetMeQuery } from "@/src/lib/features/auth/auth-api";
 import { useGetPMNotificationsQuery, useGetPMProjectQuery, useLazyGlobalPMSearchQuery } from "@/src/lib/features/product-management/product-management-api";
 import type { PMProject } from "@/src/lib/features/product-management/product-management-types";
@@ -71,7 +71,7 @@ export function ProductManagementShell({children}:{children:ReactNode}){
     {mobile&&<div className="fixed inset-0 z-50 lg:hidden"><button aria-label="Close navigation" className="absolute inset-0 bg-slate-950/35" onClick={()=>setMobile(false)}/><div className="relative h-full">{sidebar}<button onClick={()=>setMobile(false)} className="absolute right-3 top-3 rounded-lg bg-slate-100 p-2"><X className="h-4 w-4"/></button></div></div>}
     <div className={`${compact?"lg:pl-[84px]":"lg:pl-[270px]"} transition-all`}>
       <header className="sticky top-0 z-30 flex h-20 items-center gap-3 qf-surface border-b px-4 backdrop-blur md:px-6">
-        <button onClick={()=>setMobile(true)} className="rounded-xl border border-slate-200 p-2.5 text-slate-600 lg:hidden"><Menu className="h-5 w-5"/></button>
+        <button onClick={()=>setMobile(true)} className="qf-secondary-button h-10 rounded-xl px-3 text-xs font-black lg:hidden">Navigation</button>
         <div className="relative max-w-2xl flex-1"><Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search projects, work items, bugs, stories, epics, releases…" className="qf-input h-11 w-full rounded-xl pl-10 pr-4 text-sm"/>{query.trim().length>=2&&<SearchResults data={searchData?.data} loading={isFetching} close={()=>setQuery("")}/>}</div>
         {projectId&&!isClient&&has("product-management.work.manage")&&<Link href={`/product-management/projects/${projectId}/tasks?new=1`} className="hidden h-11 items-center gap-2 rounded-xl bg-blue-600 px-4 text-sm font-black text-white shadow-sm hover:bg-blue-700 sm:flex"><Plus className="h-4 w-4"/>Work item</Link>}
         <DashboardThemeToggle/><Link href="/product-management/notifications" className="qf-icon-button relative"><Bell className="h-5 w-5"/>{unread>0&&<span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-rose-500 px-1 text-[9px] font-black text-white">{unread>99?"99+":unread}</span>}</Link>

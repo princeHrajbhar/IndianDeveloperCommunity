@@ -24,7 +24,6 @@ type IconName =
   | "notification"
   | "course"
   | "security"
-  | "menu"
   | "close"
   | "search"
   | "chevronLeft"
@@ -67,7 +66,6 @@ export function ProfileShell({ children }: { children: ReactNode }) {
   return (
     <div className="qf-profile-surface qf-app-shell relative min-h-screen overflow-x-hidden">
       <TopNavbar
-        onOpenSidebar={() => setMobileOpen(true)}
         displayName={displayName}
         email={user?.email ?? profile?.email ?? ""}
         role={user?.role ?? profile?.role ?? "user"}
@@ -119,14 +117,12 @@ export function ProfileShell({ children }: { children: ReactNode }) {
 }
 
 function TopNavbar({
-  onOpenSidebar,
   displayName,
   email,
   role,
   initials,
   avatarUrl,
 }: {
-  onOpenSidebar: () => void;
   displayName: string;
   email: string;
   role: string;
@@ -151,15 +147,6 @@ function TopNavbar({
   return (
     <header className="qf-surface fixed inset-x-0 top-0 z-50 h-[72px] border-b backdrop-blur-xl">
       <div className="mx-auto flex h-full max-w-[1800px] items-center gap-3 px-4 sm:px-6 lg:px-8">
-        <button
-          type="button"
-          aria-label="Open profile navigation"
-          onClick={onOpenSidebar}
-          className="qf-icon-button lg:hidden"
-        >
-          <Icon name="menu" className="h-5 w-5" />
-        </button>
-
         <DashboardBrandLogo
           href="/"
           label="QuantumFinix home"
@@ -398,7 +385,6 @@ function Icon({ name, className = "h-5 w-5" }: { name: IconName; className?: str
     notification: <><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z" /><path d="M10 21h4" /></>,
     course: <><path d="m3 8.5 9-4.5 9 4.5-9 4.5-9-4.5Z" /><path d="M6 10v5.5c3.7 2.4 8.3 2.4 12 0V10M21 9v6" /></>,
     security: <><path d="M12 3 5 6v5c0 4.3 2.6 7.2 7 9 4.4-1.8 7-4.7 7-9V6l-7-3Z" /><path d="m9.5 12 1.7 1.7 3.5-3.7" /></>,
-    menu: <path d="M4 7h16M4 12h16M4 17h16" />,
     close: <path d="m6 6 12 12M18 6 6 18" />,
     search: <><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></>,
     chevronLeft: <path d="m15 18-6-6 6-6" />,
