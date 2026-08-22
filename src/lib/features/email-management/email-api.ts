@@ -4,6 +4,8 @@ import type {
   AudiencePreview,
   AudienceRequest,
   EmailCampaign,
+  EmailDirectoryRecipient,
+  CustomEmailInput,
   EmailSuppression,
   EmailTemplateRecord,
 } from "./email-types";
@@ -16,6 +18,12 @@ interface Paginated<T> {
 
 export const emailManagementApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    searchEmailRecipients: builder.query<ApiEnvelope<EmailDirectoryRecipient[]>, string>({
+      query: (search) => ({ url: "/email-management/recipients", params: { search } }),
+    }),
+    sendCustomEmail: builder.mutation<ApiEnvelope<{ sent: number; failed: number; skipped: number; recipientEmail: string; profileReminderApplied: boolean }>, CustomEmailInput>({
+      query: (body) => ({ url: "/email-management/send-custom", method: "POST", body }),
+    }),
     getEmailTemplates: builder.query<
       ApiEnvelope<{ builtIn: EmailTemplateRecord[]; custom: EmailTemplateRecord[] }>,
       void
@@ -77,6 +85,8 @@ export const emailManagementApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useSearchEmailRecipientsQuery,
+  useSendCustomEmailMutation,
   useGetEmailTemplatesQuery,
   useCreateEmailTemplateMutation,
   useUpdateEmailTemplateMutation,

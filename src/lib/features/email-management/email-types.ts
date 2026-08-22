@@ -1,4 +1,4 @@
-export type EmailAudience = "users" | "leads" | "applications" | "manual";
+export type EmailAudience = "users" | "leads" | "applications" | "external-applications" | "manual";
 
 export interface EmailTemplateRecord {
   id: string;
@@ -16,6 +16,7 @@ export interface AudienceRequest {
   filters?: {
     search?: string;
     role?: string;
+    roleScope?: "all" | "organizational" | "standard" | "specific";
     isVerified?: boolean;
     status?: string;
     source?: string;
@@ -37,6 +38,7 @@ export interface AudiencePreview {
     name: string;
     source: EmailAudience;
     blocked: boolean;
+    role?: string;
   }>;
 }
 
@@ -60,4 +62,21 @@ export interface EmailSuppression {
   email: string;
   reason?: string;
   createdAt: string;
+}
+
+
+export interface EmailDirectoryRecipient {
+  id: string;
+  email: string;
+  name: string;
+  source: "user" | "lead" | "application" | "external-application";
+  role?: string;
+}
+
+export interface CustomEmailInput {
+  recipientEmail: string;
+  recipientName?: string;
+  subject: string;
+  html: string;
+  replyTo?: string;
 }

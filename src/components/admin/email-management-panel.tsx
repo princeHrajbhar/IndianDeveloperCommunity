@@ -39,6 +39,7 @@ const applicationStatuses = ["Applied", "Reviewing", "Shortlisted", "Interview S
 const leadStatuses = ["New", "Contacted", "Qualified", "Proposal Sent", "Converted", "Lost", "Spam"];
 const leadSources = ["Website Form", "Contact Page", "Landing Page", "Referral", "Social Media", "Campaign", "Manual", "Other"];
 const leadPriorities = ["Low", "Medium", "High", "Urgent"];
+const externalSources = ["Manual", "CSV", "Excel", "Google Sheet", "Google Form"];
 
 export function EmailManagementPanel({ initialManualEmails = [], scopeLabel }: { initialManualEmails?: string[]; scopeLabel?: string } = {}) {
   return (
@@ -78,6 +79,7 @@ function CampaignComposer({ initialManualEmails, scopeLabel, lockRecipients = fa
   const [replyTo, setReplyTo] = useState("");
   const [search, setSearch] = useState("");
   const [role, setRole] = useState("");
+  const [roleScope, setRoleScope] = useState<"all" | "organizational" | "standard" | "specific">("all");
   const [verified, setVerified] = useState("");
   const [status, setStatus] = useState("");
   const [source, setSource] = useState("");
@@ -114,7 +116,8 @@ function CampaignComposer({ initialManualEmails, scopeLabel, lockRecipients = fa
   function requestBody(includeSelectedRecipients = true): AudienceRequest {
     const filters = {
       ...(search.trim() ? { search: search.trim() } : {}),
-      ...(role ? { role } : {}),
+      ...(audience === "users" ? { roleScope } : {}),
+      ...(roleScope === "specific" && role ? { role } : {}),
       ...(verified ? { isVerified: verified === "true" } : {}),
       ...(status ? { status } : {}),
       ...(source ? { source } : {}),
@@ -169,7 +172,7 @@ function CampaignComposer({ initialManualEmails, scopeLabel, lockRecipients = fa
       <form onSubmit={submit} className="space-y-6">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <Field label="Campaign name"><input required value={campaignName} onChange={(event) => setCampaignName(event.target.value)} className={inputClass} placeholder="August hiring update" /></Field>
-          <Field label="Audience">{lockRecipients ? <input value={scopeLabel ? `${scopeLabel} employees` : "Scoped recipients"} disabled className={inputClass} /> : <select value={audience} onChange={(event) => setAudience(event.target.value as EmailAudience)} className={inputClass}><option value="users">Users</option><option value="leads">Leads</option><option value="applications">Applications</option><option value="manual">Manual emails</option></select>}</Field>
+          <Field label="Audience">{lockRecipients ? <input value={scopeLabel ? `${scopeLabel} employees` : "Scoped recipients"} disabled className={inputClass} /> : <select value={audience} onChange={(event) => setAudience(event.target.value as EmailAudience)} className={inputClass}><option value="users">Users</option><option value="leads">Leads</option><option value="applications">Applications</option><option value="external-applications">External applications</option><option value="manual">Manual emails</option></select>}</Field>
           <Field label="Template"><select value={templateId} onChange={(event) => setTemplateId(event.target.value)} className={inputClass}><option value="">Custom message</option>{templates.map((template) => <option key={template.id} value={template.id}>{template.name}{template.builtIn ? " · built in" : ""}</option>)}</select></Field>
           <Field label="Reply-to (optional)"><input type="email" value={replyTo} onChange={(event) => setReplyTo(event.target.value)} className={inputClass} /></Field>
         </div>
@@ -178,6 +181,7 @@ function CampaignComposer({ initialManualEmails, scopeLabel, lockRecipients = fa
           audience={audience}
           search={search} setSearch={setSearch}
           role={role} setRole={setRole}
+          roleScope={roleScope} setRoleScope={setRoleScope}
           verified={verified} setVerified={setVerified}
           status={status} setStatus={setStatus}
           source={source} setSource={setSource}
@@ -188,7 +192,7 @@ function CampaignComposer({ initialManualEmails, scopeLabel, lockRecipients = fa
         />
 
         <div className="grid gap-4 lg:grid-cols-2">
-          <Field label="Subject" hint="Variables: {{name}}, {{email}}, {{role}}, {{status}}, {{jobTitle}}"><input required value={subject} onChange={(event) => setSubject(event.target.value)} className={inputClass} /></Field>
+          <Field label="Subject" hint="Variables: {{name}}, {{email}}, {{role}}, {{status}}, {{jobTitle}}. External-application campaigns automatically include the profile-completion reminder."><input required value={subject} onChange={(event) => setSubject(event.target.value)} className={inputClass} /></Field>
           <label className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-slate-300">
             <input type="checkbox" checked={selectiveOnly} onChange={(event) => setSelectiveOnly(event.target.checked)} className="h-4 w-4 accent-cyan-300" disabled={audience === "manual"} />
             Send only to recipients selected in the preview
@@ -207,9 +211,10 @@ function CampaignComposer({ initialManualEmails, scopeLabel, lockRecipients = fa
           <div className="mb-4 flex flex-wrap items-center gap-3">
             <StatusBadge value={`${preview.available} available`} />
             <StatusBadge value={`${preview.blocked} blocked`} />
-            <span className="text-xs text-slate-500">{preview.total} matching recipient(s){preview.truncated ? " · first 100 shown" : ""}</span>
+            <span className="text-xs text-slate-500">{preview.total} matching recipient(s){preview.truncated ? " · first 100 shown" : ""} · {selectedIds.size} selected</span>
+            {audience !== "manual" ? <button type="button" onClick={() => { const selectable = preview.recipients.filter((recipient) => !recipient.blocked && recipient.id).map((recipient) => recipient.id!); setSelectedIds((current) => current.size === selectable.length ? new Set() : new Set(selectable)); }} className="ml-auto text-xs font-black text-cyan-300">{selectedIds.size ? "Clear selection" : "Select all shown"}</button> : null}
           </div>
-          {preview.recipients.length ? <div className="max-h-80 overflow-y-auto rounded-2xl border border-white/10"><table className="w-full min-w-[620px] text-left text-sm"><thead className="sticky top-0 bg-[#07101f] text-[10px] uppercase tracking-wider text-slate-500"><tr><th className="p-3">Select</th><th className="p-3">Recipient</th><th className="p-3">Source</th><th className="p-3">Communication</th></tr></thead><tbody className="divide-y divide-white/8">{preview.recipients.map((recipient) => <tr key={`${recipient.source}-${recipient.id || recipient.email}`}><td className="p-3"><input type="checkbox" disabled={recipient.blocked || !recipient.id} checked={Boolean(recipient.id && selectedIds.has(recipient.id))} onChange={() => recipient.id && setSelectedIds((current) => toggleSet(current, recipient.id!))} className="h-4 w-4 accent-cyan-300" /></td><td className="p-3"><p className="font-bold">{recipient.name}</p><p className="mt-1 text-xs text-slate-500">{recipient.email}</p></td><td className="p-3 text-slate-400">{recipient.source}</td><td className="p-3"><StatusBadge value={recipient.blocked ? "Blocked" : "Allowed"} /></td></tr>)}</tbody></table></div> : <Empty title="No recipients" description="Change the audience filters and preview again." />}
+          {preview.recipients.length ? <div className="max-h-80 overflow-y-auto rounded-2xl border border-white/10"><table className="w-full min-w-[620px] text-left text-sm"><thead className="sticky top-0 bg-[#07101f] text-[10px] uppercase tracking-wider text-slate-500"><tr><th className="p-3">Select</th><th className="p-3">Recipient</th><th className="p-3">Source / role</th><th className="p-3">Communication</th></tr></thead><tbody className="divide-y divide-white/8">{preview.recipients.map((recipient) => <tr key={`${recipient.source}-${recipient.id || recipient.email}`}><td className="p-3"><input type="checkbox" disabled={recipient.blocked || !recipient.id} checked={Boolean(recipient.id && selectedIds.has(recipient.id))} onChange={() => recipient.id && setSelectedIds((current) => toggleSet(current, recipient.id!))} className="h-4 w-4 accent-cyan-300" /></td><td className="p-3"><p className="font-bold">{recipient.name}</p><p className="mt-1 text-xs text-slate-500">{recipient.email}</p></td><td className="p-3 text-slate-400">{recipient.source}{recipient.role ? <span className="mt-1 block text-xs text-slate-500">{recipient.role}</span> : null}</td><td className="p-3"><StatusBadge value={recipient.blocked ? "Blocked" : "Allowed"} /></td></tr>)}</tbody></table></div> : <Empty title="No recipients" description="Change the audience filters and preview again." />}
         </div>
       ) : null}
     </Panel>
@@ -220,6 +225,7 @@ function AudienceFilters(props: {
   audience: EmailAudience;
   search: string; setSearch: (value: string) => void;
   role: string; setRole: (value: string) => void;
+  roleScope: "all" | "organizational" | "standard" | "specific"; setRoleScope: (value: "all" | "organizational" | "standard" | "specific") => void;
   verified: string; setVerified: (value: string) => void;
   status: string; setStatus: (value: string) => void;
   source: string; setSource: (value: string) => void;
@@ -231,9 +237,10 @@ function AudienceFilters(props: {
   if (props.audience === "manual") return <Field label="Recipient emails" hint={props.lockManualEmails ? "Recipients are locked to employees assigned to this department." : "Separate email addresses with commas, spaces, or new lines."}><textarea required readOnly={props.lockManualEmails} value={props.manualEmails} onChange={(event) => props.setManualEmails(event.target.value)} className={`${textareaClass} ${props.lockManualEmails ? "opacity-80" : ""}`} /></Field>;
   return <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
     <Field label="Search"><input value={props.search} onChange={(event) => props.setSearch(event.target.value)} className={inputClass} placeholder="Name or email" /></Field>
-    {props.audience === "users" ? <><Field label="Role"><input value={props.role} onChange={(event) => props.setRole(event.target.value)} className={inputClass} placeholder="user, admin…" /></Field><Field label="Verification"><select value={props.verified} onChange={(event) => props.setVerified(event.target.value)} className={inputClass}><option value="">Any</option><option value="true">Verified</option><option value="false">Unverified</option></select></Field></> : null}
+    {props.audience === "users" ? <><Field label="Member scope"><select value={props.roleScope} onChange={(event) => props.setRoleScope(event.target.value as typeof props.roleScope)} className={inputClass}><option value="all">All users</option><option value="organizational">Organizational members (role ≠ user)</option><option value="standard">Standard users (role = user)</option><option value="specific">Specific role</option></select></Field>{props.roleScope === "specific" ? <Field label="Role"><input required value={props.role} onChange={(event) => props.setRole(event.target.value)} className={inputClass} placeholder="hr-admin, recruiter…" /></Field> : null}<Field label="Verification"><select value={props.verified} onChange={(event) => props.setVerified(event.target.value)} className={inputClass}><option value="">Any</option><option value="true">Verified</option><option value="false">Unverified</option></select></Field></> : null}
     {props.audience === "leads" ? <><Field label="Status"><select value={props.status} onChange={(event) => props.setStatus(event.target.value)} className={inputClass}><option value="">Any</option>{leadStatuses.map((item) => <option key={item}>{item}</option>)}</select></Field><Field label="Source"><select value={props.source} onChange={(event) => props.setSource(event.target.value)} className={inputClass}><option value="">Any</option>{leadSources.map((item) => <option key={item}>{item}</option>)}</select></Field><Field label="Priority"><select value={props.priority} onChange={(event) => props.setPriority(event.target.value)} className={inputClass}><option value="">Any</option>{leadPriorities.map((item) => <option key={item}>{item}</option>)}</select></Field></> : null}
     {props.audience === "applications" ? <><Field label="Application status"><select value={props.status} onChange={(event) => props.setStatus(event.target.value)} className={inputClass}><option value="">Any</option>{applicationStatuses.map((item) => <option key={item}>{item}</option>)}</select></Field><Field label="Job ID (optional)"><input value={props.jobId} onChange={(event) => props.setJobId(event.target.value)} className={inputClass} /></Field></> : null}
+    {props.audience === "external-applications" ? <><Field label="External application status"><select value={props.status} onChange={(event) => props.setStatus(event.target.value)} className={inputClass}><option value="">Any</option>{applicationStatuses.map((item) => <option key={item}>{item}</option>)}</select></Field><Field label="Import source"><select value={props.source} onChange={(event) => props.setSource(event.target.value)} className={inputClass}><option value="">Any</option>{externalSources.map((item) => <option key={item}>{item}</option>)}</select></Field></> : null}
   </div>;
 }
 

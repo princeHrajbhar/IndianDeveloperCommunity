@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { Bell, Building2, Mail, MailCheck, Megaphone, Plus, Users } from "lucide-react";
+import { Bell, Building2, Mail, MailCheck, Megaphone, Plus, Send, Users } from "lucide-react";
 import { EmailManagementPanel } from "@/src/components/admin/email-management-panel";
 import { QueuePanel } from "@/src/components/admin/queue-panel";
+import { HRDirectEmailWorkspace } from "./hr-direct-email";
 import { getApiErrorMessage } from "@/src/lib/api/error";
 import {
   useCreateHRAnnouncementMutation,
@@ -28,16 +29,16 @@ import {
   textarea,
 } from "./hr-ui";
 
-type Tab = "announcements" | "bulk-email" | "queue";
+type Tab = "announcements" | "direct-email" | "bulk-email" | "queue";
 
 export function HRCommunicationWorkspace() {
   const searchParams = useSearchParams();
   const department = searchParams.get("department")?.trim() || "";
   const requestedTab = searchParams.get("tab");
-  const initialTab: Tab = requestedTab === "queue" || requestedTab === "bulk-email" ? requestedTab : "announcements";
+  const initialTab: Tab = requestedTab === "queue" || requestedTab === "bulk-email" || requestedTab === "direct-email" ? requestedTab : "announcements";
   const [tab, setTab] = useState<Tab>(initialTab);
   useEffect(() => {
-    setTab(requestedTab === "queue" || requestedTab === "bulk-email" ? requestedTab : "announcements");
+    setTab(requestedTab === "queue" || requestedTab === "bulk-email" || requestedTab === "direct-email" ? requestedTab : "announcements");
   }, [requestedTab]);
   const employees = useGetHREmployeesQuery(department ? { page: 1, limit: 200, department } : { page: 1, limit: 200 });
   const departmentEmails = useMemo(
@@ -76,11 +77,13 @@ export function HRCommunicationWorkspace() {
 
       <div className="qf-surface mb-6 flex flex-wrap gap-1 rounded-2xl border p-1.5">
         <TabButton active={tab === "announcements"} onClick={() => setTab("announcements")} icon={<Megaphone className="h-4 w-4" />} label="Announcements" />
+        <TabButton active={tab === "direct-email"} onClick={() => setTab("direct-email")} icon={<Send className="h-4 w-4" />} label="Direct Email" />
         <TabButton active={tab === "bulk-email"} onClick={() => setTab("bulk-email")} icon={<Mail className="h-4 w-4" />} label="Bulk Email" />
         <TabButton active={tab === "queue"} onClick={() => setTab("queue")} icon={<MailCheck className="h-4 w-4" />} label="Delivery Queues" />
       </div>
 
       {tab === "announcements" ? <AnnouncementWorkspace department={department} /> : null}
+      {tab === "direct-email" ? <HRDirectEmailWorkspace /> : null}
       {tab === "bulk-email" ? <EmailManagementPanel initialManualEmails={departmentEmails} scopeLabel={department || undefined} /> : null}
       {tab === "queue" ? <QueuePanel /> : null}
     </>

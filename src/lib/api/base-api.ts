@@ -67,6 +67,7 @@ export const baseApi = createApi({
     "HRPolicy",
     "HROperations",
     "HRInterview",
+    "HRSchedule",
   ],
   refetchOnFocus: true,
   refetchOnReconnect: true,
